@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>總覽 — 海盜 模組製作手冊</title>
+<meta name="description" content="海盜 遊戲的模組製作手冊。教你加道具、改數值、放自己的圖和音樂。">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="選單">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>海盜 模組製作手冊</h1>
+    <p class="lead">不用寫程式。會用記事本，就能做模組。</p>
+
+    <p>這份手冊教你怎麼幫《海盜》做模組 —— 加新道具、改角色數值、換立繪、放自己的 BGM。
+       全部靠編輯文字檔完成，不需要任何開發工具，也不需要重新編譯遊戲。</p>
+
+    <div class="ok">
+      <strong>五分鐘就能做出第一個模組</strong>
+      建一個資料夾、寫一個 <code>mod.json</code>、放一個 JSON 檔。就這樣。
+      直接跳到 <a href="pages/01-quickstart.html">快速開始</a>。
+    </div>
+
+    <h2>你可以做什麼</h2>
+    <ul>
+      <li><strong>改數值</strong> —— 角色、敵人、技能、Buff、道具、關卡、地形…遊戲的 13 張資料表全部可改</li>
+      <li><strong>加新內容</strong> —— 不只是改既有的，可以憑空加新道具 / 新角色 / 新技能</li>
+      <li><strong>帶自己的美術</strong> —— PNG 放進 <code>Images/</code> 就會被載入，可以加新立繪或換掉本體素材</li>
+      <li><strong>帶自己的音樂</strong> —— OGG / MP3 / WAV 放進 <code>Music/</code>，BGM 和音效都支援</li>
+    </ul>
+
+    <h2>你不能做什麼</h2>
+    <ul>
+      <li><strong>刪除既有內容</strong> —— 模組只能「改」和「加」，沒有刪除功能。想隱藏東西要用
+          <code>UnlockCon</code>（見 <a href="pages/03-data.html">修改遊戲資料</a>）</li>
+      <li><strong>加新程式邏輯</strong> —— 不能寫 C#。但劇本指令和演出系統的組合已經很自由</li>
+      <li><strong>在手機版使用</strong> —— 模組功能是桌機版限定</li>
+    </ul>
+
+    <h2>章節</h2>
+    <div class="cards"></div>
+
+    <h2>需要準備什麼</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>用途</th><th>工具</th><th>說明</th></tr>
+      <tr><td>編輯 JSON</td><td>記事本 / VS Code / Notepad++</td><td>任何純文字編輯器都行。推薦 VS Code，會幫你檢查 JSON 格式</td></tr>
+      <tr><td>做圖</td><td>任何繪圖軟體</td><td>輸出 PNG 即可</td></tr>
+      <tr><td>做音樂</td><td>任何音訊軟體</td><td>輸出 OGG / MP3 / WAV</td></tr>
+      <tr><td>做劇情演出</td><td>演出編輯器</td><td>視覺化工具，見 <a href="pages/08-showeditor.html">演出編輯器</a></td></tr>
+    </table>
+    </div>
+
+    <div class="note">
+      <strong>這份手冊的內容是跟著遊戲程式走的</strong>
+      裡面寫的規則（合併方式、資料夾結構、優先順序）都對照實際實作。
+      如果你發現手冊跟遊戲行為不一致，那是手冊過時了 —— 請回報。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+<script>
+buildNav({ lang: 'zh-TW', page: 0 });
+buildCards('zh-TW', [
+  '建立第一個模組。資料夾放哪、最小可運作範例。',
+  '模組的名片檔。每個欄位是什麼意思、缺了會怎樣。',
+  '改數值與加新內容。合併規則、13 張資料表、常見範例。',
+  '把自己的 PNG 放進遊戲。資料夾結構、命名規則、覆蓋本體素材。',
+  '加入 BGM 與音效。支援格式、命名規則、載入時機的注意事項。',
+  '多個模組同時啟用時誰贏。排序、衝突、給作者的建議。',
+  '模組沒生效怎麼查。錯誤訊息對照表、檢查清單。',
+  '視覺化編輯劇情演出。這是什麼、能做什麼、怎麼取得。',
+]);
+</script>
+</body>
+</html>

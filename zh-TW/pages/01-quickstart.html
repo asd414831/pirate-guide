@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>快速開始 — 海盜 模組製作手冊</title>
+<meta name="description" content="五分鐘做出第一個海盜模組。資料夾放哪、mod.json 怎麼寫、怎麼啟用。">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="選單">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>快速開始</h1>
+    <p class="lead">目標：五分鐘內做出一個會動的模組，確認整條流程通了。</p>
+
+    <h2>1. 找到模組資料夾</h2>
+    <p>模組放在遊戲安裝目錄底下：</p>
+<pre><code>&lt;遊戲安裝資料夾&gt;/Pirate_Data/StreamingAssets/Mods/</code></pre>
+    <p>最快的找法：<strong>進遊戲 → 標題畫面 → 模組 → 開啟資料夾</strong>。遊戲會直接幫你開，不用自己翻。</p>
+
+    <div class="note">
+      <strong>如果沒有 Mods 資料夾</strong>
+      自己建一個就行，名字要正好是 <code>Mods</code>。<br>
+      如果標題畫面連「模組」按鈕都沒有，代表你的版本不支援模組
+      —— 手機版和 Demo / 試玩版都沒有這個功能。
+    </div>
+
+    <h2>2. 建立你的模組資料夾</h2>
+    <p>在 <code>Mods/</code> 底下建一個資料夾。名字自訂，建議用英文和數字，避免空格：</p>
+<pre><code>Mods/
+└── MyFirstMod/</code></pre>
+
+    <div class="warn">
+      <strong>資料夾名稱是模組的身分證</strong>
+      遊戲用資料夾名記住「這個模組有沒有被啟用」。<br>
+      <strong>改名字 = 變成另一個模組</strong>，啟用狀態會歸零，玩家要重新打開。發布後就不要再改。
+    </div>
+
+    <h2>3. 寫 mod.json</h2>
+    <p>在你的模組資料夾裡建一個 <code>mod.json</code>。<strong>沒有這個檔，遊戲不會認為那是模組</strong>，
+       連列表都不會出現。</p>
+<pre><code>{
+  "name": "我的第一個模組",
+  "author": "你的名字",
+  "version": "1.0",
+  "description": "測試用。加了一個超強藥水。"
+}</code></pre>
+    <p>所有欄位都可以省略，缺了會用預設值。詳細說明見
+       <a href="02-modjson.html">mod.json 欄位</a>。</p>
+
+    <h2>4. 加一筆資料</h2>
+    <p>資料放在 <code>Data/&lt;表名&gt;/</code> 底下，<strong>一個 JSON 檔就是一筆資料</strong>。
+       這裡加一個道具：</p>
+<pre><code>MyFirstMod/
+├── mod.json
+└── Data/
+    └── Item/
+        └── SuperPotion.json</code></pre>
+    <p><code>SuperPotion.json</code> 的內容：</p>
+<pre><code>{
+  "Name": "超強藥水",
+  "Name_I2": "超強藥水",
+  "Desc_I2": "喝下去會變得很強",
+  "Type": "道具",
+  "HealHP": "999"
+}</code></pre>
+
+    <div class="warn">
+      <strong>資料夾名決定改哪張表</strong>
+      <code>Data/Item/</code> 改的是道具表，<code>Data/Role/</code> 改角色表。<br>
+      寫 <code>Item</code> 或 <code>TheItem</code> 都會被接受（遊戲會自動補上 <code>The</code>）。<br>
+      <strong>檔名不重要</strong>，遊戲看的是檔案裡面的 <code>Name</code> 欄位。
+    </div>
+
+    <h2>5. 啟用並測試</h2>
+    <ol>
+      <li>回到遊戲，<strong>標題畫面 → 模組</strong></li>
+      <li>找到「我的第一個模組」，打開開關</li>
+      <li><strong>重新啟動遊戲</strong></li>
+      <li>進遊戲看道具清單，應該有「超強藥水」</li>
+    </ol>
+
+    <div class="warn">
+      <strong>模組只在開機時載入</strong>
+      改完檔案或切換啟用狀態，都必須<strong>完全關掉遊戲再重開</strong>。
+      遊戲執行中改檔案不會有反應 —— 這不是壞了，是設計如此。
+    </div>
+
+    <h2>成功了嗎？</h2>
+    <div class="ok">
+      <strong>看到新道具 → 整條流程通了</strong>
+      接下來看 <a href="03-data.html">修改遊戲資料</a>，學怎麼改既有內容、有哪些欄位可以填。
+    </div>
+    <div class="note">
+      <strong>沒看到 → 去疑難排解</strong>
+      <a href="07-troubleshoot.html">疑難排解</a> 有錯誤訊息對照表和檢查清單。
+      九成的問題是 JSON 格式打錯（少一個逗號、多一個逗號）。
+    </div>
+
+    <h2>完整的模組長什麼樣</h2>
+    <p>一個用到全部功能的模組結構：</p>
+<pre><code>MyMod/
+├── mod.json              名片檔（必要）
+├── icon.png              列表縮圖（選配）
+├── Data/                 資料表
+│   ├── Item/
+│   │   └── SuperPotion.json
+│   ├── Role/
+│   │   └── NewHero.json
+│   └── Skill/
+│       └── MegaSlash.json
+├── Images/               圖片
+│   ├── RoleHead/
+│   │   └── NewHero.png
+│   └── Role/
+│       └── NewHero.png
+└── Music/                音樂與音效
+    ├── BGM/
+    │   └── BGM_MyTheme.ogg
+    └── Sfx/
+        └── se_MyHit.ogg</code></pre>
+    <p>各部分的詳細規則在後面的章節。</p>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-TW', page: 1 });</script>
+</body>
+</html>

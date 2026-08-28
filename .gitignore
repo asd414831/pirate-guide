@@ -1,0 +1,22 @@
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# 防止遊戲專案檔誤入（這個 repo 是 public，只放手冊）
+*.cs
+*.unity
+*.asset
+*.prefab
+*.meta
+*.csproj
+*.sln
+Assets/
+Library/
+StreamingAssets/
