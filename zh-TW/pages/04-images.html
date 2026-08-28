@@ -66,6 +66,21 @@
       資料裡填的是 <code>"NewHero"</code>。遊戲自己知道要去哪個資料夾找。
     </div>
 
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-head.png" alt="RoleHead：頭像，300x300 方形">
+        <span class="fig-label"><code>RoleHead/Nausea.png</code><br>300×300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Role：立繪，直立長方形">
+        <span class="fig-label"><code>Role/Nausea/…</code><br>900×1479</span>
+      </div>
+      <figcaption>
+        同一個角色的<strong>頭像</strong>與<strong>立繪</strong>是兩張不同的圖，
+        放在不同資料夾、尺寸也不同。兩個都要準備。
+      </figcaption>
+    </figure>
+
     <h2>格式</h2>
     <div class="table-wrap">
     <table>
@@ -106,6 +121,60 @@
 Images/Role/Nausea/Body/Body_Dark.png
 Images/Role/Nausea/Face/Face_Normal.png
 Images/Role/Nausea/Face/Face_Laugh.png</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Body_Normal：完整的全身圖">
+        <span class="fig-label"><code>Body/Body_Normal.png</code></span>
+      </div>
+      <div class="fig-op">+</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-face-laugh.png" alt="Face_Laugh：畫布同樣是全身尺寸，只有臉的部分有內容">
+        <span class="fig-label"><code>Face/Face_Laugh.png</code></span>
+      </div>
+      <div class="fig-op">=</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="兩張同座標疊起來的結果">
+        <span class="fig-label">遊戲顯示的結果</span>
+      </div>
+      <figcaption>
+        棋盤格 = 透明區域。<strong>注意中間那張</strong> ——
+        <code>Face_Laugh.png</code> 只有臉的部分有內容，但<strong>畫布是完整的全身尺寸</strong>。
+        引擎把兩張同座標疊起來，所以表情不需要設定位置。
+      </figcaption>
+    </figure>
+
+    <div class="warn">
+      <strong>這是最常犯的錯</strong>
+      很多人以為表情圖只要畫「一張臉」那麼大。<strong>不是</strong> ——
+      表情圖也要是全身尺寸的畫布，臉以外全部透明。<br>
+      裁切成小圖的話，疊上去會出現在左上角。
+    </div>
+
+    <h4>換服裝也是同一套機制</h4>
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-normal.png" alt="Body_Normal + Face_Normal">
+        <span class="fig-label"><code>Normal</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="Body_Normal + Face_Laugh">
+        <span class="fig-label"><code>Normal</code> + <code>Laugh</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-normal.png" alt="Body_Dark + Face_Normal">
+        <span class="fig-label"><code>Dark</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-laugh.png" alt="Body_Dark + Face_Laugh">
+        <span class="fig-label"><code>Dark</code> + <code>Laugh</code></span>
+      </div>
+      <figcaption>
+        2 套服裝 × 2 種表情 = 4 種組合，只需要 4 張圖（2 個 Body + 2 個 Face）。<br>
+        劇本用 <code>&lt;Image&gt;Mid,Nausea,Laugh,Dark</code> 指定組合。
+      </figcaption>
+    </figure>
+
 
     <div class="table-wrap">
     <table>

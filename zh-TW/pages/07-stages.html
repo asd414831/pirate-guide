@@ -68,6 +68,15 @@
       範例的艾瑪原圖是 1475×2020，所以 <code>Sca</code> 用 48。<br>
       同樣的畫面高度換成 1000×1600 的圖，就要填 60 左右。
     </div>
+    <figure>
+      <img src="../../assets/emma-body-normal.png" alt="艾瑪的立繪，原圖 1475x2020" style="max-height:300px">
+      <figcaption>
+        官方範例的艾瑪，原圖 <strong>1475×2020</strong>，戰鬥中用
+        <code>Sca: 48</code> / <code>Pos_y: -1120</code>。<br>
+        同樣的畫面高度換成 1000×1600 的圖就要填 60 左右 —— <strong>圖越高，<code>Sca</code> 越小</strong>。
+      </figcaption>
+    </figure>
+
     <div class="ok">
       <strong>最快的做法：抄一隻體型相近的既有敵人</strong>
       找遊戲裡大小差不多的敵人，把它的 <code>Pos_y</code> / <code>Sca</code> 抄過來再微調。
@@ -84,6 +93,26 @@
 Images/Role/Emma/Face/Face_Normal.png
 Images/Role/Emma/Face/Face_Sad.png
 Images/Role/Emma/Face/Face_Shock.png</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/emma-body-normal.png" alt="Body_Normal">
+        <span class="fig-label"><code>Body_Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-composite-shock.png" alt="Body + Face_Shock">
+        <span class="fig-label">+ <code>Face_Shock</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-face-sad.png" alt="Face_Sad 單獨看">
+        <span class="fig-label"><code>Face_Sad</code> 單獨看</span>
+      </div>
+      <figcaption>
+        艾瑪的 4 張圖（1 個 Body + 3 個 Face）。
+        <strong>最右邊是 <code>Face_Sad.png</code> 單獨的樣子</strong> ——
+        每張表情圖都是完整的全身畫布，臉以外透明。棋盤格 = 透明。
+      </figcaption>
+    </figure>
     <p><code>PSB</code> 的三段是「PSB名,表情,服裝」：</p>
 <pre><code>"PSB": "Emma,Normal,Normal"</code></pre>
     <p>對應到 <code>Images/Role/<strong>Emma</strong>/Face/Face_<strong>Normal</strong></code>
@@ -156,6 +185,21 @@ Images/Role/Emma/Face/Face_Shock.png</code></pre>
       <tr><td><code>GetItem</code> / <code>GetItemProbability</code></td><td>同位置 = 同一項掉落</td></tr>
     </table>
     </div>
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss.png" alt="第一波的背景">
+        <span class="fig-label">第 1 波<br><code>Background_ModAbyss</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss-night.png" alt="第二波的背景">
+        <span class="fig-label">第 2 波<br><code>Background_ModAbyss_Night</code></span>
+      </div>
+      <figcaption>
+        <code>FightBackground</code> 用逗號分隔就能每波換一張。<br>
+        背景圖是 <strong>960×540</strong>，放在 <code>Images/Background/</code>。
+      </figcaption>
+    </figure>
+
     <div class="note">
       <strong>清單比波數短時會自動沿用</strong>
       <code>EnemyLv</code> 不夠長時遊戲會自動算等級；
