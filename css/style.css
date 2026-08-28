@@ -237,6 +237,44 @@ td code { white-space: nowrap; }
 .ok code { background: rgba(0,0,0,.25); border-color: transparent; color: inherit; }
 .note strong, .warn strong, .ok strong { display: block; margin-bottom: 4px; }
 
+/* 作者的碎念。跟 note/warn/ok 區隔開來 —— 這裡面是題外話，
+   查資料的人可以整段跳過，不會漏掉任何規則。
+   只出現在中文版：反諷跟自嘲翻譯過去常常變味或變失禮。 */
+.aside-note {
+  position: relative;
+  background: linear-gradient(180deg, rgba(126,102,168,.10), rgba(126,102,168,.05));
+  border-left: 4px solid #8f79b8;
+  border-radius: 0 4px 4px 0;
+  padding: 12px 16px 12px 42px;
+  margin: 0 0 20px;
+  max-width: var(--maxw);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+  font-style: italic;
+}
+.aside-note::before {
+  content: '☕';
+  position: absolute;
+  left: 13px;
+  top: 11px;
+  font-size: 15px;
+  font-style: normal;
+  opacity: .85;
+}
+.aside-note code {
+  font-style: normal;
+  background: rgba(0,0,0,.22);
+  border-color: transparent;
+}
+@media (prefers-color-scheme: light) {
+  .aside-note {
+    background: linear-gradient(180deg, rgba(126,102,168,.09), rgba(126,102,168,.04));
+    border-left-color: #7b64a8;
+  }
+  .aside-note code { background: rgba(0,0,0,.06); }
+}
+
 /* ---------- 上下頁 ---------- */
 .pager {
   display: flex;
