@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>加入音樂音效 — 海盜 模組製作手冊</title>
+<meta name="description" content="模組加入 BGM 與音效。支援格式、命名規則、載入時機的注意事項。">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="選單">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>加入音樂音效</h1>
+    <p class="lead">模組可以帶自己的 BGM 和音效。</p>
+
+    <h2>基本規則</h2>
+<pre><code>Mods/&lt;你的模組&gt;/Music/&lt;任意子資料夾&gt;/&lt;音檔名&gt;.ogg</code></pre>
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目</th><th>說明</th></tr>
+      <tr><td>支援格式</td><td>OGG / MP3 / WAV</td></tr>
+      <tr><td>推薦格式</td><td><strong>OGG</strong> —— 檔案小、載入快、無授權問題</td></tr>
+      <tr><td>子資料夾</td><td>隨你怎麼分，<strong>不影響查找</strong></td></tr>
+    </table>
+    </div>
+
+    <h2>命名是「純檔名」，不含路徑</h2>
+    <div class="warn">
+      <strong>這點跟圖片不同，最容易搞混</strong>
+      音樂的子資料夾<strong>純粹給你自己整理用</strong>，遊戲查找時只看檔名。<br>
+      <code>Music/BGM/MyTheme.ogg</code> 和 <code>Music/隨便/亂/MyTheme.ogg</code>
+      對遊戲來說<strong>完全一樣</strong>，都是「MyTheme」。
+    </div>
+    <p>所以下面這兩種放法效果相同：</p>
+<pre><code>Music/
+├── BGM/
+│   └── MyTheme.ogg          → 遊戲認得的名字是 "MyTheme"
+└── Sfx/
+    └── se_MyHit.ogg         → 遊戲認得的名字是 "se_MyHit"</code></pre>
+<pre><code>Music/
+├── MyTheme.ogg              → 一樣是 "MyTheme"
+└── se_MyHit.ogg             → 一樣是 "se_MyHit"</code></pre>
+
+    <div class="warn">
+      <strong>不同資料夾撞名 = 其中一個消失</strong>
+      因為查找只看檔名，<code>Music/BGM/Theme.ogg</code> 和
+      <code>Music/Sfx/Theme.ogg</code> 會互相衝突，只有一個會生效。<br>
+      建議自己加前綴避開：<code>BGM_</code> / <code>se_</code>。
+    </div>
+
+    <h2>加一首 BGM</h2>
+    <p><strong>兩個步驟，缺一個都沒聲音。</strong></p>
+
+    <h3>1. 放音檔</h3>
+<pre><code>MyMod/
+└── Music/
+    └── BGM/
+        └── BGM_MyTheme.ogg</code></pre>
+
+    <h3>2. 註冊到 BGM 清單</h3>
+    <p><code>Data/BGM/MyTheme.json</code></p>
+<pre><code>{
+  "Name": "BGM_MyTheme",
+  "ID": 9201,
+  "Desc": "曲子的說明文字",
+  "Path": "BGM_MyTheme.ogg",
+  "Maker": "作曲者"
+}</code></pre>
+    <div class="warn">
+      <strong>只放音檔不註冊，或只註冊不放音檔，都是安靜失敗</strong>
+      <ul>
+        <li>只放音檔 → 遊戲裡沒有任何地方會用到它</li>
+        <li>只註冊 → 清單裡看得到名字，播放時<strong>沒有聲音</strong></li>
+      </ul>
+      兩種情況都不會有錯誤訊息。
+    </div>
+    <div class="warn">
+      <strong><code>ID</code> 必須大於 0，否則不會出現在清單</strong>
+      <code>ID</code> 是 0 或負數的資料會被當成佔位列跳過。<br>
+      建議用 9000 以上的數字，避開遊戲本體未來新增的內容。
+    </div>
+    <div class="note">
+      <strong>其他欄位</strong>
+      <ul>
+        <li><code>Name</code> —— 要跟音檔檔名一致（不含 <code>.ogg</code>）</li>
+        <li><code>Desc</code> —— 曲子的說明文字</li>
+        <li><code>Path</code> —— 純顯示用，寫音檔檔名就好</li>
+        <li><code>Maker</code> —— 作曲者</li>
+      </ul>
+    </div>
+    <div class="note">
+      <strong>音樂清單預設是鎖著的</strong>
+      玩家第一次在遊戲裡實際播到這首時會自動解鎖，不用另外設定。
+    </div>
+
+    <h2>換掉本體的音樂</h2>
+    <p>用<strong>跟本體一樣的檔名</strong>，就會蓋掉。不需要註冊（本體已經註冊過了）：</p>
+<pre><code>Music/BGM_Title.ogg      &lt;-- 換掉標題畫面音樂</code></pre>
+    <div class="ok">
+      <strong>模組音檔優先於本體音檔</strong>
+      跟圖片一樣的規則。想做「全部換成自己的配樂」的模組完全可行。
+    </div>
+
+    <h2>音效</h2>
+    <p>音效跟 BGM 走同一個資料夾，規則完全一樣。差別只在<strong>音效不需要註冊到清單</strong>
+       —— 它是由技能或演出指定名字來播放的。</p>
+<pre><code>Music/Sfx/se_MyHit.ogg</code></pre>
+    <p>然後在技能或演出裡指定播放 <code>se_MyHit</code>。</p>
+
+    <h2>載入時機（重要）</h2>
+    <div class="warn">
+      <strong>音檔在背景慢慢載入，開機後前幾秒可能還沒好</strong>
+      跟圖片不同，音檔（尤其 MP3）要花時間解碼。遊戲的做法是：<br>
+      開機時<strong>先記住有哪些檔案</strong>（很快），然後<strong>在背景逐個解碼</strong>。<br>
+      所以「遊戲剛開機的前幾秒」播放模組音樂，可能會沒聲音或播到本體的音樂。
+      等一下再播就正常了。
+    </div>
+    <div class="note">
+      <strong>這不是 bug，也不需要處理</strong>
+      實際遊玩時玩家不會在開機瞬間就進到用模組音樂的場景。
+      但你自己測試時如果「第一次沒聲音、再試一次就有」，原因就是這個。
+    </div>
+
+    <h2>檔案大小建議</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>用途</th><th>建議</th><th>理由</th></tr>
+      <tr><td>BGM</td><td>OGG，2～5 MB</td><td>循環播放的曲子，用 OGG 壓縮效率最好</td></tr>
+      <tr><td>音效</td><td>OGG 或 WAV，&lt; 500 KB</td><td>短音效用 WAV 也可以，解碼最快</td></tr>
+      <tr><td>避免</td><td>大檔 WAV</td><td>一首 WAV 的 BGM 可能 50 MB 以上，載入慢又佔空間</td></tr>
+    </table>
+    </div>
+
+    <h2>檢查清單</h2>
+    <p>沒聲音的時候按順序檢查：</p>
+    <ol>
+      <li>音檔放在 <code>Music/</code> 底下嗎？</li>
+      <li>格式是 OGG / MP3 / WAV 嗎？（不是改副檔名，要真的轉檔）</li>
+      <li>要當 BGM 的話，<code>Data/BGM/</code> 有註冊嗎？</li>
+      <li>註冊的 <code>Name</code> 跟音檔檔名完全一致嗎？（不含副檔名）</li>
+      <li>有跟其他音檔撞名嗎？</li>
+      <li>是不是開機後太快就測試了？（等幾秒再試）</li>
+      <li>回標題重新「開始新遊戲」或「讀取存檔」了嗎？</li>
+    </ol>
+
+    <div class="warn">
+      <strong>音樂的授權是你的責任</strong>
+      發布模組時請確認你有權使用那些音檔。使用他人作品前要取得授權，
+      或選擇明確標示可自由使用的素材。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-TW', page: 5 });</script>
+</body>
+</html>

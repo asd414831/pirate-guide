@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>加入圖片 — 海盜 模組製作手冊</title>
+<meta name="description" content="把自己畫的 PNG 放進海盜。資料夾結構、命名規則、覆蓋本體素材。">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="選單">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>加入圖片</h1>
+    <p class="lead">模組可以帶自己的美術。放進 <code>Images/</code> 就會被載入。</p>
+
+    <h2>基本規則</h2>
+<pre><code>Mods/&lt;你的模組&gt;/Images/&lt;照抄遊戲的結構&gt;/&lt;圖名&gt;.png</code></pre>
+    <div class="ok">
+      <strong>照抄遊戲本體的資料夾結構就對了</strong>
+      不需要記任何特殊規則。遊戲裡角色頭像放在 <code>RoleHead/</code>，
+      你的模組也放 <code>Images/RoleHead/</code>。就這樣。
+    </div>
+
+    <h2>範例</h2>
+<pre><code>MyMod/
+├── mod.json
+├── Data/
+│   └── Role/
+│       └── NewHero.json
+└── Images/
+    ├── RoleHead/
+    │   └── NewHero.png      角色頭像
+    └── Role/
+        └── NewHero.png      角色立繪</code></pre>
+
+    <h3>資料夾對照表</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>資料夾</th><th>內容</th><th>資料表欄位</th></tr>
+      <tr><td><code>Images/Role/</code></td><td>立繪（角色與敵人共用）</td><td><code>PSB</code></td></tr>
+      <tr><td><code>Images/RoleHead/</code></td><td>頭像</td><td><code>ImageName</code> / <code>EyeImageName</code></td></tr>
+      <tr><td><code>Images/Icon/</code></td><td>道具與 buff 圖示</td><td><code>IconName</code></td></tr>
+      <tr><td><code>Images/Background/</code></td><td>背景圖</td><td><code>FightBackground</code>、劇本 <code>&lt;BG&gt;</code></td></tr>
+      <tr><td><code>Images/Sticker/</code></td><td>貼紙小圖</td><td>劇本 <code>&lt;Sticker&gt;</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong><code>IconName</code> 要含子路徑</strong>
+      圖示放 <code>Images/Icon/Buff/MyIcon.png</code> 時，
+      <code>IconName</code> 填 <code>"Icon/Buff/MyIcon"</code>。<br>
+      其他欄位（<code>PSB</code> / <code>ImageName</code>）只填檔名就好。
+    </div>
+    <p>然後在 <code>Data/Role/NewHero.json</code> 裡指定圖名：</p>
+<pre><code>{
+  "Name": "新角色",
+  "Name_I2": "新角色",
+  "ImageName": "NewHero"
+}</code></pre>
+    <div class="note">
+      <strong>圖名不含資料夾也不含 <code>.png</code></strong>
+      放的是 <code>Images/RoleHead/NewHero.png</code>，
+      資料裡填的是 <code>"NewHero"</code>。遊戲自己知道要去哪個資料夾找。
+    </div>
+
+    <h2>格式</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目</th><th>要求</th></tr>
+      <tr><td>檔案格式</td><td>PNG</td></tr>
+      <tr><td>透明背景</td><td>支援（頭像和立繪通常需要）</td></tr>
+      <tr><td>尺寸</td><td>沒有硬性限制，但<strong>建議跟本體同類型的圖一致</strong>，不然會顯示得太大或太小</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>尺寸怎麼抓</strong>
+      去看遊戲本體同類型的圖多大，照著做。角色立繪跟道具圖示的尺寸差很多，
+      用錯會在遊戲裡看起來很奇怪（不會壞，只是難看）。
+    </div>
+
+    <h2>覆蓋本體的圖</h2>
+    <p>用<strong>跟本體一樣的路徑和檔名</strong>，就會蓋掉本體那張。</p>
+<pre><code>Images/RoleHead/主角.png      &lt;-- 換掉主角的頭像</code></pre>
+    <div class="ok">
+      <strong>模組圖優先於本體圖</strong>
+      這是刻意的設計 —— 想做「換立繪」「換 UI 風格」的模組應該辦得到。
+      不需要任何額外設定，同名就會蓋掉。
+    </div>
+    <div class="warn">
+      <strong>檔名要完全一致，包含中文字</strong>
+      本體的圖如果叫 <code>主角.png</code>，你的檔名也得是 <code>主角.png</code>。
+      差一個字（或全形半形不同）就不會覆蓋，而是變成一張沒人用的新圖。
+    </div>
+
+    <h2>立繪的表情與服裝差分</h2>
+    <p>立繪有兩種擺法，看你要不要差分。</p>
+
+    <h3>(A) 不要差分 —— 一張圖到底</h3>
+<pre><code>Images/Role/Nausea.png</code></pre>
+
+    <h3>(B) 要差分 —— 改放成資料夾</h3>
+<pre><code>Images/Role/Nausea/Body/Body_Normal.png
+Images/Role/Nausea/Body/Body_Dark.png
+Images/Role/Nausea/Face/Face_Normal.png
+Images/Role/Nausea/Face/Face_Laugh.png</code></pre>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>規則</th><th>說明</th></tr>
+      <tr><td>資料夾名 = 群組名</td><td>目前有 <code>Body</code>（身體 / 服裝）與 <code>Face</code>（表情）兩種</td></tr>
+      <tr><td>檔名 = 圖層名</td><td><strong>要自己加 <code>Body_</code> / <code>Face_</code> 前綴</strong></td></tr>
+      <tr><td>每張都是全身圖</td><td>完整尺寸、背景透明、<strong>全部同樣大小</strong></td></tr>
+      <tr><td>疊圖順序</td><td>同座標直接疊起來，<code>Face</code> 疊在 <code>Body</code> 之上</td></tr>
+    </table>
+    </div>
+
+    <div class="warn">
+      <strong>每張差分圖都要畫成「完整尺寸的全身圖」</strong>
+      引擎是把它們<strong>同座標疊起來</strong>，不是把表情貼到臉的位置。<br>
+      所以表情圖也要是全尺寸、只有臉的部分有內容、其他透明。
+      <strong>不需要（也無法）設定表情的位置。</strong>
+    </div>
+
+    <h3>預設顯示哪一張</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>情況</th><th>結果</th></tr>
+      <tr><td>群組裡有 <code>&lt;群組&gt;_Normal</code></td><td>預設顯示它</td></tr>
+      <tr><td>群組裡<strong>沒有</strong> <code>Normal</code></td><td>該群組<strong>預設全部不顯示</strong></td></tr>
+    </table>
+    </div>
+    <p>例如只放了 <code>Face_Laugh.png</code>，平常就是沒表情，等劇本叫它才出現。</p>
+
+    <div class="warn">
+      <strong>建議一定要放 <code>Face_Normal.png</code></strong>
+      「回想之境 &gt; 船員」點進立繪可以翻看所有表情差分，
+      <strong><code>&lt;群組&gt;_Normal</code> 固定排在第一頁</strong>
+      —— 那就是玩家點進去先看到的那一張。<br>
+      沒有額外表情時，把 <code>Face_Normal.png</code> 畫成<strong>全透明</strong>就好
+      （<code>Body</code> 圖本身已經有臉）。
+    </div>
+    <div class="note">
+      <strong>表情頁的排序</strong>
+      頁序是<strong>檔名字母序</strong>，但 <code>Normal</code> 一定第一頁。<br>
+      想多一頁「刻意的無表情」，照本體慣例放 <code>Face_Null.png</code>（全透明）——
+      名字含 <code>Null</code> 的表情會被固定排到<strong>最後一頁</strong>。
+    </div>
+
+    <h3>劇本怎麼切換差分</h3>
+    <div class="warn">
+      <strong><code>&lt;Image&gt;</code> 的第 1 段是「槽位」，不是角色名</strong>
+      槽位有 <code>Mid</code> / <code>Left</code> / <code>Right</code>。
+      角色名從<strong>第 2 段</strong>才開始。
+    </div>
+<pre><code>&lt;Image&gt;Mid,Nausea,Laugh        臉換成 Face_Laugh
+&lt;Image&gt;Mid,Nausea,,Dark        身體換成 Body_Dark
+&lt;Image&gt;Mid,Nausea,Laugh,Dark   兩個一起換
+&lt;Image&gt;Mid,Nausea,-            該群組全部關掉
+&lt;Image&gt;Mid                     清掉該槽的立繪
+&lt;Image&gt;                        清掉三個槽</code></pre>
+    <p>表情和服裝都<strong>省略前綴</strong> —— 寫 <code>Laugh</code> 不是 <code>Face_Laugh</code>。</p>
+
+    <p>另外兩個同族指令<strong>沒有槽位參數</strong>，直接從角色名開始：</p>
+<pre><code>&lt;MateImage&gt;Nausea,Laugh        主畫面立繪
+&lt;EnemyImage&gt;艾瑪,Emma,Shock    戰鬥中換敵人立繪</code></pre>
+    <div class="note">
+      <strong><code>&lt;EnemyImage&gt;</code> 的第 1 段是敵人的資料 <code>Name</code></strong>
+      第 2 段起才是「PSB名,表情,服裝」。
+    </div>
+    <div class="note">
+      <strong>找不到指定的差分時</strong>
+      遊戲會提示（例「群組【Face】找不到【Face_Angry】」），
+      畫面上那個群組會變成全部不顯示。
+    </div>
+
+    <h2>子資料夾的意義</h2>
+    <p>跟音樂不同，<strong>圖片的資料夾結構有意義</strong>：</p>
+<pre><code>Images/RoleHead/Nausea.png    &lt;-- 頭像
+Images/Role/Nausea.png        &lt;-- 立繪</code></pre>
+    <p>這兩張是不同的圖，遊戲會分別去對應資料夾找。放錯資料夾 = 找不到。</p>
+    <div class="warn">
+      <strong>這點跟音樂剛好相反</strong>
+      <a href="05-audio.html">音樂</a>的子資料夾純粹給你整理用，不影響查找。
+      圖片的子資料夾<strong>是查找路徑的一部分</strong>，不能亂放。
+    </div>
+
+    <h2>記憶體</h2>
+    <div class="note">
+      <strong>所有圖在開機時全部載入並常駐</strong>
+      幾張到幾十張沒問題。如果你的模組有上百張高解析度圖，
+      玩家的記憶體用量會明顯上升 —— 這是你自己的取捨。
+    </div>
+
+    <h2>檢查清單</h2>
+    <p>圖沒出現的時候按順序檢查：</p>
+    <ol>
+      <li>檔案是 <code>.png</code> 嗎？（不是 <code>.jpg</code> 改名）</li>
+      <li>放在 <code>Images/</code> 底下嗎？（不是 <code>Image/</code>，有 s）</li>
+      <li>子資料夾名對嗎？（<code>RoleHead</code> 不是 <code>Rolehead</code>）</li>
+      <li>資料裡的 <code>ImageName</code> 跟檔名一致嗎？（不含 <code>.png</code>）</li>
+      <li>用差分資料夾的話，檔名有加 <code>Body_</code> / <code>Face_</code> 前綴嗎？</li>
+      <li>差分圖都是同樣尺寸的全身圖嗎？</li>
+      <li>回標題重新「開始新遊戲」或「讀取存檔」了嗎？</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-TW', page: 4 });</script>
+</body>
+</html>

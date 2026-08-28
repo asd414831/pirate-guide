@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mod.json 欄位 — 海盜 模組製作手冊</title>
+<meta name="description" content="mod.json 每個欄位的意思、預設值、以及寫錯會發生什麼事。">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="選單">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>mod.json 欄位</h1>
+    <p class="lead">模組的名片檔。決定玩家在模組列表裡看到什麼。</p>
+
+    <h2>放哪裡</h2>
+<pre><code>Mods/&lt;你的模組資料夾&gt;/mod.json</code></pre>
+    <div class="warn">
+      <strong>沒有 mod.json = 不是模組</strong>
+      遊戲掃描 <code>Mods/</code> 時，只把「含有 <code>mod.json</code> 的子資料夾」當成模組。
+      少了這個檔，你的資料夾會被完全忽略，連列表都不會出現（也不會有錯誤訊息）。
+    </div>
+
+    <h2>完整範例</h2>
+<pre><code>{
+  "name": "更難的海盜",
+  "author": "某位玩家",
+  "version": "1.2.0",
+  "description": "敵人變強，掉落變少。\n適合二輪以後遊玩。",
+  "icon": "icon.png"
+}</code></pre>
+
+    <h2>欄位表</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>欄位</th><th>型別</th><th>缺少時</th><th>說明</th></tr>
+      <tr>
+        <td><code>name</code></td><td>文字</td><td>用資料夾名</td>
+        <td>模組列表顯示的名稱。可以用任何語言。</td>
+      </tr>
+      <tr>
+        <td><code>author</code></td><td>文字</td><td>顯示「未知作者」</td>
+        <td>你的名字或暱稱。</td>
+      </tr>
+      <tr>
+        <td><code>version</code></td><td>文字</td><td>顯示「-」</td>
+        <td>純顯示用。遊戲<strong>不會</strong>比較版本大小，寫 <code>1.0</code> 或 <code>v2-beta</code> 都行。</td>
+      </tr>
+      <tr>
+        <td><code>description</code></td><td>文字</td><td>空白</td>
+        <td>說明。可以換行，用 <code>\n</code>。</td>
+      </tr>
+      <tr>
+        <td><code>icon</code></td><td>文字</td><td><code>icon.png</code></td>
+        <td>縮圖的相對路徑。檔案不存在時顯示預設底圖。</td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>所有欄位都可以省略</strong>
+      連空的 <code>{}</code> 都能運作 —— 遊戲會用資料夾名當顯示名稱。
+      少寫一個欄位不會讓模組壞掉，這是刻意的設計。
+    </div>
+
+    <h2>縮圖</h2>
+    <p>預設會找模組資料夾底下的 <code>icon.png</code>。想換檔名或放子資料夾：</p>
+<pre><code>{
+  "icon": "art/my-thumbnail.png"
+}</code></pre>
+    <p>路徑是相對於<strong>模組資料夾</strong>，不是相對於 <code>Mods/</code>。</p>
+
+    <h2>換行怎麼寫</h2>
+    <p>JSON 的字串不能直接按 Enter 換行，要用 <code>\n</code>：</p>
+<pre><code>{
+  "description": "第一行\n第二行\n\n空一行後的第三行"
+}</code></pre>
+    <div class="warn">
+      <strong>Windows 路徑的反斜線要跳脫</strong>
+      JSON 裡 <code>\</code> 是特殊字元。<code>icon</code> 路徑<strong>請用正斜線</strong>
+      <code>art/icon.png</code>，不要寫 <code>art\icon.png</code>。
+      真的要寫反斜線得打兩個 <code>\</code>，很容易出錯，不建議。
+    </div>
+
+    <h2>寫壞了會怎樣</h2>
+    <p>如果 <code>mod.json</code> 存在但格式錯誤（少逗號、多逗號、引號沒關），
+       <strong>模組還是會出現在列表裡，但會被標記為壞掉</strong>。</p>
+    <div class="ok">
+      <strong>這是刻意的</strong>
+      壞掉的模組如果直接消失，玩家會以為檔案放錯地方，完全無從查起。
+      列出來並標記，玩家才知道「東西在，但有問題」。
+    </div>
+    <p>常見的 JSON 錯誤：</p>
+<pre><code>{
+  "name": "我的模組",
+  "author": "某人",     &lt;-- 最後一個欄位不能有逗號
+}
+
+{
+  "name": "我的模組"
+  "author": "某人"      &lt;-- 中間的欄位漏了逗號
+}
+
+{
+  'name': '我的模組'    &lt;-- JSON 只能用雙引號，不能用單引號
+}</code></pre>
+    <div class="note">
+      <strong>用 VS Code 編輯可以避開九成問題</strong>
+      它會即時標紅格式錯誤。或者把檔案內容貼到任何線上 JSON 檢查工具驗一次。
+    </div>
+
+    <h2>資料夾名不要改</h2>
+    <div class="warn">
+      <strong>啟用狀態綁在資料夾名上，不是 <code>name</code> 欄位</strong>
+      遊戲用資料夾名記住玩家有沒有啟用這個模組。<br>
+      改 <code>mod.json</code> 的 <code>name</code>：安全，只是顯示名稱變了。<br>
+      改<strong>資料夾名</strong>：對遊戲來說變成另一個模組，啟用狀態歸零，玩家要重新打開。
+      發布之後就不要再改資料夾名。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-TW', page: 2 });</script>
+</body>
+</html>

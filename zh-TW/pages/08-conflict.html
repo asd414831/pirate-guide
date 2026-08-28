@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多模組共存 — 海盜 模組製作手冊</title>
+<meta name="description" content="多個模組同時啟用時誰贏。套用順序、衝突處理、給作者的建議。">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="選單">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>多模組共存</h1>
+    <p class="lead">玩家可以同時開很多模組。這章講衝突時誰贏。</p>
+
+    <h2>套用順序</h2>
+    <p>遊戲開機時的順序：</p>
+    <ol>
+      <li>載入遊戲本體的資料</li>
+      <li>依模組清單順序，一個一個疊上去</li>
+    </ol>
+    <div class="ok">
+      <strong>後套用的贏</strong>
+      清單裡比較後面的模組，會蓋掉前面的。資料表、圖片、音樂都是同一個規則。
+    </div>
+
+    <h2>什麼情況叫衝突</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>類型</th><th>衝突條件</th><th>結果</th></tr>
+      <tr><td>資料表</td><td>兩個模組改<strong>同一個 <code>Name</code> 的同一個欄位</strong></td><td>後面的值贏</td></tr>
+      <tr><td>圖片</td><td>兩個模組放<strong>同路徑同檔名</strong>的圖</td><td>後面的圖贏</td></tr>
+      <tr><td>音樂</td><td>兩個模組放<strong>同檔名</strong>的音檔</td><td>後面的音檔贏</td></tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>改不同欄位不會衝突</strong>
+      A 模組改藥草的 <code>SellPrice</code>，B 模組改藥草的 <code>Desc</code>
+      —— 兩個都會生效，因為合併只覆寫「有寫到的欄位」。<br>
+      這是模組相容性比想像中好的主要原因。
+    </div>
+
+    <h2>玩家可以調順序</h2>
+    <p>模組管理頁面可以手動排序。玩家遇到衝突時，可以把想要優先的模組排到後面。</p>
+    <div class="note">
+      <strong>所以「無法相容」通常不是真的無法相容</strong>
+      兩個模組打架時，先請玩家試著調整順序。真正無解的情況是
+      「兩個模組都需要同一個欄位是不同的值」。
+    </div>
+
+    <h2>給作者的建議</h2>
+
+    <h3>1. 改最少的欄位</h3>
+    <div class="ok">
+      <strong>只寫你真的要改的欄位</strong>
+      想讓道具賣貴一點，就只寫 <code>Name</code> 和 <code>SellPrice</code>。<br>
+      不要為了「完整」把整筆資料的所有欄位都複製進來 ——
+      那會讓你的模組跟每一個改同一筆資料的模組衝突，而且遊戲更新後你的舊值會蓋掉新的。
+    </div>
+
+    <h3>2. 新增內容用獨特的名字</h3>
+    <p>新增道具 / 角色 / 技能時，<code>Name</code> 建議加上自己的前綴：</p>
+<pre><code>"Name": "MyMod_超強藥水"</code></pre>
+    <p>這樣不會意外撞到別人的新增內容，也不會撞到遊戲未來新增的內容。</p>
+    <div class="note">
+      <strong>前綴只影響內部識別，玩家看不到</strong>
+      玩家看到的是 <code>Name_I2</code>，所以 <code>Name</code> 寫多醜都沒關係。
+    </div>
+
+    <h3>3. 圖片和音樂也加前綴</h3>
+<pre><code>Images/RoleHead/MyMod_NewHero.png
+Music/BGM_MyMod_Theme.ogg</code></pre>
+    <p>除非你<strong>刻意</strong>要覆蓋本體或別人的素材，否則加前綴避免撞名。</p>
+
+    <h3>4. 在 description 寫清楚你改了什麼</h3>
+<pre><code>{
+  "description": "改動：\n- 所有敵人 HP x2\n- 藥草賣價 500\n\n會跟其他調整敵人數值的模組衝突。"
+}</code></pre>
+    <p>玩家才知道遇到問題時該關掉哪個。</p>
+
+    <h2>模組不能互相依賴</h2>
+    <div class="warn">
+      <strong>沒有「依賴」機制</strong>
+      你不能宣告「我的模組需要先裝 XX 模組」。遊戲不會檢查，也不會提示。<br>
+      如果你的模組真的依賴另一個模組的內容（例如引用了它新增的道具名），
+      請在 <code>description</code> 裡寫清楚，並自行處理「對方沒裝」時的情況。
+    </div>
+
+    <h2>一個模組壞掉不會拖垮其他</h2>
+    <div class="ok">
+      <strong>錯誤是隔離的</strong>
+      某個模組的某個 JSON 檔格式錯誤，只有那個檔案被跳過。
+      同模組的其他檔案、其他模組都正常運作。<br>
+      所以玩家開了十個模組其中一個壞掉，遊戲還是能玩 —— 只是那部分內容沒生效。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-TW', page: 8 });</script>
+</body>
+</html>

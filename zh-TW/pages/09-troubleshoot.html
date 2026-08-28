@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>疑難排解 — 海盜 模組製作手冊</title>
+<meta name="description" content="模組沒生效怎麼查。錯誤訊息對照表、按症狀分類的檢查清單。">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="選單">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>疑難排解</h1>
+    <p class="lead">模組沒反應時照這章查。九成問題是 JSON 格式或名字打錯。</p>
+
+    <h2>先做這三件事</h2>
+    <ol>
+      <li><strong>回標題畫面，再「開始新遊戲」或「讀取存檔」</strong> —— 資料在這兩個時機才合併，這是最常見的原因</li>
+      <li><strong>確認模組是啟用狀態</strong> —— 標題畫面 → 模組，開關要是打開的</li>
+      <li><strong>把 JSON 貼到線上檢查工具驗一次</strong> —— 搜尋「JSON validator」，任何一個都行</li>
+    </ol>
+    <div class="ok">
+      <strong>大部分問題到這裡就解決了</strong>
+      還是不行的話往下看按症狀分類的檢查。
+    </div>
+
+    <h2>症狀：模組列表裡沒有我的模組</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>檢查</th><th>說明</th></tr>
+      <tr><td>有 <code>mod.json</code> 嗎</td><td><strong>最常見原因。</strong>沒有這個檔，資料夾會被完全忽略</td></tr>
+      <tr><td>檔名對嗎</td><td>必須正好是 <code>mod.json</code>，不是 <code>Mod.json</code> 或 <code>mod.json.txt</code></td></tr>
+      <tr><td>放對地方了嗎</td><td><code>Mods/你的模組/mod.json</code>，不是 <code>Mods/mod.json</code></td></tr>
+      <tr><td>層數對嗎</td><td>只掃 <code>Mods/</code> 的<strong>直接子資料夾</strong>。放到孫層不會被找到</td></tr>
+      <tr><td>有「模組」按鈕嗎</td><td>手機版和 Demo / 試玩版沒有模組功能</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>小心 Windows 隱藏副檔名</strong>
+      記事本存檔時容易變成 <code>mod.json.txt</code>，而 Windows 預設不顯示 <code>.txt</code>
+      —— 看起來叫 <code>mod.json</code>，實際不是。<br>
+      在檔案總管開啟「檢視 → 副檔名」確認。
+    </div>
+
+    <h2>症狀：模組出現在列表但被標記為壞掉</h2>
+    <p>代表 <code>mod.json</code> 存在但格式錯誤。</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>常見錯誤</th><th>範例</th></tr>
+      <tr><td>最後一個欄位多了逗號</td><td><code>"author": "某人",</code> 後面就是 <code>}</code></td></tr>
+      <tr><td>中間欄位漏了逗號</td><td>兩行之間沒有 <code>,</code></td></tr>
+      <tr><td>用了單引號</td><td><code>'name'</code> 應該是 <code>"name"</code></td></tr>
+      <tr><td>引號沒關</td><td><code>"name": "我的模組</code></td></tr>
+      <tr><td>用了反斜線沒跳脫</td><td><code>"icon": "art\icon.png"</code> 應該用 <code>/</code></td></tr>
+      <tr><td>檔案不是 UTF-8</td><td>中文變亂碼時的原因。存檔時選 UTF-8</td></tr>
+    </table>
+    </div>
+
+    <h2>症狀：模組有啟用，但資料沒生效</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>檢查</th><th>說明</th></tr>
+      <tr><td><code>Name</code> 有打錯嗎</td><td><strong>最常見原因。</strong>打錯就變成「新增一筆」而不是「修改」。注意全形半形、空格、簡繁</td></tr>
+      <tr><td>欄位名大小寫對嗎</td><td><code>SellPrice</code> 不是 <code>Sellprice</code>。打錯會被安靜忽略</td></tr>
+      <tr><td>資料夾名對嗎</td><td><code>Data/Item/</code> 不是 <code>Data/Items/</code></td></tr>
+      <tr><td>JSON 放對層數了嗎</td><td>必須是 <code>Data/&lt;表名&gt;/檔案.json</code>。直接放 <code>Data/檔案.json</code> 不會被載入</td></tr>
+      <tr><td>該加引號的加了嗎</td><td>裝備能力值欄位是文字，要寫 <code>"Atk": "20"</code></td></tr>
+      <tr><td>回標題重進了嗎</td><td>改完要回標題「開始新遊戲」或「讀取存檔」才會套用</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>資料放在 <code>Data/</code> 底下但沒有子資料夾 = 不會載入</strong>
+      舊版的模組格式是直接放 <code>Data/*.json</code>，<strong>現在已經不支援</strong>。
+      必須放進表名資料夾：<code>Data/Item/我的道具.json</code>。<br>
+      舊格式的 <code>.csv</code> 檔也不再讀取。
+    </div>
+
+    <h2>症狀：名字或介紹是空白的</h2>
+    <div class="warn">
+      <strong>漏填 <code>Name_I2</code></strong>
+      <code>Name</code> 只是內部識別碼，<strong>玩家看到的是 <code>Name_I2</code></strong>。<br>
+      不做多語言也一定要填 <code>Name_I2</code>，直接寫你的母語就好。
+    </div>
+
+    <h2>症狀：圖片沒出現</h2>
+    <p>見 <a href="04-images.html">加入圖片</a> 的檢查清單。最常見的是：</p>
+    <ul>
+      <li>資料夾寫成 <code>Image/</code>（漏了 s），正確是 <code>Images/</code></li>
+      <li>子資料夾名大小寫錯（<code>Rolehead</code> vs <code>RoleHead</code>）</li>
+      <li>資料裡的 <code>ImageName</code> 多寫了 <code>.png</code></li>
+      <li>檔案其實是 JPG 改成 <code>.png</code> 的（要真的轉檔）</li>
+    </ul>
+
+    <h2>症狀：音樂沒聲音</h2>
+    <p>見 <a href="05-audio.html">加入音樂音效</a> 的檢查清單。最常見的是：</p>
+    <ul>
+      <li>放了音檔但沒在 <code>Data/BGM/</code> 註冊</li>
+      <li>註冊的 <code>Name</code> 跟音檔檔名不一致</li>
+      <li>開機後太快測試（音檔在背景載入，等幾秒再試）</li>
+      <li>檔案格式不支援（只吃 OGG / MP3 / WAV）</li>
+    </ul>
+
+    <h2>看遊戲的錯誤訊息</h2>
+    <p>遊戲會把模組載入的過程寫進記錄檔。裡面有明確的錯誤原因，比猜快得多。</p>
+    <p>記錄檔位置：</p>
+<pre><code>C:\Users\&lt;你的使用者名&gt;\AppData\LocalLow\&lt;公司名&gt;\&lt;遊戲名&gt;\Player.log</code></pre>
+    <div class="note">
+      <strong>怎麼找</strong>
+      在檔案總管的位址欄貼上 <code>%USERPROFILE%\AppData\LocalLow</code> 按 Enter，
+      然後往下找遊戲的資料夾。
+    </div>
+    <p>用記事本開啟，搜尋 <code>[Mod</code> 就能看到所有模組相關訊息。</p>
+
+    <h2>訊息對照表</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>訊息片段</th><th>意思</th><th>怎麼修</th></tr>
+      <tr>
+        <td><code>mod.json 解析失敗</code></td>
+        <td>JSON 格式錯誤</td>
+        <td>用 JSON 檢查工具驗證 <code>mod.json</code></td>
+      </tr>
+      <tr>
+        <td><code>略過「XXX」：mod.json 解析失敗</code></td>
+        <td>整個模組被跳過</td>
+        <td>同上。修好格式後重開</td>
+      </tr>
+      <tr>
+        <td><code>沒有</code>…<code>.json</code>（提到 Data 底下）</td>
+        <td>JSON 直接放在 <code>Data/</code>，沒放進表名資料夾</td>
+        <td>移到 <code>Data/&lt;表名&gt;/</code> 底下</td>
+      </tr>
+      <tr>
+        <td><code>.csv 已不再</code>…</td>
+        <td>用了舊版格式</td>
+        <td>改寫成 JSON，放進表名資料夾</td>
+      </tr>
+      <tr>
+        <td><code>讀取失敗</code></td>
+        <td>檔案讀不到或格式壞</td>
+        <td>檢查該檔案的 JSON 格式與編碼（要 UTF-8）</td>
+      </tr>
+      <tr>
+        <td><code>部分資料套用失敗</code></td>
+        <td>欄位名或型別有問題</td>
+        <td>訊息後面會說是哪個欄位，照著改</td>
+      </tr>
+      <tr>
+        <td><code>不是合法的 PNG，略過</code></td>
+        <td>檔案不是真的 PNG</td>
+        <td>用繪圖軟體重新輸出成 PNG，不要只改副檔名</td>
+      </tr>
+      <tr>
+        <td><code>不支援的音檔格式，略過</code></td>
+        <td>音檔格式不對</td>
+        <td>轉成 OGG / MP3 / WAV</td>
+      </tr>
+      <tr>
+        <td><code>音檔解碼後是空的</code></td>
+        <td>音檔壞了或是 0 位元組</td>
+        <td>重新輸出音檔</td>
+      </tr>
+      <tr>
+        <td><code>已套用 N 個模組、共 M 個資料</code></td>
+        <td><strong>這是成功訊息</strong></td>
+        <td>數字對不對？少了就是有檔案被跳過，往上找警告</td>
+      </tr>
+    </table>
+    </div>
+    <div class="ok">
+      <strong>找「已套用 N 個模組」這行最快</strong>
+      它會告訴你實際載入了幾個模組、幾個資料檔。數字跟你預期的不符，
+      就往上翻看有什麼警告。
+    </div>
+
+    <h2>還是解決不了</h2>
+    <p>回報問題時請附上：</p>
+    <ul>
+      <li>你的 <code>mod.json</code> 內容</li>
+      <li>出問題的那個 JSON 檔內容</li>
+      <li>模組的資料夾結構（截圖或文字都行）</li>
+      <li><code>Player.log</code> 裡所有含 <code>[Mod</code> 的行</li>
+    </ul>
+    <div class="note">
+      <strong>遊戲內建回報功能</strong>
+      遊戲中按 <strong>F10</strong> 可以開啟問題回報，會自動附上必要的資訊。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-TW', page: 9 });</script>
+</body>
+</html>

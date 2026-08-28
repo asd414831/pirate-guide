@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>演出編輯器 — 海盜 模組製作手冊</title>
+<meta name="description" content="視覺化編輯劇情演出的工具。這是什麼、能做什麼、怎麼取得。">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="選單">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>演出編輯器</h1>
+    <p class="lead">用視覺化工具寫演出，不用手打指令、不用背參數。</p>
+
+    <h2>這是什麼</h2>
+    <p>演出編輯器是一個網頁工具，用來編輯遊戲的劇情演出。它把
+       <a href="06-shows.html">演出與發放內容</a> 那些指令變成可以點選的介面：</p>
+    <ul>
+      <li>從清單挑指令，不用記名字和參數順序</li>
+      <li>選背景、立繪、表情時直接看到縮圖</li>
+      <li>邊寫邊預覽對話框和立繪的實際樣子</li>
+      <li>輸出成模組可以直接用的 JSON</li>
+    </ul>
+
+    <div class="ok">
+      <strong>手打指令與用編輯器的差別</strong>
+      手打要記得 <code>&lt;Image&gt;</code> 第一段是槽位、第二段才是角色名；
+      要自己確認立繪檔名有沒有打錯；要自己數逗號。<br>
+      編輯器把這些變成選單和縮圖。長一點的演出（十幾行以上）用編輯器快得多。
+    </div>
+
+    <h2>能做什麼</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>功能</th><th>說明</th></tr>
+      <tr><td>指令選單</td><td>所有演出指令分類列出，附參數說明</td></tr>
+      <tr><td>素材瀏覽</td><td>背景、立繪、表情、貼紙都有縮圖可以挑</td></tr>
+      <tr><td>即時預覽</td><td>看到對話框、立繪位置、明暗變化的實際效果</td></tr>
+      <tr><td>模組素材</td><td>可以載入你自己模組的圖，跟本體素材一起挑</td></tr>
+      <tr><td>資料表欄位</td><td>列出每張資料表有哪些欄位 —— 查欄位名時很有用</td></tr>
+      <tr><td>匯出 JSON</td><td>輸出成 <code>Data/Show/</code> 可以直接放的格式</td></tr>
+    </table>
+    </div>
+
+    <h2>不用編輯器也可以</h2>
+    <div class="note">
+      <strong>演出就是純文字的 JSON，用記事本寫完全可行</strong>
+      <a href="06-shows.html">演出與發放內容</a> 和
+      <a href="07-stages.html">關卡與敵人</a> 兩章有完整的範例可以照抄。<br>
+      短演出（例如只放 <code>&lt;AddRole&gt;</code> 的 AutoRun）用記事本反而更快。
+    </div>
+
+    <h2>怎麼取得</h2>
+    <div class="warn">
+      <strong>編輯器不在這個網站上</strong>
+      取得方式請看遊戲的官方公告或社群管道。
+    </div>
+
+    <h2>查欄位名的替代方法</h2>
+    <p>編輯器最實用的功能之一是查資料表欄位。沒有編輯器時的替代方法：</p>
+    <ol>
+      <li><strong>看官方範例模組</strong> —— <code>Mods/</code> 底下的範例已經示範了大部分常用欄位</li>
+      <li><strong>看本體資料怎麼寫的</strong> —— 想改某個道具，先找到遊戲裡類似的道具，照它的格式寫</li>
+      <li><strong>看遊戲的錯誤提示</strong> —— 欄位名打錯時，遊戲會提示
+          「沒有欄位「XXX」，你想找「YYY」嗎？」，直接告訴你正確的名字</li>
+    </ol>
+    <div class="ok">
+      <strong>第 3 點很好用</strong>
+      故意打一個接近的欄位名，遊戲的提示就會告訴你正確拼法。
+      比翻文件快。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-TW', page: 10 });</script>
+</body>
+</html>

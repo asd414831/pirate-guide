@@ -64,9 +64,9 @@
 <pre><code>{
   "Name": "超強藥水",
   "Name_I2": "超強藥水",
-  "Desc_I2": "喝下去會變得很強",
+  "Desc": "喝下去會變得很強",
   "Type": "道具",
-  "HealHP": "999"
+  "AddHP": 999
 }</code></pre>
 
     <div class="warn">
@@ -80,14 +80,16 @@
     <ol>
       <li>回到遊戲，<strong>標題畫面 → 模組</strong></li>
       <li>找到「我的第一個模組」，打開開關</li>
-      <li><strong>重新啟動遊戲</strong></li>
+      <li><strong>回到標題畫面，再「開始新遊戲」或「讀取存檔」</strong></li>
       <li>進遊戲看道具清單，應該有「超強藥水」</li>
     </ol>
 
     <div class="warn">
-      <strong>模組只在開機時載入</strong>
-      改完檔案或切換啟用狀態，都必須<strong>完全關掉遊戲再重開</strong>。
-      遊戲執行中改檔案不會有反應 —— 這不是壞了，是設計如此。
+      <strong>改完要回標題重新進入遊戲</strong>
+      模組資料在「開始新遊戲」與「讀取存檔」這兩個時機合併。
+      改完檔案或切換啟用狀態後，<strong>回到標題畫面再進一次遊戲</strong>就會生效
+      —— <strong>不需要關掉遊戲重開</strong>。<br>
+      已經在進行中的遊戲不會即時變動，要回標題再進來。
     </div>
 
     <h2>成功了嗎？</h2>
@@ -97,7 +99,7 @@
     </div>
     <div class="note">
       <strong>沒看到 → 去疑難排解</strong>
-      <a href="07-troubleshoot.html">疑難排解</a> 有錯誤訊息對照表和檢查清單。
+      <a href="09-troubleshoot.html">疑難排解</a> 有錯誤訊息對照表和檢查清單。
       九成的問題是 JSON 格式打錯（少一個逗號、多一個逗號）。
     </div>
 
