@@ -17,6 +17,16 @@ Desktop.ini
 *.meta
 *.csproj
 *.sln
-Assets/
-Library/
-StreamingAssets/
+# ---------------------------------------------------------------
+# 這個 repo 是 public，只放手冊。下面是防止遊戲專案檔誤入的安全網。
+#
+# 注意 Windows 檔名不分大小寫：
+#   寫 "Assets/" 會連手冊的 "assets/" 一起擋掉（教材圖就放在那）。
+#   而 "!assets/**" 放行規則同樣不分大小寫，會把 Assets/ 底下的東西一起放行 ——
+#   等於拆掉安全網。兩邊都不能用。
+#
+# 解法：不擋資料夾名，改擋副檔名（上面的 *.cs / *.unity / *.prefab 等已涵蓋
+# 所有會誤入的遊戲檔），資料夾層級只擋 Unity 專屬的 Library / StreamingAssets。
+# ---------------------------------------------------------------
+/Library/
+/StreamingAssets/
