@@ -20,7 +20,16 @@
     <h2>1. 找到模組資料夾</h2>
     <p>模組放在遊戲安裝目錄底下：</p>
 <pre><code>&lt;遊戲安裝資料夾&gt;/Pirate_Data/StreamingAssets/Mods/</code></pre>
-    <p>最快的找法：<strong>進遊戲 → 標題畫面 → 模組 → 開啟資料夾</strong>。遊戲會直接幫你開，不用自己翻。</p>
+    <p>最快的找法：<strong>進遊戲 → 標題畫面 → 模組管理 → 開啟資料夾</strong>。遊戲會直接幫你開，不用自己翻。</p>
+
+    <figure>
+      <img src="../../assets/ui-modlist-off.png" alt="模組管理面板，列出四個範例模組">
+      <figcaption>
+        標題畫面的<strong>模組管理</strong>。遊戲附帶四個官方範例模組
+        —— 不確定某個欄位怎麼寫時，按<strong>開啟資料夾</strong>去看它們怎麼做的。<br>
+        左下角的<strong>模組目錄</strong>會直接開啟 <code>Mods/</code>。
+      </figcaption>
+    </figure>
 
     <div class="note">
       <strong>如果沒有 Mods 資料夾</strong>
@@ -77,9 +86,26 @@
     </div>
 
     <h2>5. 啟用並測試</h2>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/ui-modlist-off.png" alt="啟用前：灰底，按鈕是「啟用」" style="max-width:420px">
+        <span class="fig-label">啟用前 —— 灰底，按鈕寫<strong>啟用</strong></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/ui-modlist-on.png" alt="啟用後：金底，按鈕變「停用」" style="max-width:420px">
+        <span class="fig-label">啟用後 —— 金底，按鈕變<strong>停用</strong></span>
+      </div>
+      <figcaption>
+        左上角的<strong>已啟用 N / M</strong> 是快速確認的地方。<br>
+        列表順序 = 套用順序（由上至下），左邊的三條線可以拖曳排序
+        —— 多個模組衝突時靠這個決定誰贏（見 <a href="08-conflict.html">多模組共存</a>）。
+      </figcaption>
+    </figure>
+
     <ol>
-      <li>回到遊戲，<strong>標題畫面 → 模組</strong></li>
-      <li>找到「我的第一個模組」，打開開關</li>
+      <li>回到遊戲，<strong>標題畫面 → 模組管理</strong></li>
+      <li>找到「我的第一個模組」，按<strong>啟用</strong></li>
       <li><strong>回到標題畫面，再「開始新遊戲」或「讀取存檔」</strong></li>
       <li>進遊戲看道具清單，應該有「超強藥水」</li>
     </ol>
@@ -93,6 +119,15 @@
     </div>
 
     <h2>成功了嗎？</h2>
+    <figure>
+      <img src="../../assets/ui-shop-potion.png" alt="商店清單裡出現「範例藥水 $100」">
+      <figcaption>
+        官方範例模組「範例道具」啟用後的實際結果 ——
+        商店多了一個 <strong>範例藥水 $100</strong>。<br>
+        你自己的道具也會這樣出現（有填 <code>SellPrice</code> 的話）。
+      </figcaption>
+    </figure>
+
     <div class="ok">
       <strong>看到新道具 → 整條流程通了</strong>
       接下來看 <a href="03-data.html">修改遊戲資料</a>，學怎麼改既有內容、有哪些欄位可以填。

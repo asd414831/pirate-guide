@@ -98,6 +98,25 @@
       兩個條件不滿足時，即使 <code>&lt;AddRole&gt;</code> 執行了也看不到。
     </div>
 
+    <figure>
+      <img src="../../assets/ui-mod-role.png" alt="模組角色出現在船員列表，有自己的立繪與技能">
+      <figcaption>
+        官方範例模組「範例角色」的成果 —— 完全由模組加入的角色，
+        自帶立繪、頭像、素質與技能組（<code>殺意感知</code> / <code>暗夜陶醉</code> /
+        <code>重力場</code> 都是模組自己加的）。<br>
+        這一切的前提是 AutoRun 演出裡那一行 <code>&lt;AddRole&gt;矮額</code>
+        —— <strong>沒有它，資料再完整玩家也拿不到</strong>。
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="../../assets/ui-mod-role-slot.png" alt="模組角色排在船員清單的最後面">
+      <figcaption>
+        <strong>模組新增的內容一律追加在清單尾端。</strong>
+        找不到自己加的角色時，把清單捲到最下面 —— 通常就在那裡。
+      </figcaption>
+    </figure>
+
     <h2>發放關卡</h2>
     <p><strong>兩行都不能省。</strong></p>
 <pre><code>"&lt;AddStageGroup&gt;模組",
