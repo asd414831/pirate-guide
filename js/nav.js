@@ -16,9 +16,10 @@ const LANGS = [
 // 新增章節：三個語言都要加一筆，並在 pages/ 放對應 html。
 const CHAPTERS = {
   'zh-TW': {
-    brandTitle: '海盜 模組製作手冊',
+    brandTitle: '海盜模組製作手冊',
     brandSub:   'Pirate Mod Making Guide',
     home:       '總覽',
+    langLabel:  '語言',
     prev:       '上一章',
     next:       '下一章',
     items: [
@@ -38,6 +39,7 @@ const CHAPTERS = {
     brandTitle: 'Pirate Mod Making Guide',
     brandSub:   'for mod authors',
     home:       'Overview',
+    langLabel:  'Language',
     prev:       'Previous',
     next:       'Next',
     items: [
@@ -57,6 +59,7 @@ const CHAPTERS = {
     brandTitle: 'パイレーツ MOD制作ガイド',
     brandSub:   'MOD作者向け',
     home:       '概要',
+    langLabel:  '言語',
     prev:       '前の章',
     next:       '次の章',
     items: [
@@ -103,7 +106,29 @@ function buildNav(opts) {
   let nav = '<div class="brand">'
     + '<a href="' + langHome + '">' + t.brandTitle + '</a>'
     + '<span class="sub">' + t.brandSub + '</span>'
-    + '</div><ul class="nav-list">';
+    + '</div>';
+
+  // 語言切換：放在品牌名正下方、章節清單之上。
+  //
+  // 為什麼移到這裡：原本在側邊欄最底部，章節多的時候要捲到底才看得到 ——
+  // 非中文讀者第一眼找不到怎麼換語言，等於沒做多語言。
+  //
+  // 為什麼用 <select> 而不是三顆按鈕：語言之後可能加到 6 個（遊戲支援
+  // 繁中/簡中/英/日/韓/俄），按鈕會擠成兩行。<select> 不管幾個語言都是一行，
+  // 而且手機上會叫出系統原生的選單，比一排小按鈕好點。
+  nav += '<div class="lang-box">'
+       + '<label class="lang-label" for="langSel">' + (t.langLabel || 'Language') + '</label>'
+       + '<select id="langSel" class="lang-select" aria-label="' + (t.langLabel || 'Language') + '">';
+  for (const L of LANGS) {
+    const target = page === 0
+      ? up + L.code + '/index.html'
+      : up + L.code + '/pages/' + SLUGS[page - 1] + '.html';
+    nav += '<option value="' + target + '"' + (L.code === lang ? ' selected' : '') + '>'
+         + L.label + '</option>';
+  }
+  nav += '</select></div>';
+
+  nav += '<ul class="nav-list">';
 
   nav += '<li><a href="' + langHome + '"' + (page === 0 ? ' class="active"' : '') + '>'
        + '<span class="num">00</span>' + t.home + '</a></li>';
@@ -117,20 +142,17 @@ function buildNav(opts) {
   }
   nav += '</ul>';
 
-  // ---- 語言切換：同章對跳 ----
-  // 在 en/pages/03-data.html 按日文 → ja/pages/03-data.html（不回首頁）
-  nav += '<div class="lang-switch">';
-  for (const L of LANGS) {
-    const target = page === 0
-      ? up + L.code + '/index.html'
-      : up + L.code + '/pages/' + SLUGS[page - 1] + '.html';
-    nav += '<a href="' + target + '"' + (L.code === lang ? ' class="current"' : '') + '>'
-         + L.label + '</a>';
-  }
-  nav += '</div>';
-
   const sb = document.querySelector('.sidebar');
   if (sb) sb.innerHTML = nav;
+
+  // 選了語言就跳過去。用 change 而不是 click —— 鍵盤操作（方向鍵選、Enter 確認）
+  // 也要能觸發，click 只吃滑鼠。
+  const sel = document.getElementById('langSel');
+  if (sel) {
+    sel.addEventListener('change', function () {
+      if (this.value) location.href = this.value;
+    });
+  }
 
   // ---- 上下頁 ----
   const pager = document.querySelector('.pager');

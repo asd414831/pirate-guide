@@ -101,25 +101,46 @@ body {
 }
 .nav-list .num { color: var(--accent-dim); margin-right: 6px; font-variant-numeric: tabular-nums; }
 
-/* ---------- 語言切換 ---------- */
-.lang-switch {
-  margin: 20px 20px 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+/* ---------- 語言切換（側邊欄頂端的下拉選單） ---------- */
+.lang-box {
+  padding: 14px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
 }
-.lang-switch a {
-  font-size: 12px;
-  padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
+.lang-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
   color: var(--fg-dim);
-  text-decoration: none;
+  margin-bottom: 6px;
 }
-.lang-switch a:hover { border-color: var(--accent); color: var(--accent); }
-.lang-switch a.current { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+.lang-select {
+  width: 100%;
+  padding: 7px 30px 7px 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+  /* 自訂箭頭：原生箭頭在深色主題下常是黑的，看不見 */
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23d4a24a' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 11px 7px;
+}
+.lang-select:hover { border-color: var(--accent); }
+.lang-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(212,162,74,.22);
+}
+/* 展開後的選項清單由作業系統畫，只能設顏色 —— 至少讓它跟著主題走 */
+.lang-select option { background: var(--bg-soft); color: var(--fg); }
 
 /* ---------- 內文 ---------- */
 h1 { font-size: 30px; color: var(--accent); margin: 0 0 8px; line-height: 1.3; }
