@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="Get your own PNGs into Pirate. Folder map, expression variants, replacing the game artwork.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Adding Images</h1>
+    <p class="lead">Mods can ship their own artwork. Drop it in <code>Images/</code> and it loads.</p>
+
+    <h2>The basic rule</h2>
+<pre><code>Mods/&lt;your mod&gt;/Images/&lt;mirror the game's structure&gt;/&lt;name&gt;.png</code></pre>
+    <div class="ok">
+      <strong>Just mirror the game's own folder structure</strong>
+      There are no special rules to memorise. The game keeps character portraits in
+      <code>RoleHead/</code>, so your mod puts them in <code>Images/RoleHead/</code>. That's it.
+    </div>
+
+    <h2>Example</h2>
+<pre><code>MyMod/
+&#9500;&#9472;&#9472; mod.json
+&#9500;&#9472;&#9472; Data/
+&#9474;   &#9492;&#9472;&#9472; Role/
+&#9474;       &#9492;&#9472;&#9472; NewHero.json
+&#9492;&#9472;&#9472; Images/
+    &#9500;&#9472;&#9472; RoleHead/
+    &#9474;   &#9492;&#9472;&#9472; NewHero.png      face icon
+    &#9492;&#9472;&#9472; Role/
+        &#9492;&#9472;&#9472; NewHero.png      full portrait</code></pre>
+
+    <h3>Folder map</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Folder</th><th>Contents</th><th>Data field</th></tr>
+      <tr><td><code>Images/Role/</code></td><td>Full portraits (characters and enemies)</td><td><code>PSB</code></td></tr>
+      <tr><td><code>Images/RoleHead/</code></td><td>Face icons</td><td><code>ImageName</code> / <code>EyeImageName</code></td></tr>
+      <tr><td><code>Images/Icon/</code></td><td>Item and buff icons</td><td><code>IconName</code></td></tr>
+      <tr><td><code>Images/Background/</code></td><td>Backgrounds</td><td><code>FightBackground</code>, script <code>&lt;BG&gt;</code></td></tr>
+      <tr><td><code>Images/Sticker/</code></td><td>Sticker graphics</td><td>script <code>&lt;Sticker&gt;</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong><code>IconName</code> includes the subpath</strong>
+      An icon at <code>Images/Icon/Buff/MyIcon.png</code> is referenced as
+      <code>"Icon/Buff/MyIcon"</code>.<br>
+      The other fields (<code>PSB</code>, <code>ImageName</code>) take just the filename.
+    </div>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-head.png" alt="RoleHead: square face icon, 300x300">
+        <span class="fig-label"><code>RoleHead/Nausea.png</code><br>300&times;300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Role: tall full portrait">
+        <span class="fig-label"><code>Role/Nausea/&hellip;</code><br>900&times;1479</span>
+      </div>
+      <figcaption>
+        The <strong>face icon</strong> and the <strong>full portrait</strong> of one character are
+        two different images in two different folders, at different sizes. You need both.
+      </figcaption>
+    </figure>
+
+    <p>Then point the data at it:</p>
+<pre><code>{
+  "Name": "NewHero",
+  "Name_I2": "New Hero",
+  "ImageName": "NewHero"
+}</code></pre>
+    <div class="note">
+      <strong>No folder, no <code>.png</code></strong>
+      The file is at <code>Images/RoleHead/NewHero.png</code>; the data says
+      <code>"NewHero"</code>. The game knows which folder to look in.
+    </div>
+
+    <h2>Expression and outfit variants</h2>
+    <p>Portraits come in two layouts, depending on whether you want variants.</p>
+
+    <h3>(A) No variants &mdash; a single image</h3>
+<pre><code>Images/Role/Nausea.png</code></pre>
+
+    <h3>(B) With variants &mdash; a folder instead</h3>
+<pre><code>Images/Role/Nausea/Body/Body_Normal.png
+Images/Role/Nausea/Body/Body_Dark.png
+Images/Role/Nausea/Face/Face_Normal.png
+Images/Role/Nausea/Face/Face_Laugh.png</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Body_Normal: the full figure">
+        <span class="fig-label"><code>Body/Body_Normal.png</code></span>
+      </div>
+      <div class="fig-op">+</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-face-laugh.png" alt="Face_Laugh: same canvas size, only the face drawn">
+        <span class="fig-label"><code>Face/Face_Laugh.png</code></span>
+      </div>
+      <div class="fig-op">=</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="The two layers composited">
+        <span class="fig-label">what the game shows</span>
+      </div>
+      <figcaption>
+        The checkerboard is transparency. <strong>Look at the middle image</strong> &mdash;
+        <code>Face_Laugh.png</code> only has the face drawn, but <strong>the canvas is the full
+        body size</strong>. The engine stacks the layers at the same coordinates, which is why
+        expressions need no positioning.
+      </figcaption>
+    </figure>
+
+    <div class="warn">
+      <strong>This is the most common mistake</strong>
+      People assume the expression image only needs to be face-sized. <strong>It doesn't</strong>
+      &mdash; it must be a full-body canvas with everything but the face transparent.<br>
+      Crop it small and it lands in the top-left corner instead.
+    </div>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>Rule</th><th>Detail</th></tr>
+      <tr><td>Folder name = group name</td><td>Currently <code>Body</code> (body / outfit) and <code>Face</code> (expression)</td></tr>
+      <tr><td>Filename = layer name</td><td><strong>You add the <code>Body_</code> / <code>Face_</code> prefix yourself</strong></td></tr>
+      <tr><td>Every image is full-size</td><td>Full canvas, transparent background, <strong>all the same dimensions</strong></td></tr>
+      <tr><td>Stacking order</td><td>Composited at identical coordinates, <code>Face</code> on top of <code>Body</code></td></tr>
+    </table>
+    </div>
+
+    <h4>Mixing outfits and expressions</h4>
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-normal.png" alt="Body_Normal plus Face_Normal">
+        <span class="fig-label"><code>Normal</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="Body_Normal plus Face_Laugh">
+        <span class="fig-label"><code>Normal</code> + <code>Laugh</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-normal.png" alt="Body_Dark plus Face_Normal">
+        <span class="fig-label"><code>Dark</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-laugh.png" alt="Body_Dark plus Face_Laugh">
+        <span class="fig-label"><code>Dark</code> + <code>Laugh</code></span>
+      </div>
+      <figcaption>
+        2 outfits &times; 2 expressions = 4 combinations from only 4 images (2 Body + 2 Face).<br>
+        Scripts pick a combination with <code>&lt;Image&gt;Mid,Nausea,Laugh,Dark</code>.
+      </figcaption>
+    </figure>
+
+    <h3>Which variant shows by default</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Situation</th><th>Result</th></tr>
+      <tr><td>the group has <code>&lt;Group&gt;_Normal</code></td><td>that one is shown</td></tr>
+      <tr><td>the group has <strong>no</strong> <code>Normal</code></td><td>the whole group is <strong>hidden by default</strong></td></tr>
+    </table>
+    </div>
+    <p>So if you only ship <code>Face_Laugh.png</code>, there's normally no expression at all until
+       a script asks for it.</p>
+
+    <div class="warn">
+      <strong>Always include <code>Face_Normal.png</code></strong>
+      In the crew gallery players can flip through every expression variant, and
+      <strong><code>&lt;Group&gt;_Normal</code> is always the first page</strong> &mdash; that's what
+      they see when they open the portrait.<br>
+      If you have no extra expressions, make <code>Face_Normal.png</code> <strong>fully
+      transparent</strong> (the Body image already has a face).
+    </div>
+    <div class="note">
+      <strong>Gallery page order</strong>
+      Alphabetical by filename, except <code>Normal</code> which is always first.<br>
+      For a deliberate "no expression" page, follow the game's convention and add
+      <code>Face_Null.png</code> (fully transparent) &mdash; names containing <code>Null</code>
+      are pinned to the <strong>last</strong> page.
+    </div>
+
+    <h3>Switching variants from a script</h3>
+    <div class="warn">
+      <strong>The first argument of <code>&lt;Image&gt;</code> is the slot, not the character</strong>
+      Slots are <code>Mid</code> / <code>Left</code> / <code>Right</code>. The character name starts
+      at the <strong>second</strong> argument.
+    </div>
+<pre><code>&lt;Image&gt;Mid,Nausea,Laugh        face becomes Face_Laugh
+&lt;Image&gt;Mid,Nausea,,Dark        body becomes Body_Dark
+&lt;Image&gt;Mid,Nausea,Laugh,Dark   both at once
+&lt;Image&gt;Mid,Nausea,-            hide that group entirely
+&lt;Image&gt;Mid                     clear that slot
+&lt;Image&gt;                        clear all three slots</code></pre>
+    <p>Expressions and outfits <strong>omit the prefix</strong> &mdash; write <code>Laugh</code>,
+       not <code>Face_Laugh</code>.</p>
+
+    <p>Two related commands take <strong>no slot argument</strong> and start at the character name:</p>
+<pre><code>&lt;MateImage&gt;Nausea,Laugh        home screen portrait
+&lt;EnemyImage&gt;Emma,Emma,Shock    swap an enemy portrait mid-battle</code></pre>
+    <div class="note">
+      <strong><code>&lt;EnemyImage&gt;</code>'s first argument is the enemy's data <code>Name</code></strong>
+      "PSB name, expression, outfit" starts from the second argument.
+    </div>
+    <div class="note">
+      <strong>When a variant isn't found</strong>
+      The game logs it (e.g. <em>group [Face] has no [Face_Angry]</em>) and that group is hidden.
+    </div>
+
+    <h2>Format</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Item</th><th>Requirement</th></tr>
+      <tr><td>File format</td><td>PNG</td></tr>
+      <tr><td>Transparency</td><td>Supported (usually required for portraits and icons)</td></tr>
+      <tr><td>Dimensions</td><td>No hard limit, but <strong>match the game's own art of the same kind</strong> or it'll render too large or too small</td></tr>
+    </table>
+    </div>
+
+    <h2>Replacing the game's art</h2>
+    <p>Use <strong>the same path and filename</strong> as the original and yours wins.</p>
+<pre><code>Images/RoleHead/Rackham.png      &lt;-- replaces Rackham's face icon</code></pre>
+    <div class="ok">
+      <strong>Mod images take priority over the game's</strong>
+      That's deliberate &mdash; "replace the portraits" and "reskin the UI" should be possible
+      mods. No extra configuration; the same name is enough.
+    </div>
+    <div class="warn">
+      <strong>The filename must match exactly</strong>
+      One character off and it isn't a replacement &mdash; it's a new image nobody uses.
+    </div>
+
+    <h2>Subfolders matter here</h2>
+    <p>Unlike audio, <strong>the image folder structure is part of the lookup</strong>:</p>
+<pre><code>Images/RoleHead/Nausea.png    &lt;-- face icon
+Images/Role/Nausea.png        &lt;-- full portrait</code></pre>
+    <p>Two different images. Put one in the wrong folder and it's simply not found.</p>
+    <div class="warn">
+      <strong>Audio works the opposite way</strong>
+      <a href="05-audio.html">Audio</a> subfolders are purely for your own organisation and don't
+      affect lookup. Image subfolders <strong>are part of the path</strong>.
+    </div>
+
+    <h2>Memory</h2>
+    <div class="note">
+      <strong>All images load at startup and stay resident</strong>
+      A handful to a few dozen is fine. If your mod has hundreds of high-resolution images,
+      players will notice the memory use &mdash; that's your call as the author.
+    </div>
+
+    <h2>Checklist</h2>
+    <p>When an image doesn't show, in order:</p>
+    <ol>
+      <li>Is it a real <code>.png</code>? (not a renamed JPG)</li>
+      <li>Is it under <code>Images/</code>? (with the s)</li>
+      <li>Is the subfolder spelled right? (<code>RoleHead</code>, not <code>Rolehead</code>)</li>
+      <li>Does <code>ImageName</code> match the filename? (without <code>.png</code>)</li>
+      <li>Using variant folders &mdash; did you add the <code>Body_</code> / <code>Face_</code> prefix?</li>
+      <li>Are all variant images the same full-body size?</li>
+      <li>Did you return to the title screen and Start New Game or Load Game?</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 4 });</script>
+</body>
+</html>

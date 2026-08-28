@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="How mods change game values and add content. Merge rules, the 13 data tables, worked examples.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Editing Game Data</h1>
+    <p class="lead">The main thing mods do. Change existing values, or add brand new content.</p>
+
+    <h2>The basic rule</h2>
+<pre><code>Mods/&lt;your mod&gt;/Data/&lt;table&gt;/&lt;any filename&gt;.json</code></pre>
+    <ul>
+      <li><strong>The folder name picks the table</strong> &mdash; <code>Data/Item/</code> edits items,
+          <code>Data/Role/</code> edits characters</li>
+      <li><strong>One JSON file is one entry</strong> &mdash; one item per file; don't pack several
+          into one file</li>
+      <li><strong>The filename doesn't matter</strong> &mdash; the game reads the <code>Name</code>
+          field inside. The filename is purely for your own benefit</li>
+    </ul>
+
+    <div class="note">
+      <strong>Both <code>Item</code> and <code>TheItem</code> work</strong>
+      The internal table name is <code>TheItem</code>; when the folder is called <code>Item</code>
+      the game prepends <code>The</code> automatically. Both spellings are accepted &mdash;
+      one less thing to get wrong.
+    </div>
+
+    <h2>Merge rules (the important part)</h2>
+    <p>The game already has a full data set. Your JSON is <strong>layered on top</strong>, not
+       replacing it. The key used for matching is the <code>Name</code> field:</p>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>Your <code>Name</code></th><th>Result</th></tr>
+      <tr>
+        <td>the game <strong>already has</strong> that name</td>
+        <td>Edited in place. <strong>Only the fields you wrote change</strong>; everything else
+            keeps its original value</td>
+      </tr>
+      <tr>
+        <td>the game <strong>doesn't have</strong> it</td>
+        <td>Added as a new entry at the end of the list</td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>Only write the fields you want to change</strong>
+      To make an item sell for more, the entire file is two lines:<br>
+      <code>{ "Name": "Herb", "SellPrice": 500 }</code><br>
+      Everything else (name, icon, effect) is untouched.
+    </div>
+
+    <div class="warn">
+      <strong>There is no delete</strong>
+      Mods cannot remove existing game content. To make something not appear, set
+      <code>UnlockCon</code> to a condition that never becomes true &mdash; don't try to delete it.
+    </div>
+
+    <h2>Name is the identity</h2>
+    <div class="warn">
+      <strong>A typo in <code>Name</code> turns an edit into an addition</strong>
+      If you meant to edit "Herb" but wrote "Herbb", the game doesn't complain &mdash; it assumes
+      you want to <strong>add</strong> a new item called "Herbb". Result: the original Herb is
+      unchanged and there's a strange new item.<br>
+      When a mod does nothing, <strong>check <code>Name</code> for typos first</strong>
+      (including stray spaces and full-width characters).
+    </div>
+
+    <h2>Which tables you can edit</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Folder</th><th>Contents</th></tr>
+      <tr><td><code>Data/Role/</code></td><td>Playable characters</td></tr>
+      <tr><td><code>Data/Enemy/</code></td><td>Enemies</td></tr>
+      <tr><td><code>Data/Skill/</code></td><td>Skills</td></tr>
+      <tr><td><code>Data/Buff/</code></td><td>Buffs / status effects</td></tr>
+      <tr><td><code>Data/Item/</code></td><td>Items and equipment</td></tr>
+      <tr><td><code>Data/Stage/</code></td><td>Stages</td></tr>
+      <tr><td><code>Data/StageGroup/</code></td><td>Stage groups</td></tr>
+      <tr><td><code>Data/Terrain/</code></td><td>Terrain</td></tr>
+      <tr><td><code>Data/Show/</code></td><td>Shows (see <a href="10-showeditor.html">Show Editor</a>)</td></tr>
+      <tr><td><code>Data/CG/</code></td><td>CG images</td></tr>
+      <tr><td><code>Data/BGM/</code></td><td>Music list (see <a href="05-audio.html">Adding Audio</a>)</td></tr>
+      <tr><td><code>Data/Var/</code></td><td>Script variables</td></tr>
+      <tr><td><code>Data/BaseData/</code></td><td>Global game settings</td></tr>
+    </table>
+    </div>
+
+    <h2>Finding field names</h2>
+    <p>Field names must match the game's internals exactly, including case. The most reliable way
+       to look them up is the <strong>data table view in the Show Editor</strong>
+       (see <a href="10-showeditor.html">Show Editor</a>), which lists every field of every table.</p>
+    <div class="ok">
+      <strong>Or just make a typo on purpose</strong>
+      When a field name doesn't exist, the game prints a suggestion:<br>
+      <code>TheItem has no field "IconImage", skipped. Did you mean "IconName"?</code><br>
+      Faster than looking it up.
+    </div>
+
+    <h2>Adding content needs an ID</h2>
+    <div class="warn">
+      <strong>New entries must have <code>ID</code> greater than 0, or they're skipped</strong>
+      Entries with <code>ID</code> 0 or negative are treated as spreadsheet placeholder rows and
+      never appear in game.<br>
+      <strong>Use 9000 or above</strong> to stay clear of content the game itself might add later.<br>
+      When editing an existing entry you don't need <code>ID</code> at all &mdash; the original is kept.
+    </div>
+
+    <h2>Types: when to use quotes</h2>
+    <p>JSON writes numbers and text differently, and it has to match the game's field type.</p>
+<pre><code>{
+  "Name": "SuperPotion",
+  "SellPrice": 500,          number, no quotes
+  "AddHP": 999,              number, no quotes
+  "Name_I2": "Super Potion", text, quotes
+  "Atk": "20"                text, quotes (see below)
+}</code></pre>
+
+    <div class="warn">
+      <strong>Equipment stat fields are text, not numbers</strong>
+      <code>Atk</code> / <code>MaxHP</code> / <code>AtkPercent</code> and friends hold
+      <strong>formula strings</strong>, so write <code>"Atk": "20"</code>, not
+      <code>"Atk": 20</code>.<br>
+      This is what lets stats scale with level. When unsure whether a field needs quotes,
+      <strong>look at how the game's own data of the same kind is written</strong> and copy that.
+    </div>
+
+    <h2>List fields</h2>
+    <p>Some fields hold several values; in JSON they're arrays:</p>
+<pre><code>{
+  "Name": "SomeCharacter",
+  "Skill": ["Slash", "Heavy Slash", "Spin Slash"]
+}</code></pre>
+    <div class="warn">
+      <strong>Arrays replace the whole list; they don't append</strong>
+      Written like that, the character has <strong>exactly those three skills</strong> &mdash;
+      the originals are gone.<br>
+      To keep the existing ones and add more, <strong>list the existing ones too</strong>.<br>
+      Why not append: if the same patch is applied twice, appending gives
+      <code>["Slash","Heavy Slash","Slash","Heavy Slash"]</code>. Replacement is the predictable
+      behaviour.
+    </div>
+
+    <h3>Comma-separated fields</h3>
+    <p>Some fields are stored internally as a single comma-separated string (item <code>Tag</code>,
+       for instance). Both forms work and mean the same thing:</p>
+<pre><code>"Tag": "Usable in battle,Fruit"
+"Tag": ["Usable in battle", "Fruit"]</code></pre>
+
+    <h2>Example: edit an existing item</h2>
+    <p><code>Data/Item/HerbPrice.json</code></p>
+<pre><code>{
+  "Name": "Herb",
+  "SellPrice": 500
+}</code></pre>
+    <p>Only the sell price changes. Nothing else is touched.</p>
+
+    <h2>Example: add an item</h2>
+    <p><code>Data/Item/SuperPotion.json</code></p>
+<pre><code>{
+  "Name": "SuperPotion",
+  "Name_I2": "Super Potion",
+  "Desc": "Drink it and you get very strong",
+  "Type": "Item",
+  "IconName": "Potion",
+  "SellPrice": 1000,
+  "AddHP": 999,
+  "AddMP": 99
+}</code></pre>
+    <div class="note">
+      <strong><code>IconName</code> can borrow the game's own art</strong>
+      Give it the name of an existing icon and that image is used. To ship your own artwork see
+      <a href="04-images.html">Adding Images</a>.
+    </div>
+
+    <h2>Example: make an enemy tougher</h2>
+    <p><code>Data/Enemy/SlimeBuff.json</code></p>
+<pre><code>{
+  "Name": "Slime",
+  "MaxHP": "200",
+  "Atk": "30"
+}</code></pre>
+
+    <h2>Localisation</h2>
+    <p>The game supports Traditional Chinese, Simplified Chinese, English, Japanese, Korean and
+       Russian. Name and description fields ending in <code>_I2</code> feed the translation system.</p>
+    <div class="warn">
+      <strong>Omitting <code>Name_I2</code> leaves the name blank</strong>
+      <code>Name</code> is only an internal identifier &mdash; <strong>what players see is
+      <code>Name_I2</code></strong>. Setting only <code>Name</code> gives an entry with a blank
+      name and description in game, with no error message.<br>
+      Even if you're not localising, <strong>always fill in <code>Name_I2</code></strong>
+      &mdash; just put your own language in it.
+    </div>
+    <div class="warn">
+      <strong>Don't end strings with punctuation</strong>
+      The translation system treats trailing punctuation as a separator, which makes the lookup
+      fail.<br>
+      Write <code>"Deals heavy damage"</code>, not <code>"Deals heavy damage."</code><br>
+      Commas mid-sentence are best replaced with a plain space as well.
+    </div>
+
+    <h2>Apply order</h2>
+    <p>Mod data is applied at game start:</p>
+    <ol>
+      <li>The game loads its own data</li>
+      <li>Mods are layered on in order (later mods override earlier ones)</li>
+    </ol>
+    <p>Mods are always the top layer, so your changes always take effect. For conflicts between
+       mods see <a href="08-conflict.html">Multiple Mods</a>.</p>
+
+    <div class="warn">
+      <strong>Re-enter the game from the title screen after editing</strong>
+      Data is merged on <strong>Start New Game</strong> and <strong>Load Game</strong>. Go back to
+      the title and enter again &mdash; <strong>no need to restart the game</strong>.
+      A session in progress won't change.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 3 });</script>
+</body>
+</html>

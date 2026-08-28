@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="When your Pirate mod does nothing. Error message table and checks organised by symptom.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Troubleshooting</h1>
+    <p class="lead">When a mod does nothing. Nine times out of ten it's JSON syntax or a typo in a name.</p>
+
+    <h2>Try these three first</h2>
+    <ol>
+      <li><strong>Return to the title screen, then Start New Game or Load Game</strong>
+          &mdash; data is only merged at those two moments; this is the most common cause</li>
+      <li><strong>Check the mod is actually enabled</strong> &mdash; title screen &rarr; Mod Manager</li>
+      <li><strong>Paste the JSON into an online validator</strong> &mdash; search "JSON validator", any will do</li>
+    </ol>
+    <div class="ok">
+      <strong>Most problems end here</strong>
+      If not, the checks below are organised by symptom.
+    </div>
+
+    <h2>Symptom: my mod isn't in the list</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Check</th><th>Notes</th></tr>
+      <tr><td>Is there a <code>mod.json</code>?</td><td><strong>Most common cause.</strong> Without it the folder is ignored entirely</td></tr>
+      <tr><td>Is the filename right?</td><td>Exactly <code>mod.json</code> &mdash; not <code>Mod.json</code> or <code>mod.json.txt</code></td></tr>
+      <tr><td>Is it in the right place?</td><td><code>Mods/YourMod/mod.json</code>, not <code>Mods/mod.json</code></td></tr>
+      <tr><td>Is the nesting right?</td><td>Only <strong>direct subfolders</strong> of <code>Mods/</code> are scanned</td></tr>
+      <tr><td>Is there a Mod Manager button at all?</td><td>Mobile and demo builds don't support mods</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>Watch out for hidden file extensions on Windows</strong>
+      Notepad easily saves <code>mod.json.txt</code>, and Windows hides the <code>.txt</code> by
+      default &mdash; it looks like <code>mod.json</code> but isn't.<br>
+      Turn on <em>View &rarr; File name extensions</em> in Explorer to check.
+    </div>
+
+    <h2>Symptom: it's listed but flagged as broken</h2>
+    <p>That means <code>mod.json</code> exists but has a syntax error.</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Common mistake</th><th>Example</th></tr>
+      <tr><td>Trailing comma on the last field</td><td><code>"author": "Someone",</code> followed by <code>}</code></td></tr>
+      <tr><td>Missing comma between fields</td><td>no <code>,</code> between two lines</td></tr>
+      <tr><td>Single quotes</td><td><code>'name'</code> should be <code>"name"</code></td></tr>
+      <tr><td>Unclosed quote</td><td><code>"name": "My Mod</code></td></tr>
+      <tr><td>Unescaped backslash</td><td><code>"icon": "art\icon.png"</code> &mdash; use <code>/</code></td></tr>
+      <tr><td>File isn't UTF-8</td><td>Why non-ASCII text turns to mojibake. Save as UTF-8</td></tr>
+    </table>
+    </div>
+
+    <h2>Symptom: enabled, but the data doesn't apply</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Check</th><th>Notes</th></tr>
+      <tr><td>Typo in <code>Name</code>?</td><td><strong>Most common cause.</strong> A typo turns an edit into an addition. Watch for stray spaces and full-width characters</td></tr>
+      <tr><td>Field name case correct?</td><td><code>SellPrice</code>, not <code>Sellprice</code></td></tr>
+      <tr><td>Folder name right?</td><td><code>Data/Item/</code>, not <code>Data/Items/</code></td></tr>
+      <tr><td>JSON at the right depth?</td><td>Must be <code>Data/&lt;table&gt;/file.json</code>. Files directly in <code>Data/</code> aren't loaded</td></tr>
+      <tr><td>Quotes where needed?</td><td>Equipment stat fields are text: <code>"Atk": "20"</code></td></tr>
+      <tr><td><code>ID</code> greater than 0?</td><td>New entries with ID 0 or negative are skipped</td></tr>
+      <tr><td>Re-entered from the title screen?</td><td>Check again</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>JSON directly under <code>Data/</code> is never loaded</strong>
+      The old mod format put files at <code>Data/*.json</code>. <strong>That's no longer
+      supported.</strong> They must go in a table folder: <code>Data/Item/MyItem.json</code>.<br>
+      Old-format <code>.csv</code> files are also ignored.
+    </div>
+
+    <h2>Symptom: the name or description is blank</h2>
+    <div class="warn">
+      <strong><code>Name_I2</code> is missing</strong>
+      <code>Name</code> is only an internal identifier &mdash; <strong>players see
+      <code>Name_I2</code></strong>.<br>
+      Fill it in even if you're not localising; just use your own language.
+    </div>
+
+    <h2>Symptom: images don't show</h2>
+    <p>See the checklist in <a href="04-images.html">Adding Images</a>. The usual suspects:</p>
+    <ul>
+      <li>Folder spelled <code>Image/</code> (missing the s) instead of <code>Images/</code></li>
+      <li>Subfolder case wrong (<code>Rolehead</code> vs <code>RoleHead</code>)</li>
+      <li><code>ImageName</code> includes <code>.png</code></li>
+      <li>The file is actually a JPG renamed to <code>.png</code></li>
+      <li>Variant images cropped to face size instead of full-body canvas</li>
+    </ul>
+
+    <h2>Symptom: no sound</h2>
+    <p>See the checklist in <a href="05-audio.html">Adding Audio</a>. The usual suspects:</p>
+    <ul>
+      <li>Audio file present but not registered in <code>Data/BGM/</code></li>
+      <li>Registered <code>Name</code> doesn't match the filename</li>
+      <li><code>ID</code> is 0 or negative</li>
+      <li>Tested too soon after launch (audio loads in the background &mdash; wait a few seconds)</li>
+      <li>Unsupported format (only OGG / MP3 / WAV)</li>
+    </ul>
+
+    <div class="ok">
+      <strong>When a field name is wrong, the game tells you the right one</strong>
+      The actual message looks like this:
+<pre><code>[ModPatch] Item/ExamplePotion.json entry 1:
+  TheItem has no field "IconImage", skipped. Did you mean "IconName"?</code></pre>
+      So when unsure of a field name, <strong>deliberately write something close</strong> and let
+      the suggestion tell you the correct spelling. Faster than looking it up.
+    </div>
+
+    <h2>Reading the game's log</h2>
+    <p>The game records the whole mod loading process. It states the actual cause, which beats guessing.</p>
+    <p>Log location:</p>
+<pre><code>C:\Users\&lt;your username&gt;\AppData\LocalLow\&lt;company&gt;\&lt;game&gt;\Player.log</code></pre>
+    <div class="note">
+      <strong>How to get there</strong>
+      Paste <code>%USERPROFILE%\AppData\LocalLow</code> into Explorer's address bar and press
+      Enter, then find the game's folder.
+    </div>
+    <p>Open it in a text editor and search for <code>[Mod</code> to see every mod-related message.</p>
+
+    <h2>Message reference</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Message fragment</th><th>Meaning</th><th>Fix</th></tr>
+      <tr>
+        <td><code>mod.json parse failed</code></td>
+        <td>JSON syntax error</td>
+        <td>Run <code>mod.json</code> through a JSON validator</td>
+      </tr>
+      <tr>
+        <td><code>skipping "XXX": mod.json parse failed</code></td>
+        <td>The whole mod was skipped</td>
+        <td>Same. Fix the syntax and re-enter the game</td>
+      </tr>
+      <tr>
+        <td><code>&hellip;.json not in a table folder</code></td>
+        <td>JSON sits directly in <code>Data/</code></td>
+        <td>Move it into <code>Data/&lt;table&gt;/</code></td>
+      </tr>
+      <tr>
+        <td><code>.csv no longer&hellip;</code></td>
+        <td>Old format</td>
+        <td>Rewrite as JSON in a table folder</td>
+      </tr>
+      <tr>
+        <td><code>read failed</code></td>
+        <td>File unreadable or malformed</td>
+        <td>Check that file's JSON syntax and encoding (must be UTF-8)</td>
+      </tr>
+      <tr>
+        <td><code>has no field "X"&hellip; Did you mean "Y"?</code></td>
+        <td>Field name doesn't exist</td>
+        <td>Use the suggested name</td>
+      </tr>
+      <tr>
+        <td><code>not a valid PNG, skipped</code></td>
+        <td>The file isn't really a PNG</td>
+        <td>Re-export as PNG; don't just rename</td>
+      </tr>
+      <tr>
+        <td><code>unsupported audio format, skipped</code></td>
+        <td>Wrong audio format</td>
+        <td>Convert to OGG / MP3 / WAV</td>
+      </tr>
+      <tr>
+        <td><code>decoded audio is empty</code></td>
+        <td>Corrupt or zero-byte audio</td>
+        <td>Re-export the audio</td>
+      </tr>
+      <tr>
+        <td><code>applied N mods, M data files</code></td>
+        <td><strong>This is the success message</strong></td>
+        <td>Do the numbers match? If not, scroll up for warnings</td>
+      </tr>
+    </table>
+    </div>
+    <div class="ok">
+      <strong>Find the "applied N mods" line first</strong>
+      It tells you how many mods and data files actually loaded. If the count is lower than you
+      expect, scroll up to find the warnings.
+    </div>
+
+    <h2>Still stuck</h2>
+    <p>When reporting a problem, include:</p>
+    <ul>
+      <li>Your <code>mod.json</code></li>
+      <li>The JSON file that isn't working</li>
+      <li>Your mod's folder structure (screenshot or text)</li>
+      <li>Every line containing <code>[Mod</code> from <code>Player.log</code></li>
+    </ul>
+    <div class="note">
+      <strong>Built-in bug reporting</strong>
+      Press <strong>F10</strong> in game to open the report form; it attaches the necessary
+      information automatically.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 9 });</script>
+</body>
+</html>

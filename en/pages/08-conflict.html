@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="Who wins when several mods are enabled. Apply order, conflicts, and advice for mod authors.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Multiple Mods</h1>
+    <p class="lead">Players can enable many mods at once. This chapter is about who wins.</p>
+
+    <h2>Apply order</h2>
+    <p>At game start:</p>
+    <ol>
+      <li>The game's own data loads</li>
+      <li>Mods are layered on one at a time, in list order</li>
+    </ol>
+    <div class="ok">
+      <strong>Later wins</strong>
+      Mods further down the list override earlier ones. Same rule for data tables, images and audio.
+    </div>
+
+    <h2>What counts as a conflict</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Kind</th><th>Conflicts when</th><th>Result</th></tr>
+      <tr><td>Data</td><td>two mods edit <strong>the same field of the same <code>Name</code></strong></td><td>later value wins</td></tr>
+      <tr><td>Images</td><td>two mods ship <strong>the same path and filename</strong></td><td>later image wins</td></tr>
+      <tr><td>Audio</td><td>two mods ship <strong>the same filename</strong></td><td>later file wins</td></tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>Editing different fields isn't a conflict</strong>
+      Mod A changes an item's <code>SellPrice</code>, mod B changes its <code>Desc</code>
+      &mdash; both apply, because merging only overwrites fields that were actually written.<br>
+      This is the main reason mods are more compatible than you'd expect.
+    </div>
+
+    <h2>Players can reorder</h2>
+    <p>The Mod Manager supports manual ordering. When mods clash, players can move the one they
+       prefer further down.</p>
+    <div class="note">
+      <strong>So "incompatible" usually isn't</strong>
+      When two mods fight, ask players to try reordering first. The genuinely unsolvable case is
+      "both mods need the same field to hold a different value".
+    </div>
+
+    <h2>Advice for authors</h2>
+
+    <h3>1. Change as few fields as possible</h3>
+    <div class="ok">
+      <strong>Only write what you actually want to change</strong>
+      To make an item cost more, write only <code>Name</code> and <code>SellPrice</code>.<br>
+      Don't copy the whole entry "for completeness" &mdash; that conflicts with every other mod
+      touching the same entry, and after a game update your stale values would override the new ones.
+    </div>
+
+    <h3>2. Use distinctive names for new content</h3>
+    <p>When adding items / characters / skills, prefix <code>Name</code> with something of your own:</p>
+<pre><code>"Name": "MyMod_SuperPotion"</code></pre>
+    <p>That avoids colliding with other people's additions, and with content the game itself may
+       add later.</p>
+    <div class="note">
+      <strong>The prefix is internal; players never see it</strong>
+      Players see <code>Name_I2</code>, so <code>Name</code> can be as ugly as you like.
+    </div>
+
+    <h3>3. Prefix images and audio too</h3>
+<pre><code>Images/RoleHead/MyMod_NewHero.png
+Music/BGM_MyMod_Theme.ogg</code></pre>
+    <p>Unless you <strong>deliberately</strong> want to replace the game's or another mod's assets,
+       prefix them.</p>
+
+    <h3>4. Say what you changed in the description</h3>
+<pre><code>{
+  "description": "Changes:\n- All enemy HP x2\n- Herb sells for 500\n\nConflicts with other enemy-stat mods."
+}</code></pre>
+    <p>So players know which mod to turn off when something breaks.</p>
+
+    <h2>Mods can't depend on each other</h2>
+    <div class="warn">
+      <strong>There is no dependency mechanism</strong>
+      You can't declare "requires mod XX". The game doesn't check and won't warn.<br>
+      If your mod genuinely depends on another (referencing an item it adds, say), say so in
+      <code>description</code> and handle the "not installed" case yourself.
+    </div>
+
+    <h2>One broken mod doesn't take down the rest</h2>
+    <div class="ok">
+      <strong>Errors are isolated</strong>
+      A malformed JSON file only skips that file. Other files in the same mod, and other mods,
+      keep working.<br>
+      So a player with ten mods, one of them broken, can still play &mdash; that part of the
+      content simply doesn't apply.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 8 });</script>
+</body>
+</html>

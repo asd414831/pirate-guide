@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="Mod making guide for the game Pirate. Add items, change stats, ship your own art and music.">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Pirate Mod Making Guide</h1>
+    <p class="lead">No programming needed. If you can use a text editor, you can make mods.</p>
+
+    <p>This guide covers making mods for <em>Pirate</em> &mdash; adding items, changing character
+       stats, swapping artwork, adding your own music. Everything is done by editing text files.
+       No development tools, no recompiling the game.</p>
+
+    <div class="ok">
+      <strong>Your first mod takes five minutes</strong>
+      Make a folder, write one <code>mod.json</code>, drop in one JSON file. That's it.
+      Jump straight to <a href="pages/01-quickstart.html">Quick Start</a>.
+    </div>
+
+    <h2>What you can do</h2>
+    <ul>
+      <li><strong>Change values</strong> &mdash; characters, enemies, skills, buffs, items, stages,
+          terrain&hellip; all 13 of the game's data tables are editable</li>
+      <li><strong>Add new content</strong> &mdash; not just edit what exists; you can add entirely
+          new items, characters and skills</li>
+      <li><strong>Ship your own artwork</strong> &mdash; drop PNGs in <code>Images/</code> and they load;
+          add new portraits or replace the game's own</li>
+      <li><strong>Ship your own audio</strong> &mdash; OGG / MP3 / WAV in <code>Music/</code>, both BGM
+          and sound effects</li>
+      <li><strong>Build whole battles</strong> &mdash; custom enemies, enemy AI, multi-wave stages,
+          battle backgrounds</li>
+      <li><strong>Write story scenes</strong> &mdash; dialogue, portraits, expression variants,
+          stage intros and endings</li>
+    </ul>
+
+    <h2>What you can't do</h2>
+    <ul>
+      <li><strong>Delete existing content</strong> &mdash; mods can only change and add. To hide
+          something, use <code>UnlockCon</code> (see <a href="pages/03-data.html">Editing Game Data</a>)</li>
+      <li><strong>Add new program logic</strong> &mdash; no C#. But the script commands and show
+          system are already fairly flexible</li>
+      <li><strong>Use mods on mobile</strong> &mdash; desktop only</li>
+    </ul>
+
+    <h2>Chapters</h2>
+    <div class="cards"></div>
+
+    <h2>What you'll need</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>For</th><th>Tool</th><th>Notes</th></tr>
+      <tr><td>Editing JSON</td><td>Notepad / VS Code / Notepad++</td><td>Any plain-text editor works. VS Code is recommended &mdash; it flags JSON syntax errors as you type</td></tr>
+      <tr><td>Artwork</td><td>Any drawing software</td><td>Just export PNG</td></tr>
+      <tr><td>Audio</td><td>Any audio software</td><td>Export OGG / MP3 / WAV</td></tr>
+      <tr><td>Story scenes</td><td>Show Editor</td><td>Visual tool, see <a href="pages/10-showeditor.html">Show Editor</a></td></tr>
+    </table>
+    </div>
+
+    <div class="note">
+      <strong>This guide follows the game's actual code</strong>
+      The rules described here (merge behaviour, folder structure, priority order) are checked
+      against the real implementation. If the guide disagrees with the game, the guide is out of
+      date &mdash; please report it.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 0 });
+buildCards('en', [
+  'Build your first mod. Where the folder goes, minimal working example.',
+  'The mod\'s ID card. What each field means, what happens if you omit it.',
+  'Change values and add content. Merge rules, the 13 data tables, types and examples.',
+  'Get your PNGs into the game. Folder map, expression variants, replacing the game\'s art.',
+  'Add BGM and sound effects. Formats, naming rules, and a loading-time gotcha.',
+  'Actually give players your characters and stages. AutoRun, command reference, room dialogue.',
+  'Custom enemies and battles. Enemy AI, waves, battle backgrounds, stage cutscenes.',
+  'Who wins when several mods are on. Ordering, conflicts, advice for authors.',
+  'When your mod does nothing. Error message table, checks by symptom.',
+  'Edit story scenes visually. What it is, what it does, how to get it.',
+]);</script>
+</body>
+</html>

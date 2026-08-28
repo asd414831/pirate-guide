@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="The visual tool for editing Pirate story scenes. What it is, what it does, how to get it.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Show Editor</h1>
+    <p class="lead">Write shows visually &mdash; no typing commands, no memorising arguments.</p>
+
+    <h2>What it is</h2>
+    <p>The Show Editor is a web tool for editing the game's story scenes. It turns the commands
+       from <a href="06-shows.html">Shows &amp; Granting Content</a> into a clickable interface:</p>
+    <ul>
+      <li>Pick commands from a list instead of remembering names and argument order</li>
+      <li>Browse backgrounds, portraits and expressions as thumbnails</li>
+      <li>Preview the dialogue box and portrait positions as you write</li>
+      <li>Export JSON your mod can use directly</li>
+    </ul>
+
+    <div class="ok">
+      <strong>Hand-writing vs the editor</strong>
+      By hand you have to remember that <code>&lt;Image&gt;</code>'s first argument is the slot and
+      the character comes second; you have to verify portrait filenames yourself; you have to
+      count commas.<br>
+      The editor turns all of that into menus and thumbnails. For anything longer than a dozen
+      lines it's considerably faster.
+    </div>
+
+    <h2>What it does</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Feature</th><th>Notes</th></tr>
+      <tr><td>Command menu</td><td>Every show command, categorised, with argument descriptions</td></tr>
+      <tr><td>Asset browser</td><td>Backgrounds, portraits, expressions and stickers as thumbnails</td></tr>
+      <tr><td>Live preview</td><td>See the dialogue box, portrait placement and lighting as they'll appear</td></tr>
+      <tr><td>Mod assets</td><td>Load your own mod's images alongside the game's</td></tr>
+      <tr><td>Data table fields</td><td>Lists every field of every table &mdash; very handy for looking names up</td></tr>
+      <tr><td>JSON export</td><td>Output in the exact format <code>Data/Show/</code> expects</td></tr>
+    </table>
+    </div>
+
+    <h2>You don't have to use it</h2>
+    <div class="note">
+      <strong>Shows are plain JSON; a text editor works fine</strong>
+      <a href="06-shows.html">Shows &amp; Granting Content</a> and
+      <a href="07-stages.html">Stages &amp; Enemies</a> have complete examples to copy.<br>
+      For a short show (an AutoRun with a single <code>&lt;AddRole&gt;</code>) a text editor is
+      actually quicker.
+    </div>
+
+    <h2>How to get it</h2>
+    <div class="warn">
+      <strong>The editor isn't hosted on this site</strong>
+      Check the game's official announcements or community channels.
+    </div>
+
+    <h2>Looking up field names without it</h2>
+    <p>One of the editor's most useful features is browsing table fields. Without it:</p>
+    <ol>
+      <li><strong>Read the official example mods</strong> &mdash; the examples under
+          <code>Mods/</code> already demonstrate most common fields</li>
+      <li><strong>Copy the game's own data</strong> &mdash; find a similar item in game and follow
+          its format</li>
+      <li><strong>Let the game tell you</strong> &mdash; on a wrong field name it prints
+          <em>has no field "XXX", did you mean "YYY"?</em>, which gives you the correct spelling</li>
+    </ol>
+    <div class="ok">
+      <strong>Point 3 is genuinely useful</strong>
+      Write a field name that's deliberately close and read the suggestion.
+      Faster than searching documentation.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 10 });</script>
+</body>
+</html>

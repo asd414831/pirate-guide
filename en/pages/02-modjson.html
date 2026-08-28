@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="Every mod.json field explained: what it means, its default, and what happens when it is malformed.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>mod.json Fields</h1>
+    <p class="lead">The mod's ID card. It decides what players see in the mod list.</p>
+
+    <h2>Where it goes</h2>
+<pre><code>Mods/&lt;your mod folder&gt;/mod.json</code></pre>
+    <div class="warn">
+      <strong>No mod.json means it isn't a mod</strong>
+      When scanning <code>Mods/</code>, the game only treats subfolders <em>containing a
+      <code>mod.json</code></em> as mods. Without it your folder is ignored entirely &mdash;
+      it won't appear in the list, and there's no error message either.
+    </div>
+
+    <h2>Full example</h2>
+<pre><code>{
+  "name": "Harder Pirates",
+  "author": "Some Player",
+  "version": "1.2.0",
+  "description": "Enemies hit harder, drops are rarer.\nMeant for new game plus.",
+  "icon": "icon.png"
+}</code></pre>
+
+    <h2>Field reference</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Field</th><th>Type</th><th>If omitted</th><th>Notes</th></tr>
+      <tr>
+        <td><code>name</code></td><td>text</td><td>folder name is used</td>
+        <td>Display name in the mod list. Any language.</td>
+      </tr>
+      <tr>
+        <td><code>author</code></td><td>text</td><td>shows "Unknown author"</td>
+        <td>Your name or handle.</td>
+      </tr>
+      <tr>
+        <td><code>version</code></td><td>text</td><td>shows "-"</td>
+        <td>Display only. The game <strong>never</strong> compares versions &mdash;
+            <code>1.0</code> or <code>v2-beta</code> are equally fine.</td>
+      </tr>
+      <tr>
+        <td><code>description</code></td><td>text</td><td>empty</td>
+        <td>Description. Use <code>\n</code> for line breaks.</td>
+      </tr>
+      <tr>
+        <td><code>icon</code></td><td>text</td><td><code>icon.png</code></td>
+        <td>Relative path to the thumbnail. Falls back to a default image if the file is missing.</td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>Every field is optional</strong>
+      Even an empty <code>{}</code> works &mdash; the game falls back to the folder name.
+      Omitting a field never breaks the mod. That's deliberate.
+    </div>
+
+    <h2>Thumbnail</h2>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/modicon-role.png" alt="Example mod thumbnail">
+        <span class="fig-label">300&times;300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/modicon-stage.png" alt="Example mod thumbnail">
+        <span class="fig-label">300&times;300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/modicon-item.png" alt="Example mod thumbnail">
+        <span class="fig-label">512&times;512</span>
+      </div>
+      <figcaption>
+        Thumbnails from the official example mods. <strong>Square, 512&times;512 or smaller</strong>
+        is recommended. Without one you get a default image.
+      </figcaption>
+    </figure>
+
+    <p>By default the game looks for <code>icon.png</code> in the mod folder. To use a different
+       name or a subfolder:</p>
+<pre><code>{
+  "icon": "art/my-thumbnail.png"
+}</code></pre>
+    <p>The path is relative to <strong>your mod folder</strong>, not to <code>Mods/</code>.</p>
+
+    <h2>Line breaks</h2>
+    <p>JSON strings can't contain a literal newline &mdash; use <code>\n</code>:</p>
+<pre><code>{
+  "description": "First line\nSecond line\n\nThird line after a blank one"
+}</code></pre>
+    <div class="warn">
+      <strong>Escape backslashes in Windows paths</strong>
+      <code>\</code> is a special character in JSON. <strong>Use forward slashes</strong> for the
+      <code>icon</code> path &mdash; <code>art/icon.png</code>, not <code>art\icon.png</code>.
+      A literal backslash needs to be doubled (<code>\\</code>), which is easy to get wrong.
+    </div>
+
+    <h2>What happens if it's malformed</h2>
+    <p>If <code>mod.json</code> exists but has a syntax error (missing comma, extra comma, unclosed
+       quote), <strong>the mod still appears in the list but is flagged as broken</strong>.</p>
+    <div class="ok">
+      <strong>That's deliberate</strong>
+      If broken mods simply vanished, players would assume the files were in the wrong place with
+      no way to investigate. Listing it and flagging it tells them "it's there, but something's wrong".
+    </div>
+    <p>Common JSON mistakes:</p>
+<pre><code>{
+  "name": "My Mod",
+  "author": "Someone",     &lt;-- trailing comma on the last field
+}
+
+{
+  "name": "My Mod"
+  "author": "Someone"      &lt;-- missing comma between fields
+}
+
+{
+  'name': 'My Mod'         &lt;-- JSON requires double quotes
+}</code></pre>
+    <div class="note">
+      <strong>Editing in VS Code avoids nine tenths of these</strong>
+      It highlights syntax errors as you type. Alternatively, paste the file into any online
+      JSON validator.
+    </div>
+
+    <h2>Don't rename the folder</h2>
+    <div class="warn">
+      <strong>The enabled state is tied to the folder name, not the <code>name</code> field</strong>
+      Changing <code>name</code> in <code>mod.json</code>: safe, only the display name changes.<br>
+      Changing the <strong>folder name</strong>: as far as the game is concerned it's a different
+      mod &mdash; enabled state resets and players have to turn it back on. Don't rename after release.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 2 });</script>
+</body>
+</html>

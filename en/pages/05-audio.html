@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="Add BGM and sound effects to Pirate. Supported formats, naming rules, and a loading-time gotcha.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Adding Audio</h1>
+    <p class="lead">Mods can ship their own music and sound effects.</p>
+
+    <h2>The basic rule</h2>
+<pre><code>Mods/&lt;your mod&gt;/Music/&lt;any subfolder&gt;/&lt;name&gt;.ogg</code></pre>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Item</th><th>Detail</th></tr>
+      <tr><td>Supported formats</td><td>OGG / MP3 / WAV</td></tr>
+      <tr><td>Recommended</td><td><strong>OGG</strong> &mdash; small, fast to load, no licensing issues</td></tr>
+      <tr><td>Subfolders</td><td>Organise however you like; <strong>they don't affect lookup</strong></td></tr>
+    </table>
+    </div>
+
+    <h2>The name is the bare filename, no path</h2>
+    <div class="warn">
+      <strong>This is the opposite of images, and it's easy to mix up</strong>
+      Audio subfolders are <strong>purely for your own organisation</strong>; lookup only uses the
+      filename.<br>
+      <code>Music/BGM/MyTheme.ogg</code> and <code>Music/whatever/nested/MyTheme.ogg</code> are
+      <strong>identical</strong> as far as the game is concerned &mdash; both are "MyTheme".
+    </div>
+    <p>So these two layouts behave the same:</p>
+<pre><code>Music/
+&#9500;&#9472;&#9472; BGM/
+&#9474;   &#9492;&#9472;&#9472; MyTheme.ogg          &rarr; the game knows it as "MyTheme"
+&#9492;&#9472;&#9472; Sfx/
+    &#9492;&#9472;&#9472; se_MyHit.ogg         &rarr; the game knows it as "se_MyHit"</code></pre>
+<pre><code>Music/
+&#9500;&#9472;&#9472; MyTheme.ogg              &rarr; still "MyTheme"
+&#9492;&#9472;&#9472; se_MyHit.ogg             &rarr; still "se_MyHit"</code></pre>
+
+    <div class="warn">
+      <strong>Same filename in different folders = one of them disappears</strong>
+      Because lookup only uses the filename, <code>Music/BGM/Theme.ogg</code> and
+      <code>Music/Sfx/Theme.ogg</code> collide and only one wins.<br>
+      Prefix your own files (<code>BGM_</code>, <code>se_</code>) to avoid it.
+    </div>
+
+    <h2>Adding a BGM track</h2>
+    <p><strong>Two steps. Miss either one and there's no sound.</strong></p>
+
+    <h3>1. Drop in the audio file</h3>
+<pre><code>MyMod/
+&#9492;&#9472;&#9472; Music/
+    &#9492;&#9472;&#9472; BGM/
+        &#9492;&#9472;&#9472; BGM_MyTheme.ogg</code></pre>
+
+    <h3>2. Register it in the BGM list</h3>
+    <p><code>Data/BGM/MyTheme.json</code></p>
+<pre><code>{
+  "Name": "BGM_MyTheme",
+  "ID": 9201,
+  "Desc": "Description of the track",
+  "Path": "BGM_MyTheme.ogg",
+  "Maker": "Composer name"
+}</code></pre>
+    <div class="warn">
+      <strong>File without registration, or registration without file &mdash; both fail silently</strong>
+      <ul>
+        <li>File only &rarr; nothing in the game ever references it</li>
+        <li>Registration only &rarr; the name appears in the list but <strong>plays nothing</strong></li>
+      </ul>
+      Neither case produces an error message.
+    </div>
+    <div class="warn">
+      <strong><code>ID</code> must be greater than 0 or it won't be listed</strong>
+      Entries with <code>ID</code> 0 or negative are treated as placeholder rows.<br>
+      Use 9000 or above to stay clear of content the game might add later.
+    </div>
+    <div class="note">
+      <strong>The other fields</strong>
+      <ul>
+        <li><code>Name</code> &mdash; must match the audio filename (without <code>.ogg</code>)</li>
+        <li><code>Desc</code> &mdash; description text</li>
+        <li><code>Path</code> &mdash; display only; the filename is fine</li>
+        <li><code>Maker</code> &mdash; composer</li>
+      </ul>
+    </div>
+    <div class="note">
+      <strong>Music gallery entries start locked</strong>
+      They unlock automatically the first time the track actually plays in game. No extra setup.
+    </div>
+
+    <h2>Replacing the game's music</h2>
+    <p>Use <strong>the same filename</strong> as the original. No registration needed &mdash;
+       the game already registered it:</p>
+<pre><code>Music/BGM_Title.ogg      &lt;-- replaces the title screen music</code></pre>
+    <div class="ok">
+      <strong>Mod audio takes priority over the game's</strong>
+      Same rule as images. A "replace the whole soundtrack" mod is entirely possible.
+    </div>
+
+    <h2>Sound effects</h2>
+    <p>Effects live in the same folder and follow the same rules. The only difference is that
+       <strong>they don't need registering</strong> &mdash; skills and shows reference them by name.</p>
+<pre><code>Music/Sfx/se_MyHit.ogg</code></pre>
+    <p>Then a skill or show plays <code>se_MyHit</code>.</p>
+
+    <h2>Loading time (important)</h2>
+    <div class="warn">
+      <strong>Audio loads in the background; the first few seconds after startup it isn't ready</strong>
+      Unlike images, audio (especially MP3) takes time to decode. What the game does is:<br>
+      note which files exist at startup (fast), then <strong>decode them in the background</strong>.<br>
+      So playing mod audio in the first few seconds after launch may produce silence or the
+      game's original track. Try again a moment later and it's fine.
+    </div>
+    <div class="note">
+      <strong>Not a bug, and nothing to work around</strong>
+      In real play nobody reaches a mod-music scene in the first second. But if your own testing
+      shows "no sound the first time, fine the second time", this is why.<br>
+      The one exception is replacing the <em>title screen</em> BGM &mdash; that moment may still be
+      loading, so the game replays it once loading finishes.
+    </div>
+    <div class="warn">
+      <strong>MP3 works but OGG is safer</strong>
+      MP3 decoder support varies between environments. On failure the game logs a warning
+      (it doesn't fail silently). OGG is Unity's native format and the most reliable.
+    </div>
+
+    <h2>File size guidance</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Use</th><th>Suggested</th><th>Why</th></tr>
+      <tr><td>BGM</td><td>OGG, 2&ndash;5 MB</td><td>Looping tracks compress best as OGG</td></tr>
+      <tr><td>Sound effects</td><td>OGG or WAV, &lt; 500 KB</td><td>Short effects can be WAV; it decodes fastest</td></tr>
+      <tr><td>Avoid</td><td>Large WAV</td><td>A WAV BGM can be 50 MB+; slow to load and wasteful</td></tr>
+    </table>
+    </div>
+
+    <h2>Checklist</h2>
+    <p>When there's no sound, in order:</p>
+    <ol>
+      <li>Is the file under <code>Music/</code>?</li>
+      <li>Is it OGG / MP3 / WAV? (actually converted, not just renamed)</li>
+      <li>For BGM, is it registered in <code>Data/BGM/</code>?</li>
+      <li>Does the registered <code>Name</code> exactly match the filename (no extension)?</li>
+      <li>Is <code>ID</code> greater than 0?</li>
+      <li>Does the filename collide with another audio file?</li>
+      <li>Did you test too soon after launch? (wait a few seconds)</li>
+      <li>Did you return to the title screen and Start New Game or Load Game?</li>
+    </ol>
+
+    <div class="warn">
+      <strong>Licensing is your responsibility</strong>
+      When releasing a mod, make sure you have the right to distribute the audio. Get permission
+      for other people's work, or use material that is clearly free to use.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 5 });</script>
+</body>
+</html>

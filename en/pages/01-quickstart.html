@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="Build your first Pirate mod in five minutes. Where the folder goes, how to write mod.json, how to enable it.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Quick Start</h1>
+    <p class="lead">Goal: a working mod in five minutes, so you know the whole pipeline runs.</p>
+
+    <h2>1. Find the mods folder</h2>
+    <p>Mods live under the game's install directory:</p>
+<pre><code>&lt;game install folder&gt;/Pirate_Data/StreamingAssets/Mods/</code></pre>
+    <p>Fastest way to get there: <strong>launch the game &rarr; title screen &rarr; Mod Manager &rarr;
+       Open Folder</strong>. The game opens it for you.</p>
+
+    <figure>
+      <img src="../../assets/ui-modlist-off.png" alt="Mod Manager listing four example mods">
+      <figcaption>
+        The <strong>Mod Manager</strong> on the title screen. The game ships four official example
+        mods &mdash; when you're unsure how a field should be written, hit <strong>Open Folder</strong>
+        and look at how they did it.<br>
+        <strong>Mod Directory</strong> in the bottom-left opens <code>Mods/</code> directly.
+      </figcaption>
+    </figure>
+
+    <div class="note">
+      <strong>If there's no Mods folder</strong>
+      Just create one &mdash; it must be named exactly <code>Mods</code>.<br>
+      If the title screen has no Mod Manager button at all, your build doesn't support mods
+      &mdash; mobile and demo builds don't have the feature.
+    </div>
+
+    <h2>2. Create your mod folder</h2>
+    <p>Make a folder inside <code>Mods/</code>. Name it whatever you like; English letters and
+       digits are safest, avoid spaces:</p>
+<pre><code>Mods/
+&#9492;&#9472;&#9472; MyFirstMod/</code></pre>
+
+    <div class="warn">
+      <strong>The folder name is the mod's identity</strong>
+      The game remembers "is this mod enabled" by folder name.<br>
+      <strong>Renaming it makes it a different mod</strong> &mdash; the enabled state resets and
+      players have to turn it back on. Don't rename after release.
+    </div>
+
+    <h2>3. Write mod.json</h2>
+    <p>Create <code>mod.json</code> inside your mod folder. <strong>Without this file the game
+       doesn't consider it a mod</strong> &mdash; it won't even show up in the list.</p>
+<pre><code>{
+  "name": "My First Mod",
+  "author": "Your Name",
+  "version": "1.0",
+  "description": "Testing. Adds an absurdly strong potion."
+}</code></pre>
+    <p>Every field is optional and falls back to a default. Details in
+       <a href="02-modjson.html">mod.json Fields</a>.</p>
+
+    <h2>4. Add one piece of data</h2>
+    <p>Data goes under <code>Data/&lt;table&gt;/</code>, and <strong>one JSON file is one
+       entry</strong>. Here's an item:</p>
+<pre><code>MyFirstMod/
+&#9500;&#9472;&#9472; mod.json
+&#9492;&#9472;&#9472; Data/
+    &#9492;&#9472;&#9472; Item/
+        &#9492;&#9472;&#9472; SuperPotion.json</code></pre>
+    <p>Contents of <code>SuperPotion.json</code>:</p>
+<pre><code>{
+  "Name": "SuperPotion",
+  "Name_I2": "Super Potion",
+  "Desc": "Drink it and you get very strong",
+  "Type": "Item",
+  "AddHP": 999
+}</code></pre>
+
+    <div class="warn">
+      <strong>The folder name decides which table you're editing</strong>
+      <code>Data/Item/</code> edits items, <code>Data/Role/</code> edits characters.<br>
+      Both <code>Item</code> and <code>TheItem</code> are accepted (the game prepends
+      <code>The</code> for you).<br>
+      <strong>The filename doesn't matter</strong> &mdash; the game reads the <code>Name</code>
+      field inside the file.
+    </div>
+
+    <h2>5. Enable it and test</h2>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/ui-modlist-off.png" alt="Before: grey row, button reads Enable" style="max-width:420px">
+        <span class="fig-label">Before &mdash; grey row, button reads <strong>Enable</strong></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/ui-modlist-on.png" alt="After: gold row, button reads Disable" style="max-width:420px">
+        <span class="fig-label">After &mdash; gold row, button reads <strong>Disable</strong></span>
+      </div>
+      <figcaption>
+        The <strong>Enabled N / M</strong> counter in the top-left is the quick check.<br>
+        List order is apply order (top to bottom); the three-line handle on the left drags to
+        reorder &mdash; that's what decides who wins when mods conflict
+        (see <a href="08-conflict.html">Multiple Mods</a>).
+      </figcaption>
+    </figure>
+
+    <ol>
+      <li>Back in the game, <strong>title screen &rarr; Mod Manager</strong></li>
+      <li>Find "My First Mod" and press <strong>Enable</strong></li>
+      <li><strong>Return to the title screen, then Start New Game or Load Game</strong></li>
+      <li>Check the shop &mdash; "Super Potion" should be there</li>
+    </ol>
+
+    <div class="warn">
+      <strong>Changes apply when you re-enter the game from the title screen</strong>
+      Mod data is merged at two moments: <strong>Start New Game</strong> and <strong>Load Game</strong>.
+      After editing files or toggling a mod, go back to the title screen and enter again
+      &mdash; <strong>you do not need to restart the game</strong>.<br>
+      A session already in progress won't change; you have to go back to the title.
+    </div>
+
+    <h2>Did it work?</h2>
+
+    <figure>
+      <img src="../../assets/ui-shop-potion.png" alt="Shop list showing Example Potion for $100">
+      <figcaption>
+        What the official "Example Item" mod does once enabled &mdash; the shop gains an
+        <strong>Example Potion, $100</strong>.<br>
+        Your own items appear the same way (as long as you set <code>SellPrice</code>).
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>See the new item &rarr; the whole pipeline works</strong>
+      Next, read <a href="03-data.html">Editing Game Data</a> to learn how to modify existing
+      content and what fields are available.
+    </div>
+    <div class="note">
+      <strong>Don't see it &rarr; go to troubleshooting</strong>
+      <a href="09-troubleshoot.html">Troubleshooting</a> has an error message table and checks by
+      symptom. Nine times out of ten it's a JSON syntax error (a missing comma, or one too many).
+    </div>
+
+    <h2>What a complete mod looks like</h2>
+    <p>A mod using every feature:</p>
+<pre><code>MyMod/
+&#9500;&#9472;&#9472; mod.json              ID card (required)
+&#9500;&#9472;&#9472; icon.png              list thumbnail (optional)
+&#9500;&#9472;&#9472; Data/                 data tables
+&#9474;   &#9500;&#9472;&#9472; Item/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; SuperPotion.json
+&#9474;   &#9500;&#9472;&#9472; Role/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; NewHero.json
+&#9474;   &#9492;&#9472;&#9472; Skill/
+&#9474;       &#9492;&#9472;&#9472; MegaSlash.json
+&#9500;&#9472;&#9472; Images/               artwork
+&#9474;   &#9500;&#9472;&#9472; RoleHead/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; NewHero.png
+&#9474;   &#9492;&#9472;&#9472; Role/
+&#9474;       &#9492;&#9472;&#9472; NewHero.png
+&#9492;&#9472;&#9472; Music/                audio
+    &#9500;&#9472;&#9472; BGM/
+    &#9474;   &#9492;&#9472;&#9472; BGM_MyTheme.ogg
+    &#9492;&#9472;&#9472; Sfx/
+        &#9492;&#9472;&#9472; se_MyHit.ogg</code></pre>
+    <p>Each part is covered in the chapters that follow.</p>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 1 });</script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="Custom enemies, enemy AI, stage waves, battle backgrounds and stage cutscenes.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Stages &amp; Enemies</h1>
+    <p class="lead">Building a complete battle. Enemies, AI, waves, backgrounds, cutscenes.</p>
+
+    <h2>Enemies</h2>
+    <p><code>Data/Enemy/Emma.json</code></p>
+<pre><code>{
+  "Name": "Emma",
+  "ID": 9201,
+  "PSB": "Emma,Normal,Normal",
+  "WellTerrain": "Cave",
+  "StartHP": 420, "LvAddHP": 18,
+  "StartAtk": 48, "LvAddAtk": 1,
+  "Pos_y": -1120, "Sca": 48,
+  "DoID":    ["1",          "1",           "1"],
+  "DoCON":   ["",           "{Turn}%4==3", "{Turn}%3==0"],
+  "DoSkill": ["Combo Punch", "Rapid Heal", "Defend"]
+}</code></pre>
+
+    <h3>Enemy AI: three parallel lists</h3>
+    <p><code>DoID</code> / <code>DoCON</code> / <code>DoSkill</code> are
+       <strong>three aligned lists</strong>. The same index across all three is one rule.</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Field</th><th>Meaning</th></tr>
+      <tr><td><code>DoID</code></td><td>Weight. Higher is picked more often. <code>-1</code> means an opening passive (that slot's <code>DoSkill</code> must be a passive skill)</td></tr>
+      <tr><td><code>DoCON</code></td><td>Trigger condition. Empty string means always true</td></tr>
+      <tr><td><code>DoSkill</code></td><td>Skill name. Must match one the game has, or one you added under <code>Data/Skill/</code></td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>Mismatched lengths are truncated to the shortest</strong>
+      The extras are <strong>silently ignored</strong>, with no error. Count them yourself.
+    </div>
+    <p>The example above reads as:</p>
+    <ul>
+      <li>Normally uses "Combo Punch"</li>
+      <li>Turns 3, 7, 11&hellip; use "Rapid Heal" (<code>{Turn}%4==3</code>)</li>
+      <li>Turns 3, 6, 9&hellip; use "Defend" (<code>{Turn}%3==0</code>)</li>
+    </ul>
+
+    <h3>Portrait position and scale</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Field</th><th>Notes</th></tr>
+      <tr><td><code>Pos_y</code></td><td>Vertical position in the battle screen. Regular enemies sit around <code>-1120</code></td></tr>
+      <tr><td><code>Sca</code></td><td>Scale. Regular enemies are around <code>70</code>&ndash;<code>80</code></td></tr>
+    </table>
+    </div>
+
+    <figure>
+      <img src="../../assets/emma-body-normal.png" alt="Emma's portrait, source image 1475x2020" style="max-height:300px">
+      <figcaption>
+        Emma from the official example, source image <strong>1475&times;2020</strong>, drawn at
+        <code>Sca: 48</code> / <code>Pos_y: -1120</code>.<br>
+        The same on-screen height from a 1000&times;1600 image would need about 60 &mdash;
+        <strong>taller image, smaller <code>Sca</code></strong>.
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>Fastest approach: copy an existing enemy of similar build</strong>
+      Find one about the right size in game, copy its <code>Pos_y</code> / <code>Sca</code>,
+      then fine-tune.
+    </div>
+    <div class="note">
+      <strong>Adjusting portraits doesn't need a game restart</strong>
+      Save the file, return to the title screen, Start New Game or Load Game, and it applies.
+    </div>
+
+    <h3>Where enemy portraits go</h3>
+    <p>Exactly the same rules as characters (see <a href="04-images.html">Adding Images</a>);
+       the only difference is the field is called <code>PSB</code>.</p>
+<pre><code>Images/Role/Emma/Body/Body_Normal.png
+Images/Role/Emma/Face/Face_Normal.png
+Images/Role/Emma/Face/Face_Sad.png
+Images/Role/Emma/Face/Face_Shock.png</code></pre>
+    <p><code>PSB</code>'s three parts are "PSB name, face, body":</p>
+<pre><code>"PSB": "Emma,Normal,Normal"</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/emma-body-normal.png" alt="Body_Normal">
+        <span class="fig-label"><code>Body_Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-composite-shock.png" alt="Body plus Face_Shock">
+        <span class="fig-label">+ <code>Face_Shock</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-face-sad.png" alt="Face_Sad on its own">
+        <span class="fig-label"><code>Face_Sad</code> alone</span>
+      </div>
+      <figcaption>
+        Emma's four images (1 Body + 3 Face).
+        <strong>On the right is <code>Face_Sad.png</code> by itself</strong> &mdash;
+        every expression image is a full-body canvas with everything but the face transparent.
+        Checkerboard is transparency.
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>Characters and enemies can share one portrait set</strong>
+      The example Emma appears as an enemy first, then joins the party using the same
+      <code>PSB</code> after you beat her.<br>
+      Each table has its own <code>Pos_y</code> / <code>Sca</code> &mdash; the battle screen and
+      the home screen frame her differently.
+    </div>
+
+    <h2>Stages</h2>
+    <p><code>Data/Stage/AbyssTrial.json</code></p>
+<pre><code>{
+  "Name": "Abyss Trial",
+  "ID": 9201,
+  "Group": "Mods",
+  "Tag": "Battle",
+  "Rank": 1,
+  "FightWinExp": "60", "FightWinMoney": "60",
+  "FightWhere": "Cave",
+  "FightBackground": "Background_ModAbyss, Background_ModAbyss_Night",
+  "FightBGM": "BGM_Fight2",
+  "EnemyLv": ["3", "5"],
+  "Enemys":  ["Emma", "Emma, Jellyfish"],
+  "GetItem": ["Apple"],
+  "GetItemProbability": ["0.5"]
+}</code></pre>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>Field</th><th>Notes</th></tr>
+      <tr><td><code>Group</code></td><td>Group in the stage menu. The game ships a built-in <code>Mods</code> group</td></tr>
+      <tr><td><code>Tag</code></td><td>Without "Battle" it only plays a show and never starts a fight</td></tr>
+      <tr><td><code>FightWhere</code></td><td>Location; affects terrain matchups</td></tr>
+      <tr><td><code>FightBackground</code></td><td>Battle background. Comma-separated for one per wave</td></tr>
+      <tr><td><code>FightBGM</code></td><td>Battle music. Comma-separated for one per wave</td></tr>
+    </table>
+    </div>
+
+    <h3>Waves</h3>
+    <div class="warn">
+      <strong>One element of <code>Enemys</code> is one wave</strong>
+      Several enemies in the same wave go in one string, comma-separated.
+    </div>
+<pre><code>"Enemys": ["Emma", "Emma, Jellyfish"]     wave 1: one enemy, wave 2: two
+"Enemys": ["Emma,Jellyfish"]              one wave of two (spaces optional)</code></pre>
+    <div class="note">
+      <strong>You can use the game's existing enemies</strong>
+      "Jellyfish" above is a base-game enemy &mdash; you don't have to add your own.
+    </div>
+
+    <div class="warn">
+      <strong>Never put two identically-named enemies in one wave</strong>
+      Don't write <code>"Emma, Emma"</code>.<br>
+      Several parts of the game look enemies up <strong>by name</strong> to find their position on
+      the field. With two of the same name only the first is ever found &mdash; the second one's
+      effect coordinates and targeting land on the first.<br>
+      To field two of the same kind, <strong>duplicate the data under a different name</strong>
+      (the game's own "Knight / Knight B / Knight C" does exactly this).<br>
+      The same name across different waves is fine (each wave is cleared and respawned).
+    </div>
+
+    <h3>Parallel lists</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Field pair</th><th>Alignment</th></tr>
+      <tr><td><code>Enemys</code> / <code>EnemyLv</code></td><td>one element = one wave</td></tr>
+      <tr><td><code>FightBackground</code> / <code>FightBGM</code></td><td>comma-separated, one per wave</td></tr>
+      <tr><td><code>GetItem</code> / <code>GetItemProbability</code></td><td>same index = same drop</td></tr>
+    </table>
+    </div>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss.png" alt="Wave 1 background">
+        <span class="fig-label">Wave 1<br><code>Background_ModAbyss</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss-night.png" alt="Wave 2 background">
+        <span class="fig-label">Wave 2<br><code>Background_ModAbyss_Night</code></span>
+      </div>
+      <figcaption>
+        Comma-separate <code>FightBackground</code> to change the backdrop each wave.<br>
+        Backgrounds are <strong>960&times;540</strong>, stored in <code>Images/Background/</code>.
+      </figcaption>
+    </figure>
+
+    <div class="note">
+      <strong>Short lists are reused</strong>
+      If <code>EnemyLv</code> runs out the game computes levels automatically;
+      <code>FightBackground</code> / <code>FightBGM</code> fall back to the first entry.
+    </div>
+
+    <h2>Stage cutscenes</h2>
+    <p>Three fields take show names:</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Field</th><th>When</th></tr>
+      <tr><td><code>StartShow</code></td><td>On entering, before the fight</td></tr>
+      <tr><td><code>FightWinShow</code></td><td>After winning</td></tr>
+      <tr><td><code>FightLoseShow</code></td><td>After losing</td></tr>
+    </table>
+    </div>
+    <p>All three are optional. The shows themselves live in <code>Data/Show/</code>
+       (see <a href="06-shows.html">Shows &amp; Granting Content</a>).</p>
+
+    <h3>Example opening show</h3>
+<pre><code>Data/Show/StageStart.json
+
+{
+  "Name": "Abyss Trial_Start",
+  "Tag": "Story",
+  "Shows": [
+    "&lt;BG&gt;Background_ModAbyss,0,#00000000",
+    "&lt;BG&gt;Background_ModAbyss,1,#FFFFFF",
+    "&lt;Talk&gt;From the depths of the abyss came an ill-timed hymn.",
+    "&lt;Image&gt;Mid,Emma,Normal",
+    "&lt;Talk&gt;Emma: &hellip;&hellip;&#9834;",
+    "&lt;Image&gt;Mid,Emma,Shock",
+    "&lt;ImageShake&gt;Mid",
+    "&lt;Talk&gt;Emma: Oh. Visitors.",
+    "&lt;Talk&gt;",
+    "&lt;Image&gt;",
+    "&lt;BG&gt;,1"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>Conventions</strong>
+      <ul>
+        <li>Opening <code>&lt;BG&gt;name,0,#00000000</code> + <code>&lt;BG&gt;name,1,#FFFFFF</code> fades the background in</li>
+        <li><code>&lt;Talk&gt;</code> with no text closes the dialogue box</li>
+        <li><code>&lt;Image&gt;</code> with no arguments clears all three portrait slots</li>
+        <li>Closing <code>&lt;BG&gt;,1</code> fades out so the battle screen can take over</li>
+      </ul>
+    </div>
+
+    <h3>"Join the party only if you win"</h3>
+    <p>A more natural way to grant a character than AutoRun &mdash; AutoRun gives them the moment
+       the mod is enabled; a victory show makes the player earn it:</p>
+<pre><code>&lt;Image&gt;Mid,Emma,Laugh
+&lt;Talk&gt;Emma: Well then. As agreed, I'm with you from today.
+&lt;Talk&gt;
+&lt;Image&gt;
+&lt;AddRole&gt;Emma
+&lt;BG&gt;,1</code></pre>
+    <div class="ok">
+      <strong>No flag needed for repeat clears</strong>
+      <code>&lt;AddRole&gt;</code> is safe on a character the player already has &mdash;
+      it's skipped, without duplicating or resetting their level.
+    </div>
+
+    <h2>Mid-battle turn shows</h2>
+    <p>Shows can also fire at the start of any turn during a fight. These
+       <strong>aren't referenced from the stage data</strong> &mdash; matching the name is enough:</p>
+<pre><code>{StageName}_Wave{n}_{PlayerTurn|EnemyTurn}{turn}</code></pre>
+    <p>Waves and turns both count from 1. For example:</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Show name</th><th>When</th></tr>
+      <tr><td><code>Abyss Trial_Wave2_PlayerTurn1</code></td><td>Wave 2, the player's first turn</td></tr>
+      <tr><td><code>Abyss Trial_Wave2_PlayerTurn</code></td><td><strong>Every</strong> player turn in wave 2</td></tr>
+      <tr><td><code>Abyss Trial_PlayerTurn3</code></td><td>Turn 3 of the whole battle (any wave)</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>Numbered beats unnumbered</strong>
+      With both <code>_PlayerTurn1</code> and <code>_PlayerTurn</code> present, turn 1 plays the
+      numbered one.
+    </div>
+
+    <h3>Mid-battle conventions differ</h3>
+    <p>Story sections use a background image; <strong>mid-battle uses <code>null</code> plus a
+       semi-transparent black overlay</strong> on top of the battle screen:</p>
+<pre><code>&lt;BG&gt;null,0,#00000000
+&lt;BG&gt;null,0.5,#000000CC      dim the battle screen
+&lt;Wait&gt;1
+&lt;Image&gt;Mid,Emma,Shock
+&lt;Talk&gt;Emma: Wait &mdash; you're serious?
+&lt;Talk&gt;
+&lt;Image&gt;
+&lt;BG&gt;,0.5                    drop the overlay, back to the fight
+&lt;EnemyImage&gt;Emma,Emma,Sad   change her expression on the field</code></pre>
+    <div class="warn">
+      <strong><code>&lt;EnemyImage&gt;</code> must come <em>after</em> the overlay clears</strong>
+      Change the expression while the screen is still dimmed and the player won't see it.
+    </div>
+
+    <h2>Making the stage visible to players</h2>
+    <div class="warn">
+      <strong>Data alone only means the stage exists &mdash; the player doesn't have it</strong>
+      Grant it with an AutoRun show. <strong>Both lines are required</strong>:
+    </div>
+<pre><code>Data/Show/AutoRun.json
+
+{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddStageGroup&gt;Mods",
+    "&lt;AddStage&gt;Abyss Trial"
+  ]
+}</code></pre>
+    <p>See <a href="06-shows.html">Shows &amp; Granting Content</a>.</p>
+
+    <h2>Skills</h2>
+    <p>Skills go in <code>Data/Skill/</code>. The character skill fields have one mapping rule
+       that's easy to get wrong:</p>
+    <div class="warn">
+      <strong>The first 4 <code>Skill</code> entries are base skills; conditions start at the 5th</strong>
+      The first four are available from the start and need no condition.<br>
+      From the fifth onwards they map <strong>in order</strong> to <code>ElseSkillCon</code>:
+<pre><code>Skill[4] &lt;- ElseSkillCon[0]
+Skill[5] &lt;- ElseSkillCon[1]
+&hellip;</code></pre>
+      So <code>ElseSkillCon</code> does <strong>not</strong> need empty placeholders for the first four.
+    </div>
+
+    <h2>Official example mods</h2>
+    <div class="ok">
+      <strong>The game ships a complete example</strong>
+      Under <code>Mods/</code> there's an official example covering a whole stage:
+      custom enemy with expression variants, a two-wave stage that changes background per wave,
+      opening / victory / defeat cutscenes, and a character who joins when you win.<br>
+      <strong>When unsure how a field should be written, go look at it.</strong>
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 7 });</script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirate Mod Guide</title>
+<meta name="description" content="AutoRun shows, granting characters and stages to the player, room dialogue. The only hook a mod has to act on its own.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Menu">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Shows &amp; Granting Content</h1>
+    <p class="lead">Writing data only means the thing exists. The player still doesn't have it.
+       This chapter is about actually handing it over.</p>
+
+    <div class="warn">
+      <strong>This is the step people miss</strong>
+      You add a character under <code>Data/Role/</code>, the data is perfect &mdash;
+      and the player will never get them.<br>
+      Items have a price field so they can appear in the shop on their own.
+      <strong>Characters and stages don't.</strong> The only way to grant them is a show command.
+    </div>
+
+    <h2>What a show is</h2>
+    <p>A show is a list of game commands. It can be story dialogue, or pure data manipulation.
+       Shows live in <code>Data/Show/</code>, one per file.</p>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;NewHero"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>A show has exactly four fields</strong>
+      <code>ID</code> / <code>Name</code> / <code>Tag</code> / <code>Shows</code>.
+      There's no description field; adding one does nothing.
+    </div>
+
+    <h2>AutoRun: a mod's only hook to act on its own</h2>
+    <p>Set <code>Tag</code> to <code>AutoRun</code> and the show plays automatically
+       <strong>after Start New Game and after Load Game</strong>.</p>
+<pre><code>Data/Show/AutoRun.json
+
+{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;NewHero",
+    "&lt;AddItem&gt;SuperPotion,1"
+  ]
+}</code></pre>
+
+    <div class="warn">
+      <strong>AutoRun runs every time, not once</strong>
+      It fires on every Start New Game and every Load Game.<br>
+      That's usually harmless &mdash; <code>&lt;AddRole&gt;</code> and <code>&lt;AddItem&gt;</code>
+      skip anything the player already has. They won't duplicate, and they won't reset levels.
+    </div>
+
+    <p>If you genuinely need it once only, guard it with a flag:</p>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;if&gt;{MyModInitialised}==0",
+    "&lt;AddRole&gt;NewHero",
+    "&lt;Var&gt;MyModInitialised,=,1",
+    "&lt;endif&gt;"
+  ]
+}</code></pre>
+
+    <div class="note">
+      <strong>Use your mod's name for <code>Name</code></strong>
+      <code>Name</code> is the merge key; if two mods have AutoRun shows with the same name, the
+      later one silently overwrites the earlier. Using your mod name avoids collisions.
+    </div>
+
+    <div class="note">
+      <strong><code>Tag</code> is a "contains" check, not equality</strong>
+      <code>"Tag": "AutoRun,Story"</code> still counts as AutoRun. Case-insensitive too, so
+      <code>autorun</code> works.
+    </div>
+
+    <h2>Granting a character</h2>
+<pre><code>&lt;AddRole&gt;NewHero</code></pre>
+    <p>The argument is the character's <code>Name</code> from the data table (not
+       <code>Name_I2</code>).</p>
+
+    <figure>
+      <img src="../../assets/ui-mod-role.png" alt="A mod character in the crew list with its own portrait and skills">
+      <figcaption>
+        The result of the official "Example Role" mod &mdash; a character added entirely by a mod,
+        with its own portrait, face icon, stats and skill set (<code>Killing Intent</code>,
+        <code>Night Rapture</code> and <code>Gravity Field</code> are all mod-defined).<br>
+        None of it reaches the player without that one <code>&lt;AddRole&gt;</code> line
+        &mdash; <strong>however complete the data is</strong>.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="../../assets/ui-mod-role-slot.png" alt="The mod character sits at the very end of the crew list">
+      <figcaption>
+        <strong>Mod content is always appended to the end of a list.</strong>
+        Can't find the character you added? Scroll to the bottom &mdash; that's usually where it is.
+      </figcaption>
+    </figure>
+
+    <div class="warn">
+      <strong>Two more conditions for the crew gallery</strong>
+      <ul>
+        <li><code>ID</code> greater than 0</li>
+        <li><code>Name</code> not empty</li>
+      </ul>
+      Without both, the character stays invisible even after <code>&lt;AddRole&gt;</code> runs.
+    </div>
+
+    <h2>Granting a stage</h2>
+    <p><strong>Both lines are required.</strong></p>
+<pre><code>&lt;AddStageGroup&gt;Mods
+&lt;AddStage&gt;Abyss Trial</code></pre>
+    <div class="warn">
+      <strong>Without <code>&lt;AddStageGroup&gt;</code> the stage is invisible</strong>
+      Stages have to hang off a group. No group, no place for it in the stage menu.<br>
+      The game ships a built-in group called <code>Mods</code> you can use directly.
+    </div>
+    <div class="ok">
+      <strong>Running it repeatedly is safe</strong>
+      Groups and stages the player already has aren't added twice.
+    </div>
+
+    <h2>Granting items</h2>
+<pre><code>&lt;AddItem&gt;SuperPotion,1</code></pre>
+    <div class="note">
+      <strong>Items usually don't need AutoRun</strong>
+      Set <code>SellPrice</code> and the item shows up in the shop for players to buy.
+      <code>&lt;AddItem&gt;</code> is only for handing it over directly.
+    </div>
+
+    <h2>One caveat about AutoRun</h2>
+    <div class="warn">
+      <strong>If the save is mid-story, AutoRun runs alongside it</strong>
+      Loading a save that resumes a cutscene means AutoRun competes with it for the screen.<br>
+      <strong>Keep AutoRun to pure data commands</strong> &mdash;
+      <code>&lt;AddRole&gt;</code>, <code>&lt;AddItem&gt;</code>, <code>&lt;AddStage&gt;</code>,
+      <code>&lt;Var&gt;</code>.<br>
+      For dialogue and pacing, a <strong>stage victory show</strong> is a better home
+      (see the next chapter).
+    </div>
+    <div class="ok">
+      <strong>Multiple mods' AutoRun shows run one after another</strong>
+      Never concurrently. The order is the mod list order (top to bottom).<br>
+      So a <code>&lt;Wait&gt;</code> in your AutoRun does what you intended &mdash;
+      no other mod interrupts.
+    </div>
+
+    <h2>Naming conventions: filling the game's show slots</h2>
+    <p>Various parts of the game look for shows by a <strong>fixed name</strong>. Name your show
+       to match and it gets called &mdash; no <code>Tag</code> needed.</p>
+
+    <h3>Home screen character dialogue</h3>
+    <p>Plays when the player clicks a character portrait on the home screen:</p>
+<pre><code>RoomTalk_&lt;character Name&gt;</code></pre>
+    <p>For a character whose <code>Name</code> is <code>NewHero</code>:</p>
+<pre><code>Data/Show/RoomTalk.json
+
+{
+  "Name": "RoomTalk_NewHero",
+  "Shows": [
+    "&lt;Var&gt;RoomTalkCount,+,1",
+    "&lt;if&gt;{RoomTalkCount}&gt;3",
+    "&lt;Var&gt;RoomTalkCount,=,1",
+    "&lt;endif&gt;",
+    "&lt;if&gt;{RoomTalkCount}==1",
+    "&lt;MateImage&gt;NewHero",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: Hey there.",
+    "&lt;elseif&gt;{RoomTalkCount}==2",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: You again.",
+    "&lt;elseif&gt;",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: Stop poking me.",
+    "&lt;endif&gt;"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>Skipping this isn't an error</strong>
+      The character just stands there silently on the home screen. Add it if you want reactions.<br>
+      Note it uses the data table's <code>Name</code>, not the translated display name.
+    </div>
+
+    <h2>Command reference</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Command</th><th>Effect</th></tr>
+      <tr><td><code>&lt;AddRole&gt;Name</code></td><td>Give the player a character</td></tr>
+      <tr><td><code>&lt;AddItem&gt;Name,count</code></td><td>Give items</td></tr>
+      <tr><td><code>&lt;AddStageGroup&gt;name</code></td><td>Unlock a stage group</td></tr>
+      <tr><td><code>&lt;AddStage&gt;Name</code></td><td>Unlock a stage</td></tr>
+      <tr><td><code>&lt;Var&gt;name,=,value</code></td><td>Set a variable (<code>=</code> / <code>+</code> / <code>-</code>)</td></tr>
+      <tr><td><code>&lt;if&gt;cond</code> &hellip; <code>&lt;endif&gt;</code></td><td>Conditional, with <code>&lt;elseif&gt;</code> in between</td></tr>
+      <tr><td><code>&lt;Talk&gt;text</code></td><td>Dialogue. With no text, closes the dialogue box</td></tr>
+      <tr><td><code>&lt;MateTalk&gt;text</code></td><td>Home screen dialogue</td></tr>
+      <tr><td><code>&lt;Wait&gt;seconds</code></td><td>Pause</td></tr>
+      <tr><td><code>&lt;BG&gt;name,seconds,colour</code></td><td>Background. <code>&lt;BG&gt;,1</code> fades out</td></tr>
+      <tr><td><code>&lt;Image&gt;slot,character,face,body</code></td><td>Portrait. With no arguments, clears all</td></tr>
+      <tr><td><code>&lt;MateImage&gt;character,face,body</code></td><td>Home screen portrait (no slot argument)</td></tr>
+      <tr><td><code>&lt;BGM&gt;name</code></td><td>Change music</td></tr>
+      <tr><td><code>&lt;Sfx&gt;name</code></td><td>Play a sound effect</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>The full command list is in the Show Editor</strong>
+      There are many commands with fiddly arguments. Writing shows in the
+      <a href="10-showeditor.html">Show Editor</a> lets you pick from a menu with descriptions
+      instead of memorising them.
+    </div>
+
+    <h2>Dialogue conventions</h2>
+    <p>Write the speaker as "Name: text":</p>
+<pre><code>&lt;Talk&gt;NewHero: Good morning.</code></pre>
+    <div class="ok">
+      <strong>A name matching a character gets coloured and spotlit automatically</strong>
+      Matched against the data table's <code>Name</code>. No match just means plain text &mdash;
+      not an error.
+    </div>
+
+    <h3>Opening and closing a story section</h3>
+    <p>Follow the game's own convention:</p>
+<pre><code>&lt;BG&gt;MyBG,0,#00000000      set the background, fully transparent
+&lt;BG&gt;MyBG,1,#FFFFFF        fade in over 1 second
+&lt;Talk&gt;Someone: Opening line.
+&lt;Talk&gt;                     close the dialogue box
+&lt;Image&gt;                    clear the portraits
+&lt;BG&gt;,1                     fade the background out</code></pre>
+
+    <h2>Checklist</h2>
+    <p>Character or stage added but the player can't see it:</p>
+    <ol>
+      <li>Did you write an AutoRun show? (<strong>most common cause</strong>)</li>
+      <li>Does <code>Tag</code> contain <code>AutoRun</code>?</li>
+      <li>Is the <code>&lt;AddRole&gt;</code> argument the data table's <code>Name</code>?
+          (not <code>Name_I2</code>)</li>
+      <li>Is <code>ID</code> greater than 0?</li>
+      <li>For stages, did you include <code>&lt;AddStageGroup&gt;</code>?</li>
+      <li>Did you return to the title screen and Start New Game or Load Game?</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'en', page: 6 });</script>
+</body>
+</html>
