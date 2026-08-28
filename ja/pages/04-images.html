@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="自作PNGをパイレーツに入れる。フォルダ対応表、表情差分、既存素材の差し替え。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>画像の追加</h1>
+    <p class="lead">MODは独自の画像を同梱できます。<code>Images/</code> に置けば読み込まれます。</p>
+
+    <h2>基本ルール</h2>
+<pre><code>Mods/&lt;あなたのMOD&gt;/Images/&lt;ゲームと同じ構成&gt;/&lt;名前&gt;.png</code></pre>
+    <div class="ok">
+      <strong>ゲーム本体のフォルダ構成をそのまま真似るだけです</strong>
+      特別なルールを覚える必要はありません。ゲームは顔アイコンを <code>RoleHead/</code> に
+      置いているので、MODも <code>Images/RoleHead/</code> に置く。それだけです。
+    </div>
+
+    <h2>例</h2>
+<pre><code>MyMod/
+&#9500;&#9472;&#9472; mod.json
+&#9500;&#9472;&#9472; Data/
+&#9474;   &#9492;&#9472;&#9472; Role/
+&#9474;       &#9492;&#9472;&#9472; NewHero.json
+&#9492;&#9472;&#9472; Images/
+    &#9500;&#9472;&#9472; RoleHead/
+    &#9474;   &#9492;&#9472;&#9472; NewHero.png      顔アイコン
+    &#9492;&#9472;&#9472; Role/
+        &#9492;&#9472;&#9472; NewHero.png      立ち絵</code></pre>
+
+    <h3>フォルダ対応表</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>フォルダ</th><th>内容</th><th>データ項目</th></tr>
+      <tr><td><code>Images/Role/</code></td><td>立ち絵（キャラと敵で共通）</td><td><code>PSB</code></td></tr>
+      <tr><td><code>Images/RoleHead/</code></td><td>顔アイコン</td><td><code>ImageName</code> / <code>EyeImageName</code></td></tr>
+      <tr><td><code>Images/Icon/</code></td><td>アイテム・バフのアイコン</td><td><code>IconName</code></td></tr>
+      <tr><td><code>Images/Background/</code></td><td>背景画像</td><td><code>FightBackground</code>、スクリプトの <code>&lt;BG&gt;</code></td></tr>
+      <tr><td><code>Images/Sticker/</code></td><td>ステッカー画像</td><td>スクリプトの <code>&lt;Sticker&gt;</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong><code>IconName</code> はサブパスを含めます</strong>
+      <code>Images/Icon/Buff/MyIcon.png</code> のアイコンは
+      <code>"Icon/Buff/MyIcon"</code> と書きます。<br>
+      他の項目（<code>PSB</code>、<code>ImageName</code>）はファイル名だけで構いません。
+    </div>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-head.png" alt="RoleHead：正方形の顔アイコン 300x300">
+        <span class="fig-label"><code>RoleHead/Nausea.png</code><br>300&times;300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Role：縦長の立ち絵">
+        <span class="fig-label"><code>Role/Nausea/&hellip;</code><br>900&times;1479</span>
+      </div>
+      <figcaption>
+        同じキャラの<strong>顔アイコン</strong>と<strong>立ち絵</strong>は別々のフォルダにある
+        別の画像で、サイズも異なります。両方必要です。
+      </figcaption>
+    </figure>
+
+    <p>データ側では画像名を指定します：</p>
+<pre><code>{
+  "Name": "NewHero",
+  "Name_I2": "新キャラ",
+  "ImageName": "NewHero"
+}</code></pre>
+    <div class="note">
+      <strong>フォルダ名も <code>.png</code> も含めません</strong>
+      ファイルは <code>Images/RoleHead/NewHero.png</code> ですが、データには
+      <code>"NewHero"</code> と書きます。どのフォルダを見るかはゲームが知っています。
+    </div>
+
+    <h2>表情と衣装の差分</h2>
+    <p>立ち絵には差分の有無で2つの置き方があります。</p>
+
+    <h3>(A) 差分なし &mdash; 1枚で完結</h3>
+<pre><code>Images/Role/Nausea.png</code></pre>
+
+    <h3>(B) 差分あり &mdash; フォルダにする</h3>
+<pre><code>Images/Role/Nausea/Body/Body_Normal.png
+Images/Role/Nausea/Body/Body_Dark.png
+Images/Role/Nausea/Face/Face_Normal.png
+Images/Role/Nausea/Face/Face_Laugh.png</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Body_Normal：全身画像">
+        <span class="fig-label"><code>Body/Body_Normal.png</code></span>
+      </div>
+      <div class="fig-op">+</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-face-laugh.png" alt="Face_Laugh：キャンバスは全身サイズ、顔だけ描かれている">
+        <span class="fig-label"><code>Face/Face_Laugh.png</code></span>
+      </div>
+      <div class="fig-op">=</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="2枚を重ねた結果">
+        <span class="fig-label">ゲームでの表示</span>
+      </div>
+      <figcaption>
+        市松模様は透明部分です。<strong>真ん中の画像に注目</strong> &mdash;
+        <code>Face_Laugh.png</code> は顔だけ描かれていますが、
+        <strong>キャンバスは全身サイズ</strong>です。
+        エンジンが同じ座標で重ねるので、表情に位置指定は不要になります。
+      </figcaption>
+    </figure>
+
+    <div class="warn">
+      <strong>これが最も多い間違いです</strong>
+      表情画像は顔のサイズだけでいいと思われがちですが<strong>違います</strong> &mdash;
+      全身サイズのキャンバスで、顔以外を透明にしてください。<br>
+      小さく切り抜くと左上に貼り付いてしまいます。
+    </div>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>ルール</th><th>詳細</th></tr>
+      <tr><td>フォルダ名 = グループ名</td><td>現在は <code>Body</code>（体・衣装）と <code>Face</code>（表情）の2種類</td></tr>
+      <tr><td>ファイル名 = レイヤー名</td><td><strong><code>Body_</code> / <code>Face_</code> の接頭辞は自分で付けます</strong></td></tr>
+      <tr><td>すべて全身サイズ</td><td>フルキャンバス、背景透明、<strong>全部同じ寸法</strong></td></tr>
+      <tr><td>重ね順</td><td>同じ座標で合成。<code>Face</code> が <code>Body</code> の上</td></tr>
+    </table>
+    </div>
+
+    <h4>衣装と表情の組み合わせ</h4>
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-normal.png" alt="Body_Normal + Face_Normal">
+        <span class="fig-label"><code>Normal</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="Body_Normal + Face_Laugh">
+        <span class="fig-label"><code>Normal</code> + <code>Laugh</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-normal.png" alt="Body_Dark + Face_Normal">
+        <span class="fig-label"><code>Dark</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-laugh.png" alt="Body_Dark + Face_Laugh">
+        <span class="fig-label"><code>Dark</code> + <code>Laugh</code></span>
+      </div>
+      <figcaption>
+        衣装2種 &times; 表情2種 = 4通りが、画像4枚（Body 2 + Face 2）だけで実現できます。<br>
+        スクリプトでは <code>&lt;Image&gt;Mid,Nausea,Laugh,Dark</code> で組み合わせを指定します。
+      </figcaption>
+    </figure>
+
+    <h3>既定で表示される差分</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>状況</th><th>結果</th></tr>
+      <tr><td>グループに <code>&lt;グループ&gt;_Normal</code> がある</td><td>それが表示される</td></tr>
+      <tr><td>グループに <code>Normal</code> が<strong>ない</strong></td><td>そのグループは<strong>既定で全部非表示</strong></td></tr>
+    </table>
+    </div>
+    <p>つまり <code>Face_Laugh.png</code> だけ置いた場合、
+       スクリプトが呼ぶまで表情は表示されません。</p>
+
+    <div class="warn">
+      <strong><code>Face_Normal.png</code> は必ず入れてください</strong>
+      「回想の境地 &gt; 船員」で立ち絵を開くと表情差分をめくれますが、
+      <strong><code>&lt;グループ&gt;_Normal</code> は必ず1ページ目</strong>になります
+      &mdash; プレイヤーが最初に見るのがそれです。<br>
+      追加の表情が無いなら、<code>Face_Normal.png</code> を<strong>完全透明</strong>にすれば
+      十分です（Body画像に既に顔があるため）。
+    </div>
+    <div class="note">
+      <strong>ページ順</strong>
+      ファイル名のアルファベット順ですが、<code>Normal</code> だけは常に先頭です。<br>
+      意図的な「無表情」ページを増やしたい場合は、ゲームの慣例に従って
+      <code>Face_Null.png</code>（完全透明）を置いてください &mdash;
+      名前に <code>Null</code> を含む表情は<strong>最終ページ</strong>に固定されます。
+    </div>
+
+    <h3>スクリプトでの差分切り替え</h3>
+    <div class="warn">
+      <strong><code>&lt;Image&gt;</code> の第1引数は「スロット」でキャラ名ではありません</strong>
+      スロットは <code>Mid</code> / <code>Left</code> / <code>Right</code>。
+      キャラ名は<strong>第2引数</strong>から始まります。
+    </div>
+<pre><code>&lt;Image&gt;Mid,Nausea,Laugh        顔を Face_Laugh に
+&lt;Image&gt;Mid,Nausea,,Dark        体を Body_Dark に
+&lt;Image&gt;Mid,Nausea,Laugh,Dark   両方同時に
+&lt;Image&gt;Mid,Nausea,-            そのグループを全部消す
+&lt;Image&gt;Mid                     そのスロットの立ち絵を消す
+&lt;Image&gt;                        3スロットすべて消す</code></pre>
+    <p>表情も衣装も<strong>接頭辞は省きます</strong> &mdash;
+       <code>Face_Laugh</code> ではなく <code>Laugh</code> と書きます。</p>
+
+    <p>同系統の2つの命令は<strong>スロット引数を持たず</strong>、キャラ名から始まります：</p>
+<pre><code>&lt;MateImage&gt;Nausea,Laugh        ホーム画面の立ち絵
+&lt;EnemyImage&gt;エマ,Emma,Shock    戦闘中の敵の立ち絵を差し替え</code></pre>
+    <div class="note">
+      <strong><code>&lt;EnemyImage&gt;</code> の第1引数は敵のデータ <code>Name</code></strong>
+      「PSB名,表情,衣装」は第2引数からです。
+    </div>
+    <div class="note">
+      <strong>指定した差分が見つからない場合</strong>
+      ゲームがログを出し（例：<em>グループ【Face】に【Face_Angry】がありません</em>）、
+      そのグループは非表示になります。
+    </div>
+
+    <h2>形式</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目</th><th>要件</th></tr>
+      <tr><td>ファイル形式</td><td>PNG</td></tr>
+      <tr><td>透過</td><td>対応（立ち絵やアイコンでは通常必要）</td></tr>
+      <tr><td>寸法</td><td>厳密な制限はありませんが、<strong>ゲーム本体の同種画像に合わせて</strong>ください。合わないと大きすぎたり小さすぎたりします</td></tr>
+    </table>
+    </div>
+
+    <h2>ゲーム本体の画像を差し替える</h2>
+    <p><strong>同じパス・同じファイル名</strong>を使えば上書きされます。</p>
+<pre><code>Images/RoleHead/Rackham.png      &lt;-- ラクハムの顔アイコンを差し替え</code></pre>
+    <div class="ok">
+      <strong>MODの画像がゲーム本体より優先されます</strong>
+      これは意図的な設計です &mdash;「立ち絵の差し替え」「UIのリスキン」といったMODは
+      できて然るべきだからです。設定不要、同名にするだけです。
+    </div>
+    <div class="warn">
+      <strong>ファイル名は完全一致が必要です</strong>
+      1文字違うだけで差し替えにならず、誰も使わない新しい画像になります。
+    </div>
+
+    <h2>サブフォルダには意味があります</h2>
+    <p>音声とは異なり、<strong>画像はフォルダ構成が検索パスの一部</strong>です：</p>
+<pre><code>Images/RoleHead/Nausea.png    &lt;-- 顔アイコン
+Images/Role/Nausea.png        &lt;-- 立ち絵</code></pre>
+    <p>この2つは別の画像です。置き場所を間違えると単純に見つかりません。</p>
+    <div class="warn">
+      <strong>音声はこれと逆です</strong>
+      <a href="05-audio.html">音声</a>のサブフォルダは整理用で、検索には影響しません。
+      画像のサブフォルダは<strong>パスの一部</strong>です。
+    </div>
+
+    <h2>メモリ</h2>
+    <div class="note">
+      <strong>画像は起動時に全部読み込まれ、常駐します</strong>
+      数枚から数十枚なら問題ありません。高解像度画像が数百枚あるMODでは
+      プレイヤーのメモリ使用量が目に見えて増えます &mdash; 作者の判断次第です。
+    </div>
+
+    <h2>チェックリスト</h2>
+    <p>画像が出ないときは順番に：</p>
+    <ol>
+      <li>本当に <code>.png</code> ですか？（JPGをリネームしただけではない？）</li>
+      <li><code>Images/</code> の下にありますか？（sあり）</li>
+      <li>サブフォルダの綴りは正しいですか？（<code>RoleHead</code>、<code>Rolehead</code> ではない）</li>
+      <li><code>ImageName</code> はファイル名と一致していますか？（<code>.png</code> は含めない）</li>
+      <li>差分フォルダの場合、<code>Body_</code> / <code>Face_</code> の接頭辞を付けましたか？</li>
+      <li>差分画像はすべて同じ全身サイズですか？</li>
+      <li>タイトルに戻って「新規開始」か「セーブ読み込み」をしましたか？</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 4 });</script>
+</body>
+</html>

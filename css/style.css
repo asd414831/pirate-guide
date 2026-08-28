@@ -57,6 +57,7 @@ body {
 .sidebar {
   width: var(--sidebar-w);
   flex: 0 0 var(--sidebar-w);
+  position: relative;          /* 拖曳握把的定位基準 */
   background: var(--bg-soft);
   border-right: 1px solid var(--border);
   padding: 24px 0;
@@ -101,37 +102,44 @@ body {
 }
 .nav-list .num { color: var(--accent-dim); margin-right: 6px; font-variant-numeric: tabular-nums; }
 
-/* ---------- 語言切換（側邊欄頂端的下拉選單） ---------- */
+/* ---------- 語言切換（地球圖示 + 下拉，一行） ---------- */
 .lang-box {
-  padding: 14px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px 14px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 12px;
 }
-.lang-label {
-  display: block;
-  font-size: 11px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--fg-dim);
-  margin-bottom: 6px;
+.lang-globe {
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: var(--fg-dim);
+  stroke-width: 1.6;
+  stroke-linecap: round;
 }
+.lang-box:hover .lang-globe { stroke: var(--accent); }
+
 .lang-select {
-  width: 100%;
-  padding: 7px 30px 7px 10px;
-  font-size: 14px;
+  flex: 1 1 auto;
+  min-width: 0;                 /* flex 子元素預設不會縮小到內容以下，會撐破側邊欄 */
+  padding: 6px 28px 6px 9px;
+  font-size: 13.5px;
   font-family: inherit;
   color: var(--fg);
   background-color: var(--bg);
   border: 1px solid var(--border);
   border-radius: 5px;
   cursor: pointer;
-  /* 自訂箭頭：原生箭頭在深色主題下常是黑的，看不見 */
   appearance: none;
   -webkit-appearance: none;
+  /* 原生箭頭在深色主題下是黑的，看不見 —— 自己畫一個 */
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23d4a24a' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 11px 7px;
+  background-position: right 9px center;
+  background-size: 10px 6px;
 }
 .lang-select:hover { border-color: var(--accent); }
 .lang-select:focus {
@@ -139,8 +147,44 @@ body {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(212,162,74,.22);
 }
-/* 展開後的選項清單由作業系統畫，只能設顏色 —— 至少讓它跟著主題走 */
 .lang-select option { background: var(--bg-soft); color: var(--fg); }
+
+/* ---------- 側邊欄寬度拖曳 ---------- */
+/* 貼在側邊欄右緣的細長熱區。視覺上只有 1px 的線，
+   但可點擊寬度給到 9px —— 1px 的目標太難用滑鼠抓。 */
+.sb-resizer {
+  position: absolute;
+  top: 0;
+  right: -4px;              /* 跨在邊界上，一半在內一半在外 */
+  width: 9px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 15;
+  background: transparent;
+}
+.sb-resizer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 4px;
+  width: 1px;
+  height: 100%;
+  background: transparent;
+  transition: background .15s;
+}
+.sb-resizer:hover::after,
+body.sb-resizing .sb-resizer::after { background: var(--accent); }
+
+/* 拖曳中：關掉整頁的文字選取，否則滑鼠掃過內文會反白選字 */
+body.sb-resizing {
+  cursor: col-resize;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (max-width: 860px) {
+  .sb-resizer { display: none; }   /* 手機版是抽屜，寬度固定 */
+}
 
 /* ---------- 內文 ---------- */
 h1 { font-size: 30px; color: var(--accent); margin: 0 0 8px; line-height: 1.3; }

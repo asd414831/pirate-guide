@@ -116,8 +116,14 @@ function buildNav(opts) {
   // 為什麼用 <select> 而不是三顆按鈕：語言之後可能加到 6 個（遊戲支援
   // 繁中/簡中/英/日/韓/俄），按鈕會擠成兩行。<select> 不管幾個語言都是一行，
   // 而且手機上會叫出系統原生的選單，比一排小按鈕好點。
+  // 地球アイコン + セレクト。文字ラベルは出さない ——
+  // 「語言 / Language / 言語」と書いてもその言語が読めない人には意味がなく、
+  // 地球アイコンのほうが言語非依存で伝わる。読み上げ用に aria-label は残す。
   nav += '<div class="lang-box">'
-       + '<label class="lang-label" for="langSel">' + (t.langLabel || 'Language') + '</label>'
+       + '<svg class="lang-globe" viewBox="0 0 24 24" aria-hidden="true">'
+       + '<circle cx="12" cy="12" r="9"/>'
+       + '<path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/>'
+       + '</svg>'
        + '<select id="langSel" class="lang-select" aria-label="' + (t.langLabel || 'Language') + '">';
   for (const L of LANGS) {
     const target = page === 0
@@ -153,6 +159,8 @@ function buildNav(opts) {
       if (this.value) location.href = this.value;
     });
   }
+
+  setupResizer(sb);
 
   // ---- 上下頁 ----
   const pager = document.querySelector('.pager');
@@ -196,4 +204,86 @@ function buildCards(lang, descs) {
   }
   const box = document.querySelector('.cards');
   if (box) box.innerHTML = html;
+}
+
+/* ===================================================================
+   側邊欄寬度拖曳
+   章節名的長度隨語言差很多（日文最長），固定 260px 對某些語言會截斷。
+   讓讀者自己調，寬度存 localStorage，換頁後保持。
+   =================================================================== */
+const SB_MIN = 180, SB_MAX = 480, SB_DEFAULT = 260;
+const SB_KEY = 'pg-sidebar-w';
+
+function applySidebarWidth(px) {
+  const w = Math.max(SB_MIN, Math.min(SB_MAX, Math.round(px)));
+  document.documentElement.style.setProperty('--sidebar-w', w + 'px');
+  return w;
+}
+
+function saveSidebarWidth(w) {
+  // 隱私模式下 localStorage 可能整個 throw，一律包起來
+  try { localStorage.setItem(SB_KEY, String(w)); } catch (e) {}
+}
+
+function setupResizer(sb) {
+  if (!sb) return;
+
+  try {
+    const saved = parseInt(localStorage.getItem(SB_KEY), 10);
+    if (saved) applySidebarWidth(saved);
+  } catch (e) { /* 讀不到就用預設 */ }
+
+  const grip = document.createElement('div');
+  grip.className = 'sb-resizer';
+  grip.setAttribute('role', 'separator');
+  grip.setAttribute('aria-orientation', 'vertical');
+  grip.setAttribute('aria-label', 'Resize sidebar');
+  grip.tabIndex = 0;
+  sb.appendChild(grip);
+
+  let dragging = false;
+
+  function move(e) {
+    if (!dragging) return;
+    // 側邊欄靠左貼齊，所以游標的 clientX 就是它該有的寬度
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    applySidebarWidth(x);
+    e.preventDefault();
+  }
+
+  function up() {
+    if (!dragging) return;
+    dragging = false;
+    document.body.classList.remove('sb-resizing');
+    const w = parseInt(getComputedStyle(document.documentElement)
+                       .getPropertyValue('--sidebar-w'), 10);
+    if (w) saveSidebarWidth(w);
+  }
+
+  function down(e) {
+    dragging = true;
+    document.body.classList.add('sb-resizing');
+    e.preventDefault();
+  }
+
+  grip.addEventListener('mousedown', down);
+  grip.addEventListener('touchstart', down, { passive: false });
+  document.addEventListener('mousemove', move);
+  document.addEventListener('touchmove', move, { passive: false });
+  document.addEventListener('mouseup', up);
+  document.addEventListener('touchend', up);
+
+  // 鍵盤：聚焦握把後用左右鍵調整。滑鼠拖曳對部分使用者不可行。
+  grip.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const cur = parseInt(getComputedStyle(document.documentElement)
+                         .getPropertyValue('--sidebar-w'), 10) || SB_DEFAULT;
+    saveSidebarWidth(applySidebarWidth(cur + (e.key === 'ArrowLeft' ? -16 : 16)));
+    e.preventDefault();
+  });
+
+  // 雙擊還原預設
+  grip.addEventListener('dblclick', function () {
+    saveSidebarWidth(applySidebarWidth(SB_DEFAULT));
+  });
 }

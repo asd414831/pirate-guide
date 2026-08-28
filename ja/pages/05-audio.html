@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="パイレーツにBGMと効果音を追加する。対応形式、命名規則、読み込みタイミングの注意点。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>音楽と効果音の追加</h1>
+    <p class="lead">MODは独自のBGMと効果音を同梱できます。</p>
+
+    <h2>基本ルール</h2>
+<pre><code>Mods/&lt;あなたのMOD&gt;/Music/&lt;任意のサブフォルダ&gt;/&lt;名前&gt;.ogg</code></pre>
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目</th><th>内容</th></tr>
+      <tr><td>対応形式</td><td>OGG / MP3 / WAV</td></tr>
+      <tr><td>推奨</td><td><strong>OGG</strong> &mdash; 容量が小さく、読み込みが速く、ライセンス問題もなし</td></tr>
+      <tr><td>サブフォルダ</td><td>好きに整理してOK。<strong>検索には影響しません</strong></td></tr>
+    </table>
+    </div>
+
+    <h2>名前は「ファイル名のみ」でパスを含みません</h2>
+    <div class="warn">
+      <strong>これは画像と逆なので混同しやすい点です</strong>
+      音声のサブフォルダは<strong>純粋に整理用</strong>で、検索はファイル名だけを見ます。<br>
+      <code>Music/BGM/MyTheme.ogg</code> と <code>Music/なんでも/入れ子/MyTheme.ogg</code> は
+      ゲームから見て<strong>まったく同じ</strong>、どちらも「MyTheme」です。
+    </div>
+    <p>したがって次の2つは同じ挙動になります：</p>
+<pre><code>Music/
+&#9500;&#9472;&#9472; BGM/
+&#9474;   &#9492;&#9472;&#9472; MyTheme.ogg          &rarr; ゲームが認識する名前は "MyTheme"
+&#9492;&#9472;&#9472; Sfx/
+    &#9492;&#9472;&#9472; se_MyHit.ogg         &rarr; ゲームが認識する名前は "se_MyHit"</code></pre>
+<pre><code>Music/
+&#9500;&#9472;&#9472; MyTheme.ogg              &rarr; やはり "MyTheme"
+&#9492;&#9472;&#9472; se_MyHit.ogg             &rarr; やはり "se_MyHit"</code></pre>
+
+    <div class="warn">
+      <strong>別フォルダの同名ファイルは片方が消えます</strong>
+      検索がファイル名だけを見るため、<code>Music/BGM/Theme.ogg</code> と
+      <code>Music/Sfx/Theme.ogg</code> は衝突し、片方しか有効になりません。<br>
+      自分で接頭辞（<code>BGM_</code>、<code>se_</code>）を付けて回避してください。
+    </div>
+
+    <h2>BGMを1曲追加する</h2>
+    <p><strong>2ステップ。どちらか欠けると音が出ません。</strong></p>
+
+    <h3>1. 音声ファイルを置く</h3>
+<pre><code>MyMod/
+&#9492;&#9472;&#9472; Music/
+    &#9492;&#9472;&#9472; BGM/
+        &#9492;&#9472;&#9472; BGM_MyTheme.ogg</code></pre>
+
+    <h3>2. BGMリストに登録する</h3>
+    <p><code>Data/BGM/MyTheme.json</code></p>
+<pre><code>{
+  "Name": "BGM_MyTheme",
+  "ID": 9201,
+  "Desc": "曲の説明文",
+  "Path": "BGM_MyTheme.ogg",
+  "Maker": "作曲者名"
+}</code></pre>
+    <div class="warn">
+      <strong>ファイルだけ、あるいは登録だけ &mdash; どちらも無言で失敗します</strong>
+      <ul>
+        <li>ファイルのみ &rarr; ゲーム内のどこからも参照されない</li>
+        <li>登録のみ &rarr; リストに名前は出るが<strong>音が鳴らない</strong></li>
+      </ul>
+      どちらの場合もエラーメッセージは出ません。
+    </div>
+    <div class="warn">
+      <strong><code>ID</code> が 0 より大きくないとリストに出ません</strong>
+      <code>ID</code> が 0 以下のデータはプレースホルダ行とみなされます。<br>
+      9000 以上を推奨します。
+    </div>
+    <div class="note">
+      <strong>その他の項目</strong>
+      <ul>
+        <li><code>Name</code> &mdash; 音声ファイル名と一致させる（<code>.ogg</code> は除く）</li>
+        <li><code>Desc</code> &mdash; 説明文</li>
+        <li><code>Path</code> &mdash; 表示専用。ファイル名でOK</li>
+        <li><code>Maker</code> &mdash; 作曲者</li>
+      </ul>
+    </div>
+    <div class="note">
+      <strong>音楽リストは最初ロックされています</strong>
+      ゲーム内で実際にその曲が再生されると自動的に解放されます。追加設定は不要です。
+    </div>
+
+    <h2>ゲーム本体の音楽を差し替える</h2>
+    <p><strong>同じファイル名</strong>にするだけです。登録は不要
+       （ゲームが既に登録済みのため）：</p>
+<pre><code>Music/BGM_Title.ogg      &lt;-- タイトル画面の曲を差し替え</code></pre>
+    <div class="ok">
+      <strong>MODの音声がゲーム本体より優先されます</strong>
+      画像と同じルールです。「サウンドトラック総入れ替え」MODも可能です。
+    </div>
+
+    <h2>効果音</h2>
+    <p>効果音もBGMと同じフォルダ・同じルールです。違いは
+       <strong>登録が不要</strong>な点だけ &mdash; スキルや演出が名前で指定します。</p>
+<pre><code>Music/Sfx/se_MyHit.ogg</code></pre>
+    <p>あとはスキルや演出で <code>se_MyHit</code> を指定します。</p>
+
+    <h2>読み込みタイミング（重要）</h2>
+    <div class="warn">
+      <strong>音声はバックグラウンドで読み込まれ、起動直後の数秒は準備できていません</strong>
+      画像と違い、音声（特にMP3）はデコードに時間がかかります。ゲームの方式は：<br>
+      起動時に<strong>ファイル一覧だけ記録</strong>（高速）、その後
+      <strong>バックグラウンドで順次デコード</strong>。<br>
+      そのため起動直後の数秒でMOD音声を再生すると、無音になるかゲーム本体の曲が鳴ります。
+      少し待てば正常になります。
+    </div>
+    <div class="note">
+      <strong>バグではなく、対処も不要です</strong>
+      実際のプレイで起動1秒後にMOD音楽の場面へ到達することはありません。ただ、
+      自分でテストしていて「1回目は無音、2回目は鳴る」なら理由はこれです。<br>
+      唯一の例外は<em>タイトル画面</em>のBGM差し替えで、その瞬間はまだ読み込み中の可能性があるため、
+      読み込み完了後にゲームが1回鳴らし直します。
+    </div>
+    <div class="warn">
+      <strong>MP3も使えますがOGGが安全です</strong>
+      MP3デコーダの対応状況は環境によって差があります。失敗時はゲームが警告を出します
+      （無言で失敗はしません）。OGGはUnityのネイティブ形式で最も確実です。
+    </div>
+
+    <h2>ファイルサイズの目安</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>用途</th><th>推奨</th><th>理由</th></tr>
+      <tr><td>BGM</td><td>OGG、2&ndash;5 MB</td><td>ループする曲はOGGの圧縮効率が最良</td></tr>
+      <tr><td>効果音</td><td>OGG か WAV、500 KB 未満</td><td>短い効果音はWAVでも可。デコードが最速</td></tr>
+      <tr><td>避けるべき</td><td>大きなWAV</td><td>WAVのBGMは50 MB超になることも。読み込みが遅く容量も無駄</td></tr>
+    </table>
+    </div>
+
+    <h2>チェックリスト</h2>
+    <p>音が出ないときは順番に：</p>
+    <ol>
+      <li>ファイルは <code>Music/</code> の下にありますか？</li>
+      <li>OGG / MP3 / WAV ですか？（リネームではなく実際に変換したもの）</li>
+      <li>BGMの場合、<code>Data/BGM/</code> に登録しましたか？</li>
+      <li>登録した <code>Name</code> はファイル名と完全一致していますか？（拡張子なし）</li>
+      <li><code>ID</code> は 0 より大きいですか？</li>
+      <li>他の音声ファイルと名前が衝突していませんか？</li>
+      <li>起動直後すぎませんか？（数秒待ってから）</li>
+      <li>タイトルに戻って「新規開始」か「セーブ読み込み」をしましたか？</li>
+    </ol>
+
+    <div class="warn">
+      <strong>音源のライセンスは作者の責任です</strong>
+      MODを公開する際は、その音声を配布する権利があるか確認してください。
+      他者の作品には許諾を得るか、自由に使えることが明示された素材を使ってください。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 5 });</script>
+</body>
+</html>

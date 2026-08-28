@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="ゲーム「パイレーツ」のMOD制作ガイド。アイテム追加、数値変更、独自の画像や音楽の導入まで。">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>パイレーツ MOD制作ガイド</h1>
+    <p class="lead">プログラミングは不要。テキストエディタが使えればMODが作れます。</p>
+
+    <p>このガイドは『パイレーツ』のMOD制作を解説します &mdash; 新しいアイテムの追加、
+       キャラクターの数値変更、立ち絵の差し替え、独自BGMの導入。
+       すべてテキストファイルの編集だけで完結し、開発ツールも再ビルドも必要ありません。</p>
+
+    <div class="ok">
+      <strong>最初のMODは5分でできます</strong>
+      フォルダを1つ作り、<code>mod.json</code> を1つ書き、JSONファイルを1つ置く。それだけです。
+      <a href="pages/01-quickstart.html">はじめに</a> へどうぞ。
+    </div>
+
+    <h2>できること</h2>
+    <ul>
+      <li><strong>数値の変更</strong> &mdash; キャラクター、敵、スキル、バフ、アイテム、ステージ、
+          地形&hellip; ゲームの13個のデータテーブルすべてが編集可能</li>
+      <li><strong>新規コンテンツの追加</strong> &mdash; 既存要素の変更だけでなく、
+          新しいアイテム・キャラクター・スキルをゼロから追加できます</li>
+      <li><strong>独自の画像</strong> &mdash; PNGを <code>Images/</code> に置けば読み込まれます。
+          新しい立ち絵の追加も、既存素材の差し替えも可能</li>
+      <li><strong>独自の音声</strong> &mdash; OGG / MP3 / WAV を <code>Music/</code> へ。
+          BGMも効果音も対応</li>
+      <li><strong>戦闘一式の作成</strong> &mdash; オリジナル敵、敵AI、複数ウェーブのステージ、戦闘背景</li>
+      <li><strong>ストーリー演出</strong> &mdash; 会話、立ち絵、表情差分、ステージの開始・終了演出</li>
+    </ul>
+
+    <h2>できないこと</h2>
+    <ul>
+      <li><strong>既存コンテンツの削除</strong> &mdash; MODは「変更」と「追加」のみ。
+          何かを隠したい場合は <code>UnlockCon</code> を使ってください
+          （<a href="pages/03-data.html">ゲームデータの編集</a> 参照）</li>
+      <li><strong>新しいプログラム処理の追加</strong> &mdash; C#は書けません。
+          ただしスクリプト命令と演出システムの組み合わせはかなり自由です</li>
+      <li><strong>スマホ版での利用</strong> &mdash; MOD機能はPC版限定です</li>
+    </ul>
+
+    <h2>目次</h2>
+    <div class="cards"></div>
+
+    <h2>必要なもの</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>用途</th><th>ツール</th><th>備考</th></tr>
+      <tr><td>JSON編集</td><td>メモ帳 / VS Code / Notepad++</td><td>テキストエディタなら何でも。VS Codeは書式エラーをその場で指摘してくれるのでおすすめ</td></tr>
+      <tr><td>画像制作</td><td>任意のペイントソフト</td><td>PNGで書き出せればOK</td></tr>
+      <tr><td>音声制作</td><td>任意の音声ソフト</td><td>OGG / MP3 / WAV で書き出し</td></tr>
+      <tr><td>演出制作</td><td>演出エディタ</td><td>ビジュアルツール。<a href="pages/10-showeditor.html">演出エディタ</a> 参照</td></tr>
+    </table>
+    </div>
+
+    <div class="note">
+      <strong>このガイドはゲームの実装に基づいています</strong>
+      ここに書かれたルール（マージ方式、フォルダ構成、優先順位）は実際のコードと突き合わせています。
+      ガイドとゲームの挙動が食い違う場合はガイドが古いということです &mdash; ご報告ください。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 0 });
+buildCards('ja', [
+  '最初のMODを作る。フォルダの場所と、動く最小構成。',
+  'MODの名刺ファイル。各項目の意味と、省略した場合の挙動。',
+  '数値の変更と新規追加。マージ規則、13のデータテーブル、型と実例。',
+  '自作PNGをゲームに入れる。フォルダ対応表、表情差分、既存素材の差し替え。',
+  'BGMと効果音の追加。対応形式、命名規則、読み込みタイミングの注意点。',
+  'キャラやステージを実際にプレイヤーへ渡す。AutoRun、命令一覧、部屋会話。',
+  'オリジナル敵と戦闘。敵AI、ウェーブ、戦闘背景、ステージ演出。',
+  '複数MOD使用時にどちらが勝つか。並び順、競合、作者向けの指針。',
+  'MODが効かないときの調べ方。エラーメッセージ対応表、症状別チェック。',
+  'ストーリー演出をビジュアル編集。何ができて、どう入手するか。',
+]);</script>
+</body>
+</html>

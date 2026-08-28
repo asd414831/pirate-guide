@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="複数MOD使用時にどちらが勝つか。適用順、競合、作者向けの指針。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>複数MODの共存</h1>
+    <p class="lead">プレイヤーは多数のMODを同時に有効にできます。この章はどちらが勝つかの話です。</p>
+
+    <h2>適用順序</h2>
+    <ol>
+      <li>ゲーム本体のデータを読み込む</li>
+      <li>MODを一覧の順に1つずつ重ねる</li>
+    </ol>
+    <div class="ok">
+      <strong>後のものが勝ちます</strong>
+      一覧で下にあるMODが上を上書きします。データ・画像・音声すべて同じルールです。
+    </div>
+
+    <h2>何が競合になるか</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>種類</th><th>競合条件</th><th>結果</th></tr>
+      <tr><td>データ</td><td>2つのMODが<strong>同じ <code>Name</code> の同じ項目</strong>を変更</td><td>後の値が勝つ</td></tr>
+      <tr><td>画像</td><td><strong>同じパス・同じファイル名</strong></td><td>後の画像が勝つ</td></tr>
+      <tr><td>音声</td><td><strong>同じファイル名</strong></td><td>後のファイルが勝つ</td></tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>違う項目なら競合しません</strong>
+      MOD Aが <code>SellPrice</code>、MOD Bが同じアイテムの <code>Desc</code> を変更
+      &mdash; 両方反映されます。マージは書かれた項目だけを上書きするからです。<br>
+      MODの互換性が高いのは主にこの仕組みのおかげです。
+    </div>
+
+    <h2>プレイヤーが並び順を変えられます</h2>
+    <p>MOD管理画面で手動並べ替えができます。競合したら優先したいものを下に移動。</p>
+    <div class="note">
+      <strong>「非互換」はたいてい本当の非互換ではありません</strong>
+      まず並べ替えを試すよう伝えてください。解決不能なのは
+      「両方が同じ項目に別の値を必要とする」場合だけです。
+    </div>
+
+    <h2>作者向けの指針</h2>
+
+    <h3>1. 変更する項目は最小限に</h3>
+    <div class="ok">
+      <strong>本当に変えたい項目だけ書く</strong>
+      売値を上げたいなら <code>Name</code> と <code>SellPrice</code> だけ。<br>
+      「完全を期して」全体をコピーすると、同じデータを触る全MODと競合し、
+      ゲーム更新後は古い値が新しい値を上書きしてしまいます。
+    </div>
+
+    <h3>2. 新規追加には独自の名前を</h3>
+<pre><code>"Name": "MyMod_SuperPotion"</code></pre>
+    <div class="note">
+      <strong>接頭辞は内部用で見えません</strong>
+      プレイヤーが見るのは <code>Name_I2</code> です。
+    </div>
+
+    <h3>3. 画像と音声にも接頭辞を</h3>
+<pre><code>Images/RoleHead/MyMod_NewHero.png
+Music/BGM_MyMod_Theme.ogg</code></pre>
+    <p>意図的な差し替えでない限り接頭辞を付けてください。</p>
+
+    <h3>4. 何を変えたか description に書く</h3>
+<pre><code>{
+  "description": "変更点：\n- 敵のHP 2倍\n- 薬草の売値 500\n\n敵の数値を調整する他のMODと競合します。"
+}</code></pre>
+
+    <h2>MOD同士は依存できません</h2>
+    <div class="warn">
+      <strong>依存関係の仕組みはありません</strong>
+      「MOD XXが必要」と宣言できず、ゲームは検査も警告もしません。<br>
+      依存する場合は <code>description</code> に明記し、
+      「入っていない場合」の挙動を自分で処理してください。
+    </div>
+
+    <h2>1つ壊れても他は巻き添えになりません</h2>
+    <div class="ok">
+      <strong>エラーは隔離されます</strong>
+      壊れたJSONはそのファイルだけスキップ。同じMODの他ファイルも、他のMODも正常に動きます。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 8 });</script>
+</body>
+</html>

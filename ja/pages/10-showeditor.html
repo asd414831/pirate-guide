@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="ストーリー演出をビジュアル編集するツール。何ができて、どう入手するか。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>演出エディタ</h1>
+    <p class="lead">演出をビジュアルに書く &mdash; 命令の打ち込みも引数の暗記も不要。</p>
+
+    <h2>これは何か</h2>
+    <p>ゲームのストーリー演出を編集するウェブツールです。
+       <a href="06-shows.html">演出とコンテンツ付与</a> の命令をクリックできる画面に変えます：</p>
+    <ul>
+      <li>命令を一覧から選ぶ &mdash; 名前も引数の順番も覚えなくていい</li>
+      <li>背景・立ち絵・表情をサムネイルで選ぶ</li>
+      <li>会話ウィンドウと立ち絵の見え方をその場でプレビュー</li>
+      <li>MODがそのまま使えるJSONを書き出す</li>
+    </ul>
+
+    <div class="ok">
+      <strong>手打ちとの違い</strong>
+      手打ちでは <code>&lt;Image&gt;</code> の第1引数がスロットだと覚え、
+      ファイル名を確認し、カンマを数える必要があります。<br>
+      エディタはそれをメニューとサムネイルに変えます。十数行を超えるなら明らかに速いです。
+    </div>
+
+    <h2>できること</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>機能</th><th>説明</th></tr>
+      <tr><td>命令メニュー</td><td>全命令をカテゴリ別に、引数の説明付きで</td></tr>
+      <tr><td>素材ブラウザ</td><td>背景・立ち絵・表情をサムネイルで選択</td></tr>
+      <tr><td>リアルタイムプレビュー</td><td>実際の見た目で確認</td></tr>
+      <tr><td>MOD素材</td><td>自分のMODの画像も本体素材と並べて選べる</td></tr>
+      <tr><td>データテーブルの項目</td><td>各テーブルの全項目を一覧表示</td></tr>
+      <tr><td>JSON書き出し</td><td><code>Data/Show/</code> にそのまま置ける形式</td></tr>
+    </table>
+    </div>
+
+    <h2>使わなくても大丈夫です</h2>
+    <div class="note">
+      <strong>演出はただのJSONです</strong>
+      <a href="06-shows.html">演出とコンテンツ付与</a> と
+      <a href="07-stages.html">ステージと敵</a> に完全な例があります。<br>
+      短い演出ならテキストエディタのほうが速いくらいです。
+    </div>
+
+    <h2>入手方法</h2>
+    <div class="warn">
+      <strong>エディタはこのサイトでは配布していません</strong>
+      ゲームの公式告知やコミュニティをご確認ください。
+    </div>
+
+    <h2>エディタ無しで項目名を調べる</h2>
+    <ol>
+      <li><strong>公式サンプルMODを読む</strong> &mdash; よく使う項目のほとんどが実演されています</li>
+      <li><strong>ゲーム本体のデータを真似る</strong></li>
+      <li><strong>ゲームに教えてもらう</strong> &mdash; 間違えると
+          <em>項目「XXX」はありません。「YYY」ですか？</em> と正しい綴りを提示してくれます</li>
+    </ol>
+    <div class="ok">
+      <strong>3番目は本当に使えます</strong>
+      わざと近い名前を書いて候補を読む。資料を探すより速いです。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 10 });</script>
+</body>
+</html>

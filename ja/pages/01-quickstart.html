@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="5分でパイレーツの最初のMODを作る。フォルダの場所、mod.jsonの書き方、有効化の手順。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>はじめに</h1>
+    <p class="lead">目標：5分で動くMODを1つ作り、流れ全体が通ることを確認します。</p>
+
+    <h2>1. MODフォルダを見つける</h2>
+    <p>MODはゲームのインストール先に置きます：</p>
+<pre><code>&lt;ゲームのインストールフォルダ&gt;/Pirate_Data/StreamingAssets/Mods/</code></pre>
+    <p>手っ取り早い方法：<strong>ゲーム起動 &rarr; タイトル画面 &rarr; MOD管理 &rarr; フォルダを開く</strong>。
+       ゲームが直接開いてくれます。</p>
+
+    <figure>
+      <img src="../../assets/ui-modlist-off.png" alt="4つのサンプルMODが並ぶMOD管理画面">
+      <figcaption>
+        タイトル画面の<strong>MOD管理</strong>。公式サンプルMODが4つ同梱されています &mdash;
+        項目の書き方に迷ったら<strong>フォルダを開く</strong>で中身を見てください。<br>
+        左下の<strong>MODディレクトリ</strong>は <code>Mods/</code> を直接開きます。
+      </figcaption>
+    </figure>
+
+    <div class="note">
+      <strong>Modsフォルダが無い場合</strong>
+      自分で作れば大丈夫です。名前は正確に <code>Mods</code> にしてください。<br>
+      タイトル画面にMOD管理ボタン自体が無い場合、そのビルドはMOD非対応です
+      &mdash; スマホ版と体験版には機能がありません。
+    </div>
+
+    <h2>2. MODフォルダを作る</h2>
+    <p><code>Mods/</code> の中にフォルダを作ります。名前は自由ですが、
+       英数字を推奨、スペースは避けてください：</p>
+<pre><code>Mods/
+&#9492;&#9472;&#9472; MyFirstMod/</code></pre>
+
+    <div class="warn">
+      <strong>フォルダ名がMODの識別子です</strong>
+      ゲームは「このMODが有効かどうか」をフォルダ名で記憶しています。<br>
+      <strong>名前を変えると別のMODになり</strong>、有効状態がリセットされてプレイヤーが
+      入れ直すことになります。公開後は変更しないでください。
+    </div>
+
+    <h2>3. mod.json を書く</h2>
+    <p>MODフォルダの中に <code>mod.json</code> を作ります。
+       <strong>このファイルが無いとMODとして認識されず</strong>、一覧にも出ません。</p>
+<pre><code>{
+  "name": "はじめてのMOD",
+  "author": "あなたの名前",
+  "version": "1.0",
+  "description": "テスト用。とても強いポーションを追加します。"
+}</code></pre>
+    <p>すべての項目は省略可能で、欠けた場合は既定値になります。詳細は
+       <a href="02-modjson.html">mod.json の項目</a> を参照。</p>
+
+    <h2>4. データを1件追加する</h2>
+    <p>データは <code>Data/&lt;テーブル名&gt;/</code> の下に置き、
+       <strong>JSONファイル1つが1件</strong>です。アイテムの例：</p>
+<pre><code>MyFirstMod/
+&#9500;&#9472;&#9472; mod.json
+&#9492;&#9472;&#9472; Data/
+    &#9492;&#9472;&#9472; Item/
+        &#9492;&#9472;&#9472; SuperPotion.json</code></pre>
+    <p><code>SuperPotion.json</code> の中身：</p>
+<pre><code>{
+  "Name": "SuperPotion",
+  "Name_I2": "スーパーポーション",
+  "Desc": "飲むととても強くなる",
+  "Type": "アイテム",
+  "AddHP": 999
+}</code></pre>
+
+    <div class="warn">
+      <strong>フォルダ名で対象テーブルが決まります</strong>
+      <code>Data/Item/</code> はアイテム表、<code>Data/Role/</code> はキャラ表です。<br>
+      <code>Item</code> でも <code>TheItem</code> でも受け付けます
+      （ゲームが自動で <code>The</code> を補います）。<br>
+      <strong>ファイル名は関係ありません</strong> &mdash; ゲームが見るのは中身の
+      <code>Name</code> 項目です。
+    </div>
+
+    <h2>5. 有効化してテスト</h2>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/ui-modlist-off.png" alt="有効化前：灰色、ボタンは「有効化」" style="max-width:420px">
+        <span class="fig-label">有効化前 &mdash; 灰色、ボタンは<strong>有効化</strong></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/ui-modlist-on.png" alt="有効化後：金色、ボタンは「無効化」" style="max-width:420px">
+        <span class="fig-label">有効化後 &mdash; 金色、ボタンは<strong>無効化</strong></span>
+      </div>
+      <figcaption>
+        左上の<strong>有効 N / M</strong> が手早い確認方法です。<br>
+        並び順が適用順（上から下）。左の三本線をドラッグで並べ替えられます
+        &mdash; MOD同士が競合したときにどちらが勝つかはこれで決まります
+        （<a href="08-conflict.html">複数MODの共存</a> 参照）。
+      </figcaption>
+    </figure>
+
+    <ol>
+      <li>ゲームに戻り、<strong>タイトル画面 &rarr; MOD管理</strong></li>
+      <li>「はじめてのMOD」を見つけて<strong>有効化</strong>を押す</li>
+      <li><strong>タイトル画面に戻り、「新しい周回を始める」か「セーブを読み込む」</strong></li>
+      <li>ショップを確認 &mdash;「スーパーポーション」があるはずです</li>
+    </ol>
+
+    <div class="warn">
+      <strong>タイトルから入り直すと反映されます</strong>
+      MODデータは<strong>新規開始</strong>と<strong>セーブ読み込み</strong>の2つのタイミングで
+      マージされます。ファイルを編集したりMODを切り替えたら、タイトルに戻ってもう一度入るだけ
+      &mdash; <strong>ゲームの再起動は不要です</strong>。<br>
+      進行中のセッションには反映されないので、タイトルに戻る必要があります。
+    </div>
+
+    <h2>うまくいきましたか？</h2>
+
+    <figure>
+      <img src="../../assets/ui-shop-potion.png" alt="ショップに「サンプルポーション $100」が並んでいる">
+      <figcaption>
+        公式サンプル「サンプルアイテム」を有効にした結果 &mdash; ショップに
+        <strong>サンプルポーション $100</strong> が増えています。<br>
+        自作アイテムも同じように出ます（<code>SellPrice</code> を設定していれば）。
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>新アイテムが見えた &rarr; 流れ全体が通っています</strong>
+      次は <a href="03-data.html">ゲームデータの編集</a> で、既存内容の変更方法と
+      利用できる項目を確認してください。
+    </div>
+    <div class="note">
+      <strong>見えない &rarr; トラブル対処へ</strong>
+      <a href="09-troubleshoot.html">トラブル対処</a> にエラーメッセージ対応表と
+      症状別チェックがあります。9割はJSONの書式ミス（カンマの過不足）です。
+    </div>
+
+    <h2>完全なMODの構成</h2>
+    <p>全機能を使ったMODの構造：</p>
+<pre><code>MyMod/
+&#9500;&#9472;&#9472; mod.json              名刺ファイル（必須）
+&#9500;&#9472;&#9472; icon.png              一覧のサムネイル（任意）
+&#9500;&#9472;&#9472; Data/                 データテーブル
+&#9474;   &#9500;&#9472;&#9472; Item/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; SuperPotion.json
+&#9474;   &#9500;&#9472;&#9472; Role/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; NewHero.json
+&#9474;   &#9492;&#9472;&#9472; Skill/
+&#9474;       &#9492;&#9472;&#9472; MegaSlash.json
+&#9500;&#9472;&#9472; Images/               画像
+&#9474;   &#9500;&#9472;&#9472; RoleHead/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; NewHero.png
+&#9474;   &#9492;&#9472;&#9472; Role/
+&#9474;       &#9492;&#9472;&#9472; NewHero.png
+&#9492;&#9472;&#9472; Music/                音声
+    &#9500;&#9472;&#9472; BGM/
+    &#9474;   &#9492;&#9472;&#9472; BGM_MyTheme.ogg
+    &#9492;&#9472;&#9472; Sfx/
+        &#9492;&#9472;&#9472; se_MyHit.ogg</code></pre>
+    <p>各部分の詳細は以降の章で解説します。</p>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 1 });</script>
+</body>
+</html>

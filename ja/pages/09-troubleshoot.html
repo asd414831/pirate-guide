@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="MODが効かないときの調べ方。エラーメッセージ対応表と症状別チェック。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>トラブル対処</h1>
+    <p class="lead">MODが反応しないとき。9割はJSONの書式ミスか名前のタイプミスです。</p>
+
+    <h2>まずこの3つ</h2>
+    <ol>
+      <li><strong>タイトル画面に戻り、「新規開始」か「セーブ読み込み」</strong>
+          &mdash; データはこの2つのタイミングでしかマージされません。最も多い原因</li>
+      <li><strong>MODが有効か確認</strong> &mdash; タイトル画面 &rarr; MOD管理</li>
+      <li><strong>JSONをオンラインバリデータで確認</strong></li>
+    </ol>
+
+    <h2>症状：MOD一覧に出てこない</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>確認</th><th>説明</th></tr>
+      <tr><td><code>mod.json</code> はありますか</td><td><strong>最も多い原因。</strong>無いとフォルダごと無視されます</td></tr>
+      <tr><td>ファイル名は正しいですか</td><td>正確に <code>mod.json</code></td></tr>
+      <tr><td>置き場所は正しいですか</td><td><code>Mods/あなたのMOD/mod.json</code></td></tr>
+      <tr><td>階層は正しいですか</td><td>走査されるのは <code>Mods/</code> の<strong>直下</strong>のみ</td></tr>
+      <tr><td>MOD管理ボタンはありますか</td><td>スマホ版と体験版は非対応</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>Windowsの拡張子非表示に注意</strong>
+      メモ帳で保存すると <code>mod.json.txt</code> になりがちで、Windowsは <code>.txt</code> を隠します。<br>
+      エクスプローラーの「表示 &rarr; ファイル名拡張子」で確認を。
+    </div>
+
+    <h2>症状：一覧に出るが「壊れている」</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>よくあるミス</th><th>例</th></tr>
+      <tr><td>最後の項目に余分なカンマ</td><td><code>"author": "誰か",</code> の次が <code>}</code></td></tr>
+      <tr><td>項目間のカンマ抜け</td><td>2行の間に <code>,</code> が無い</td></tr>
+      <tr><td>シングルクォート</td><td><code>'name'</code> は <code>"name"</code></td></tr>
+      <tr><td>引用符の閉じ忘れ</td><td><code>"name": "私のMOD</code></td></tr>
+      <tr><td>バックスラッシュ</td><td><code>art\icon.png</code> &mdash; <code>/</code> を使う</td></tr>
+      <tr><td>UTF-8でない</td><td>日本語が文字化けする原因</td></tr>
+    </table>
+    </div>
+
+    <h2>症状：有効なのにデータが反映されない</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>確認</th><th>説明</th></tr>
+      <tr><td><code>Name</code> のタイプミス</td><td><strong>最も多い原因。</strong>ミスすると「変更」が「追加」に</td></tr>
+      <tr><td>項目名の大文字小文字</td><td><code>SellPrice</code>、<code>Sellprice</code> ではない</td></tr>
+      <tr><td>フォルダ名</td><td><code>Data/Item/</code>、<code>Data/Items/</code> ではない</td></tr>
+      <tr><td>JSONの階層</td><td><code>Data/</code> 直下は読み込まれません</td></tr>
+      <tr><td>引用符</td><td>装備の能力値は文字列：<code>"Atk": "20"</code></td></tr>
+      <tr><td><code>ID</code> は 0 より大きい</td><td>0以下はスキップされます</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong><code>Data/</code> 直下のJSONは読み込まれません</strong>
+      旧形式は非対応です。テーブルフォルダに入れてください。
+      旧形式の <code>.csv</code> も無視されます。
+    </div>
+
+    <h2>症状：名前や説明が空欄</h2>
+    <div class="warn">
+      <strong><code>Name_I2</code> が抜けています</strong>
+      プレイヤーが見るのは <code>Name_I2</code> です。
+      多言語対応しない場合でも記入してください。
+    </div>
+
+    <h2>症状：画像が出ない</h2>
+    <ul>
+      <li>フォルダ名が <code>Image/</code>（sが無い）</li>
+      <li>サブフォルダの大文字小文字が違う</li>
+      <li><code>ImageName</code> に <code>.png</code> が入っている</li>
+      <li>実体はJPGなのにリネームしただけ</li>
+      <li>差分画像を顔サイズに切り抜いてしまった</li>
+    </ul>
+
+    <h2>症状：音が出ない</h2>
+    <ul>
+      <li><code>Data/BGM/</code> に登録していない</li>
+      <li>登録した <code>Name</code> がファイル名と一致していない</li>
+      <li><code>ID</code> が 0 以下</li>
+      <li>起動直後すぎる（数秒待つ）</li>
+      <li>非対応形式</li>
+    </ul>
+
+    <div class="ok">
+      <strong>項目名を間違えると正しい名前を教えてくれます</strong>
+<pre><code>[ModPatch] Item/ExamplePotion.json 1件目：
+  TheItem に項目「IconImage」はありません。「IconName」ですか？</code></pre>
+      <strong>わざと近い名前を書いて</strong>候補を読むのが早道です。
+    </div>
+
+    <h2>ゲームのログを読む</h2>
+<pre><code>C:\Users\&lt;ユーザー名&gt;\AppData\LocalLow\&lt;会社名&gt;\&lt;ゲーム名&gt;\Player.log</code></pre>
+    <div class="note">
+      <strong>行き方</strong>
+      エクスプローラーのアドレス欄に <code>%USERPROFILE%\AppData\LocalLow</code> を貼ってEnter。
+    </div>
+    <p><code>[Mod</code> で検索すればMOD関連のメッセージが見られます。</p>
+
+    <h2>メッセージ対応表</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>メッセージ</th><th>意味</th><th>対処</th></tr>
+      <tr><td><code>mod.json 解析失敗</code></td><td>書式エラー</td><td>バリデータで確認</td></tr>
+      <tr><td><code>「XXX」をスキップ</code></td><td>MOD全体がスキップ</td><td>直して入り直す</td></tr>
+      <tr><td><code>テーブルフォルダにない</code></td><td><code>Data/</code> 直下にある</td><td>テーブルフォルダへ移動</td></tr>
+      <tr><td><code>.csv はもう&hellip;</code></td><td>旧形式</td><td>JSONに書き直す</td></tr>
+      <tr><td><code>読み込み失敗</code></td><td>読めないか壊れている</td><td>書式とエンコーディングを確認</td></tr>
+      <tr><td><code>項目「X」はありません</code></td><td>項目名が存在しない</td><td>提示された名前を使う</td></tr>
+      <tr><td><code>正しいPNGではありません</code></td><td>実体がPNGでない</td><td>PNGとして書き出し直す</td></tr>
+      <tr><td><code>非対応の音声形式</code></td><td>形式が違う</td><td>OGG / MP3 / WAV に変換</td></tr>
+      <tr><td><code>N個のMODを適用</code></td><td><strong>成功メッセージ</strong></td><td>数が合わなければ上の警告を探す</td></tr>
+    </table>
+    </div>
+
+    <h2>それでも解決しない場合</h2>
+    <ul>
+      <li>あなたの <code>mod.json</code></li>
+      <li>動かないJSONファイル</li>
+      <li>MODのフォルダ構成</li>
+      <li><code>Player.log</code> の <code>[Mod</code> を含む行</li>
+    </ul>
+    <div class="note">
+      <strong>ゲーム内の報告機能</strong>
+      ゲーム中に <strong>F10</strong> で報告フォームが開き、必要な情報が自動添付されます。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 9 });</script>
+</body>
+</html>

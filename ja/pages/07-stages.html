@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="オリジナル敵、敵AI、ウェーブ、戦闘背景、ステージ演出。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>ステージと敵</h1>
+    <p class="lead">戦闘を一式作る。敵、AI、ウェーブ、背景、演出。</p>
+
+    <h2>敵</h2>
+    <p><code>Data/Enemy/Emma.json</code></p>
+<pre><code>{
+  "Name": "エマ",
+  "ID": 9201,
+  "PSB": "Emma,Normal,Normal",
+  "WellTerrain": "洞窟",
+  "StartHP": 420, "LvAddHP": 18,
+  "StartAtk": 48, "LvAddAtk": 1,
+  "Pos_y": -1120, "Sca": 48,
+  "DoID":    ["1",        "1",           "1"],
+  "DoCON":   ["",         "{Turn}%4==3", "{Turn}%3==0"],
+  "DoSkill": ["連続拳", "高速治癒",    "防御"]
+}</code></pre>
+
+    <h3>敵AI：3本の並行リスト</h3>
+    <p><code>DoID</code> / <code>DoCON</code> / <code>DoSkill</code> は
+       <strong>対応する3本のリスト</strong>。同じ位置が1つのルールです。</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目</th><th>意味</th></tr>
+      <tr><td><code>DoID</code></td><td>重み。大きいほど選ばれやすい。<code>-1</code> は開幕パッシブ</td></tr>
+      <tr><td><code>DoCON</code></td><td>発動条件。空文字列は常に成立</td></tr>
+      <tr><td><code>DoSkill</code></td><td>スキル名。既存のもの、または自分で追加したものと一致させる</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>長さが揃わない場合は最短に合わせられます</strong>
+      はみ出した分は<strong>無言で無視</strong>。自分で数えてください。
+    </div>
+    <p>上の例：</p>
+    <ul>
+      <li>通常は「連続拳」</li>
+      <li>3、7、11&hellip;ターン目は「高速治癒」</li>
+      <li>3、6、9&hellip;ターン目は「防御」</li>
+    </ul>
+
+    <h3>立ち絵の位置とサイズ</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目</th><th>説明</th></tr>
+      <tr><td><code>Pos_y</code></td><td>戦闘画面での縦位置。雑魚はおおむね <code>-1120</code> 付近</td></tr>
+      <tr><td><code>Sca</code></td><td>拡大率。雑魚はおおむね <code>70</code>&ndash;<code>80</code></td></tr>
+    </table>
+    </div>
+
+    <figure>
+      <img src="../../assets/emma-body-normal.png" alt="エマの立ち絵、原画 1475x2020" style="max-height:300px">
+      <figcaption>
+        公式サンプルのエマ。原画 <strong>1475&times;2020</strong>、
+        <code>Sca: 48</code> / <code>Pos_y: -1120</code>。<br>
+        同じ表示高さを 1000&times;1600 の画像で得るには約60 &mdash;
+        <strong>画像が縦に大きいほど <code>Sca</code> は小さく</strong>なります。
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>体格の近い既存敵を真似るのが早道</strong>
+      同じくらいの大きさの敵の <code>Pos_y</code> / <code>Sca</code> をコピーして微調整。
+    </div>
+    <div class="note">
+      <strong>調整にゲーム再起動は不要</strong>
+      保存してタイトルに戻り、入り直せば反映されます。
+    </div>
+
+    <h3>敵の立ち絵の置き場所</h3>
+    <p>キャラクターと同じルール（<a href="04-images.html">画像の追加</a> 参照）。
+       違いは項目名が <code>PSB</code> であることだけ。</p>
+<pre><code>Images/Role/Emma/Body/Body_Normal.png
+Images/Role/Emma/Face/Face_Normal.png
+Images/Role/Emma/Face/Face_Sad.png
+Images/Role/Emma/Face/Face_Shock.png</code></pre>
+    <p><code>PSB</code> の3つは「PSB名,表情,衣装」：</p>
+<pre><code>"PSB": "Emma,Normal,Normal"</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/emma-body-normal.png" alt="Body_Normal">
+        <span class="fig-label"><code>Body_Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-composite-shock.png" alt="Body と Face_Shock の合成">
+        <span class="fig-label">+ <code>Face_Shock</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-face-sad.png" alt="Face_Sad 単体">
+        <span class="fig-label"><code>Face_Sad</code> 単体</span>
+      </div>
+      <figcaption>
+        エマの4枚（Body 1 + Face 3）。
+        <strong>右端が <code>Face_Sad.png</code> 単体</strong> &mdash;
+        表情画像はどれも全身サイズのキャンバスで、顔以外は透明です。
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>キャラと敵で立ち絵を共用できます</strong>
+      サンプルのエマは敵として登場し、勝利後に同じ <code>PSB</code> で仲間になります。<br>
+      <code>Pos_y</code> / <code>Sca</code> は各テーブルで別々に &mdash; 構図が違うためです。
+    </div>
+
+    <h2>ステージ</h2>
+<pre><code>{
+  "Name": "深淵の試練",
+  "ID": 9201,
+  "Group": "モジュール",
+  "Tag": "戦闘",
+  "Rank": 1,
+  "FightWinExp": "60", "FightWinMoney": "60",
+  "FightWhere": "洞窟",
+  "FightBackground": "Background_ModAbyss, Background_ModAbyss_Night",
+  "FightBGM": "BGM_Fight2",
+  "EnemyLv": ["3", "5"],
+  "Enemys":  ["エマ", "エマ, クラゲ"],
+  "GetItem": ["リンゴ"],
+  "GetItemProbability": ["0.5"]
+}</code></pre>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目</th><th>説明</th></tr>
+      <tr><td><code>Group</code></td><td>ステージ選択画面のグループ。「モジュール」が組み込みで使えます</td></tr>
+      <tr><td><code>Tag</code></td><td>「戦闘」が無いと演出だけで戦闘は始まりません</td></tr>
+      <tr><td><code>FightWhere</code></td><td>場所。地形相性に影響</td></tr>
+      <tr><td><code>FightBackground</code></td><td>戦闘背景。カンマ区切りでウェーブごとに変更</td></tr>
+      <tr><td><code>FightBGM</code></td><td>戦闘BGM。カンマ区切りでウェーブごとに変更</td></tr>
+    </table>
+    </div>
+
+    <h3>ウェーブ</h3>
+    <div class="warn">
+      <strong><code>Enemys</code> の要素1つが1ウェーブ</strong>
+      同じウェーブに複数出すならカンマで区切ります。
+    </div>
+<pre><code>"Enemys": ["エマ", "エマ, クラゲ"]     1波目1体、2波目2体
+"Enemys": ["エマ,クラゲ"]              1波で2体（空白は自由）</code></pre>
+    <div class="note">
+      <strong>ゲーム既存の敵も使えます</strong>
+      「クラゲ」はゲーム本体の敵です。
+    </div>
+
+    <div class="warn">
+      <strong>同じウェーブに同名の敵を2体入れないでください</strong>
+      ゲームの複数箇所が敵を<strong>名前</strong>で引いて位置を特定しています。
+      同名が2体いると常に1体目しか見つからず、2体目のエフェクト座標とターゲットが
+      1体目に飛びます。<br>
+      同種を2体出すなら<strong>データを複製して別名に</strong>してください
+      （本体の「騎士 / 騎士B / 騎士C」がこの方式）。<br>
+      ウェーブをまたいだ同名は問題ありません。
+    </div>
+
+    <h3>並行して対応するリスト</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目の組</th><th>対応</th></tr>
+      <tr><td><code>Enemys</code> / <code>EnemyLv</code></td><td>要素1つ = 1ウェーブ</td></tr>
+      <tr><td><code>FightBackground</code> / <code>FightBGM</code></td><td>カンマ区切り、1つ = 1ウェーブ</td></tr>
+      <tr><td><code>GetItem</code> / <code>GetItemProbability</code></td><td>同じ位置 = 同じドロップ</td></tr>
+    </table>
+    </div>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss.png" alt="1波目の背景">
+        <span class="fig-label">1波目<br><code>Background_ModAbyss</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss-night.png" alt="2波目の背景">
+        <span class="fig-label">2波目<br><code>Background_ModAbyss_Night</code></span>
+      </div>
+      <figcaption>
+        <code>FightBackground</code> をカンマ区切りにすればウェーブごとに背景を変えられます。<br>
+        背景は <strong>960&times;540</strong>、<code>Images/Background/</code> に置きます。
+      </figcaption>
+    </figure>
+
+    <div class="note">
+      <strong>リストが短い場合は流用されます</strong>
+      <code>EnemyLv</code> が足りなければ自動算出、
+      <code>FightBackground</code> / <code>FightBGM</code> は最初の1つが使われます。
+    </div>
+
+    <h2>ステージ演出</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>項目</th><th>タイミング</th></tr>
+      <tr><td><code>StartShow</code></td><td>進入時、戦闘開始前</td></tr>
+      <tr><td><code>FightWinShow</code></td><td>勝利後</td></tr>
+      <tr><td><code>FightLoseShow</code></td><td>敗北後</td></tr>
+    </table>
+    </div>
+    <p>3つとも任意。演出本体は <code>Data/Show/</code> に
+       （<a href="06-shows.html">演出とコンテンツ付与</a> 参照）。</p>
+
+    <h3>開始演出の例</h3>
+<pre><code>{
+  "Name": "深淵の試練_開始",
+  "Tag": "劇情",
+  "Shows": [
+    "&lt;BG&gt;Background_ModAbyss,0,#00000000",
+    "&lt;BG&gt;Background_ModAbyss,1,#FFFFFF",
+    "&lt;Talk&gt;深淵の最奥から、場違いな聖歌が聞こえてきた。",
+    "&lt;Image&gt;Mid,Emma,Normal",
+    "&lt;Talk&gt;エマ：&hellip;&hellip;&#9834;",
+    "&lt;Image&gt;Mid,Emma,Shock",
+    "&lt;ImageShake&gt;Mid",
+    "&lt;Talk&gt;エマ：あら、お客様。",
+    "&lt;Talk&gt;",
+    "&lt;Image&gt;",
+    "&lt;BG&gt;,1"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>慣例</strong>
+      <ul>
+        <li>冒頭の2行の <code>&lt;BG&gt;</code> で背景フェードイン</li>
+        <li>本文なしの <code>&lt;Talk&gt;</code> はウィンドウを閉じる</li>
+        <li>引数なしの <code>&lt;Image&gt;</code> は立ち絵を全消去</li>
+        <li>末尾の <code>&lt;BG&gt;,1</code> で戦闘画面に引き継ぐ</li>
+      </ul>
+    </div>
+
+    <h3>「勝ってこそ仲間になる」</h3>
+    <p>AutoRunより自然な付与方法 &mdash; AutoRunは「有効にした瞬間」、勝利演出なら「勝ち取る」形：</p>
+<pre><code>&lt;Image&gt;Mid,Emma,Laugh
+&lt;Talk&gt;エマ：それじゃ、約束どおり今日から同行させてもらうわ。
+&lt;Talk&gt;
+&lt;Image&gt;
+&lt;AddRole&gt;エマ
+&lt;BG&gt;,1</code></pre>
+    <div class="ok">
+      <strong>周回してもフラグ管理は不要</strong>
+      <code>&lt;AddRole&gt;</code> は既に持っているキャラに対して安全です。
+    </div>
+
+    <h2>戦闘中のターン演出</h2>
+    <p><strong>ステージ項目に書く必要はなく</strong>、名前が合えば呼ばれます：</p>
+<pre><code>{ステージName}_Wave{波}_{PlayerTurn|EnemyTurn}{ターン}</code></pre>
+    <div class="table-wrap">
+    <table>
+      <tr><th>演出 Name</th><th>タイミング</th></tr>
+      <tr><td><code>深淵の試練_Wave2_PlayerTurn1</code></td><td>2波目、プレイヤーの1ターン目</td></tr>
+      <tr><td><code>深淵の試練_Wave2_PlayerTurn</code></td><td>2波目の<strong>すべての</strong>プレイヤーターン</td></tr>
+      <tr><td><code>深淵の試練_PlayerTurn3</code></td><td>戦闘全体の3ターン目</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>数字付きが優先されます</strong>
+      両方あれば1ターン目は数字付きが再生されます。
+    </div>
+
+    <h3>戦闘中の慣例は異なります</h3>
+    <p><strong>戦闘中は <code>null</code> と半透明の黒</strong>をマスクとして重ねます：</p>
+<pre><code>&lt;BG&gt;null,0,#00000000
+&lt;BG&gt;null,0.5,#000000CC      戦闘画面を暗くする
+&lt;Wait&gt;1
+&lt;Image&gt;Mid,Emma,Shock
+&lt;Talk&gt;エマ：ちょっと、本気なの？
+&lt;Talk&gt;
+&lt;Image&gt;
+&lt;BG&gt;,0.5                    マスク解除、戦闘へ戻る
+&lt;EnemyImage&gt;エマ,Emma,Sad   場上の表情を変更</code></pre>
+    <div class="warn">
+      <strong><code>&lt;EnemyImage&gt;</code> はマスク解除の<em>後</em>に</strong>
+      暗転したままだとプレイヤーには見えません。
+    </div>
+
+    <h2>ステージをプレイヤーに見せる</h2>
+    <div class="warn">
+      <strong>データだけでは「存在する」だけ</strong>
+      AutoRun演出で渡してください。<strong>2行とも必要</strong>：
+    </div>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddStageGroup&gt;モジュール",
+    "&lt;AddStage&gt;深淵の試練"
+  ]
+}</code></pre>
+
+    <h2>スキル</h2>
+    <div class="warn">
+      <strong><code>Skill</code> の最初の4つは基本スキル、条件は5つ目から</strong>
+      5つ目以降が<strong>順番に</strong> <code>ElseSkillCon</code> と対応：
+<pre><code>Skill[4] &lt;- ElseSkillCon[0]
+Skill[5] &lt;- ElseSkillCon[1]</code></pre>
+      最初の4つ分の空文字列は<strong>不要</strong>です。
+    </div>
+
+    <h2>公式サンプルMOD</h2>
+    <div class="ok">
+      <strong>完全なサンプルが同梱されています</strong>
+      表情差分付きのオリジナル敵、ウェーブごとに背景が変わる2波構成、
+      開始 / 勝利 / 敗北の3演出、勝つと仲間になるキャラ &mdash;
+      <code>Mods/</code> の下で全部実演されています。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 7 });</script>
+</body>
+</html>

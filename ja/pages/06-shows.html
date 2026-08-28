@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="AutoRun演出、キャラやステージの付与、部屋会話。MODが能動的に動ける唯一のフック。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>演出とコンテンツ付与</h1>
+    <p class="lead">データを書いただけでは「存在する」だけ。プレイヤーはまだ持っていません。</p>
+
+    <div class="warn">
+      <strong>ここが最も見落とされる工程です</strong>
+      <code>Data/Role/</code> にキャラを追加してデータが完璧でも、プレイヤーには永久に届きません。<br>
+      アイテムには価格項目があるので勝手に店へ並びますが、
+      <strong>キャラとステージにはそれがありません。</strong>渡す手段は演出命令だけです。
+    </div>
+
+    <h2>演出とは</h2>
+    <p>演出（Show）はゲーム命令の並びです。会話にもなれば、純粋なデータ操作にもなります。
+       <code>Data/Show/</code> に1件1ファイルで置きます。</p>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;NewHero"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>演出の項目はちょうど4つ</strong>
+      <code>ID</code> / <code>Name</code> / <code>Tag</code> / <code>Shows</code>。
+      説明項目はなく、書いても無視されます。
+    </div>
+
+    <h2>AutoRun：能動的に動ける唯一のフック</h2>
+    <p><code>Tag</code> に <code>AutoRun</code> を入れると、
+       <strong>新規開始後とセーブ読み込み後</strong>に自動再生されます。</p>
+<pre><code>Data/Show/AutoRun.json
+
+{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;NewHero",
+    "&lt;AddItem&gt;SuperPotion,1"
+  ]
+}</code></pre>
+
+    <div class="warn">
+      <strong>AutoRunは毎回走ります。1回だけではありません</strong>
+      新規開始のたび、セーブ読み込みのたびに実行されます。<br>
+      通常は無害です &mdash; <code>&lt;AddRole&gt;</code> と <code>&lt;AddItem&gt;</code> は
+      既に持っている対象をスキップします。重複もせず、レベルも戻りません。
+    </div>
+
+    <p>本当に1回だけにしたいならフラグで囲みます：</p>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;if&gt;{MyModInit}==0",
+    "&lt;AddRole&gt;NewHero",
+    "&lt;Var&gt;MyModInit,=,1",
+    "&lt;endif&gt;"
+  ]
+}</code></pre>
+
+    <div class="note">
+      <strong><code>Name</code> にはMOD名を</strong>
+      <code>Name</code> はマージキーです。2つのMODのAutoRunが同名だと後のものが無言で上書きします。
+    </div>
+    <div class="note">
+      <strong><code>Tag</code> は「含む」判定</strong>
+      <code>"Tag": "AutoRun,劇情"</code> でも有効。大文字小文字も区別しません。
+    </div>
+
+    <h2>キャラクターの付与</h2>
+<pre><code>&lt;AddRole&gt;NewHero</code></pre>
+    <p>引数はキャラデータの <code>Name</code>（<code>Name_I2</code> ではありません）。</p>
+
+    <figure>
+      <img src="../../assets/ui-mod-role.png" alt="MODキャラが自前の立ち絵とスキルを持って船員リストに並ぶ">
+      <figcaption>
+        公式サンプル「サンプルキャラ」の成果 &mdash; MODだけで追加されたキャラが、
+        自前の立ち絵・顔アイコン・能力値・スキル構成を持っています。<br>
+        すべての前提がAutoRun内の1行 <code>&lt;AddRole&gt;</code> です &mdash;
+        <strong>それが無ければデータが完璧でも渡りません</strong>。
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="../../assets/ui-mod-role-slot.png" alt="MODキャラは船員リストの最後尾">
+      <figcaption>
+        <strong>MODが追加した内容はリスト末尾に付きます。</strong>
+        見つからないときは一番下までスクロールしてください。
+      </figcaption>
+    </figure>
+
+    <div class="warn">
+      <strong>船員一覧に出すにはあと2条件</strong>
+      <ul>
+        <li><code>ID</code> が 0 より大きい</li>
+        <li><code>Name</code> が空でない</li>
+      </ul>
+      満たさないと <code>&lt;AddRole&gt;</code> が走っても見えません。
+    </div>
+
+    <h2>ステージの付与</h2>
+    <p><strong>2行とも必要です。</strong></p>
+<pre><code>&lt;AddStageGroup&gt;モジュール
+&lt;AddStage&gt;深淵の試練</code></pre>
+    <div class="warn">
+      <strong><code>&lt;AddStageGroup&gt;</code> が無いとステージは見えません</strong>
+      ステージはグループにぶら下がる必要があります。
+      ゲームには「モジュール」という組み込みグループがあり、そのまま使えます。
+    </div>
+    <div class="ok">
+      <strong>繰り返し実行しても安全</strong>
+      既に持っているものは二重に追加されません。
+    </div>
+
+    <h2>アイテムの付与</h2>
+<pre><code>&lt;AddItem&gt;SuperPotion,1</code></pre>
+    <div class="note">
+      <strong>アイテムには通常AutoRun不要</strong>
+      <code>SellPrice</code> を設定すればショップに並びます。
+      <code>&lt;AddItem&gt;</code> は直接渡したいときだけ。
+    </div>
+
+    <h2>AutoRunの注意点</h2>
+    <div class="warn">
+      <strong>セーブがストーリー途中だと同時進行になります</strong>
+      読み込み時に会話が再開する場合、AutoRunが画面を取り合います。<br>
+      <strong>純粋なデータ命令だけを置くことを推奨</strong> &mdash;
+      <code>&lt;AddRole&gt;</code>、<code>&lt;AddItem&gt;</code>、<code>&lt;AddStage&gt;</code>、
+      <code>&lt;Var&gt;</code>。<br>
+      会話や間は<strong>ステージの勝利演出</strong>のほうが自然です（次章）。
+    </div>
+    <div class="ok">
+      <strong>複数MODのAutoRunは直列実行</strong>
+      順番はMOD一覧の並び順（上から下）。
+      AutoRun内の <code>&lt;Wait&gt;</code> は意図どおり働き、他のMODは割り込みません。
+    </div>
+
+    <h2>命名規則：ゲームの演出枠を埋める</h2>
+    <p>ゲームの各所は<strong>決まった名前</strong>で演出を探しています。
+       その名前にすれば呼ばれ、<code>Tag</code> は不要です。</p>
+
+    <h3>ホーム画面のキャラ会話</h3>
+    <p>ホーム画面で立ち絵をクリックしたとき再生：</p>
+<pre><code>主畫面角色對話_&lt;キャラの Name&gt;</code></pre>
+<pre><code>Data/Show/RoomTalk.json
+
+{
+  "Name": "主畫面角色對話_NewHero",
+  "Shows": [
+    "&lt;Var&gt;主畫面對話值,+,1",
+    "&lt;if&gt;{主畫面對話值}&gt;3",
+    "&lt;Var&gt;主畫面對話值,=,1",
+    "&lt;endif&gt;",
+    "&lt;if&gt;{主畫面對話值}==1",
+    "&lt;MateImage&gt;NewHero",
+    "&lt;MateTalk&gt;{目前主畫面角色名稱}：やあ。",
+    "&lt;elseif&gt;{主畫面對話值}==2",
+    "&lt;MateTalk&gt;{目前主畫面角色名稱}：また君か。",
+    "&lt;elseif&gt;",
+    "&lt;MateTalk&gt;{目前主畫面角色名稱}：用も無いのにつつくな。",
+    "&lt;endif&gt;"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>用意しなくてもエラーにはなりません</strong>
+      MODキャラが黙って立っているだけになります。使うのはデータの <code>Name</code> で、
+      翻訳後の表示名ではありません。
+    </div>
+
+    <h2>命令早見表</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>命令</th><th>効果</th></tr>
+      <tr><td><code>&lt;AddRole&gt;Name</code></td><td>キャラクターを渡す</td></tr>
+      <tr><td><code>&lt;AddItem&gt;Name,個数</code></td><td>アイテムを渡す</td></tr>
+      <tr><td><code>&lt;AddStageGroup&gt;名前</code></td><td>ステージグループを解放</td></tr>
+      <tr><td><code>&lt;AddStage&gt;Name</code></td><td>ステージを解放</td></tr>
+      <tr><td><code>&lt;Var&gt;変数,=,値</code></td><td>変数を設定（<code>=</code> / <code>+</code> / <code>-</code>）</td></tr>
+      <tr><td><code>&lt;if&gt;条件</code> &hellip; <code>&lt;endif&gt;</code></td><td>条件分岐。間に <code>&lt;elseif&gt;</code></td></tr>
+      <tr><td><code>&lt;Talk&gt;本文</code></td><td>会話。本文なしでウィンドウを閉じる</td></tr>
+      <tr><td><code>&lt;MateTalk&gt;本文</code></td><td>ホーム画面の会話</td></tr>
+      <tr><td><code>&lt;Wait&gt;秒数</code></td><td>待機</td></tr>
+      <tr><td><code>&lt;BG&gt;名前,秒数,色</code></td><td>背景。<code>&lt;BG&gt;,1</code> でフェードアウト</td></tr>
+      <tr><td><code>&lt;Image&gt;スロット,キャラ,表情,衣装</code></td><td>立ち絵。引数なしで全消去</td></tr>
+      <tr><td><code>&lt;MateImage&gt;キャラ,表情,衣装</code></td><td>ホーム画面の立ち絵</td></tr>
+      <tr><td><code>&lt;BGM&gt;名前</code></td><td>BGM切り替え</td></tr>
+      <tr><td><code>&lt;Sfx&gt;名前</code></td><td>効果音再生</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>全一覧は演出エディタに</strong>
+      命令は多く引数も細かいので、<a href="10-showeditor.html">演出エディタ</a>なら
+      説明を見ながらメニューから選べます。
+    </div>
+
+    <h2>会話の書き方</h2>
+    <p>話者は「名前：本文」：</p>
+<pre><code>&lt;Talk&gt;NewHero：おはよう。</code></pre>
+    <div class="ok">
+      <strong>キャラ名と一致すると自動で色とスポットライトが付きます</strong>
+      照合はデータの <code>Name</code>。一致しなければただの文字列で、エラーにはなりません。
+    </div>
+
+    <h3>ストーリー区間の開始と終了</h3>
+<pre><code>&lt;BG&gt;MyBG,0,#00000000      背景を設定、完全透明
+&lt;BG&gt;MyBG,1,#FFFFFF        1秒でフェードイン
+&lt;Talk&gt;誰か：最初のセリフ。
+&lt;Talk&gt;                     ウィンドウを閉じる
+&lt;Image&gt;                    立ち絵を消す
+&lt;BG&gt;,1                     背景をフェードアウト</code></pre>
+
+    <h2>チェックリスト</h2>
+    <p>追加したのにプレイヤーに見えない：</p>
+    <ol>
+      <li>AutoRun演出を書きましたか？（<strong>最も多い原因</strong>）</li>
+      <li><code>Tag</code> に <code>AutoRun</code> が含まれていますか？</li>
+      <li><code>&lt;AddRole&gt;</code> の引数はデータの <code>Name</code> ですか？</li>
+      <li><code>ID</code> は 0 より大きいですか？</li>
+      <li>ステージなら <code>&lt;AddStageGroup&gt;</code> を書きましたか？</li>
+      <li>タイトルに戻って入り直しましたか？</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 6 });</script>
+</body>
+</html>

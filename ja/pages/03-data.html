@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パイレーツ MODガイド</title>
+<meta name="description" content="MODによる数値変更と新規追加。マージ規則、13のデータテーブル、型と実例。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="メニュー">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>ゲームデータの編集</h1>
+    <p class="lead">MODの主な機能。既存の数値を変更する、あるいは新しい内容を追加する。</p>
+
+    <h2>基本ルール</h2>
+<pre><code>Mods/&lt;あなたのMOD&gt;/Data/&lt;テーブル名&gt;/&lt;任意のファイル名&gt;.json</code></pre>
+    <ul>
+      <li><strong>フォルダ名で対象テーブルが決まる</strong> &mdash;
+          <code>Data/Item/</code> はアイテム、<code>Data/Role/</code> はキャラクター</li>
+      <li><strong>JSONファイル1つが1件</strong> &mdash;
+          アイテム1つにつきファイル1つ。複数を1ファイルに詰めないでください</li>
+      <li><strong>ファイル名は無関係</strong> &mdash; ゲームが見るのは中身の <code>Name</code>。
+          ファイル名は自分が分かりやすいようにするためだけのものです</li>
+    </ul>
+
+    <div class="note">
+      <strong><code>Item</code> でも <code>TheItem</code> でも通ります</strong>
+      内部のテーブル名は <code>TheItem</code> ですが、フォルダが <code>Item</code> のときは
+      ゲームが自動で <code>The</code> を補います。両方受け付けるので、つまずく箇所が1つ減ります。
+    </div>
+
+    <h2>マージ規則（最重要）</h2>
+    <p>ゲームには既にデータ一式があります。あなたのJSONはその<strong>上に重ねられる</strong>もので、
+       置き換えではありません。照合のキーは <code>Name</code> 項目です：</p>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>あなたの <code>Name</code></th><th>結果</th></tr>
+      <tr>
+        <td>ゲームに<strong>既にある</strong>名前</td>
+        <td>その場で変更。<strong>書いた項目だけ</strong>が変わり、他はすべて元の値のまま</td>
+      </tr>
+      <tr>
+        <td>ゲームに<strong>無い</strong>名前</td>
+        <td>新規追加。リストの末尾に足される</td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>変えたい項目だけ書けば済みます</strong>
+      アイテムの売値を上げたいなら、ファイル全体が2行：<br>
+      <code>{ "Name": "薬草", "SellPrice": 500 }</code><br>
+      他の項目（名前・アイコン・効果）は一切影響を受けません。
+    </div>
+
+    <div class="warn">
+      <strong>「削除」機能はありません</strong>
+      MODはゲームの既存内容を消せません。何かを出さないようにしたい場合は、
+      <code>UnlockCon</code> に決して成立しない条件を設定してください。削除を試みてはいけません。
+    </div>
+
+    <h2>Name は識別子です</h2>
+    <div class="warn">
+      <strong><code>Name</code> のタイプミスは「変更」を「追加」に変えます</strong>
+      「薬草」を変えるつもりで「薬苴」と書いた場合、ゲームはエラーを出さず
+      <strong>「薬苴」という新アイテムを追加</strong>したと解釈します。
+      結果：元の薬草は変わらず、変な新アイテムが増えます。<br>
+      MODが効かないときは<strong>まず <code>Name</code> のタイプミスを疑ってください</strong>
+      （余分な空白や全角半角の違いも含めて）。
+    </div>
+
+    <h2>編集できるテーブル</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>フォルダ</th><th>内容</th></tr>
+      <tr><td><code>Data/Role/</code></td><td>味方キャラクター</td></tr>
+      <tr><td><code>Data/Enemy/</code></td><td>敵</td></tr>
+      <tr><td><code>Data/Skill/</code></td><td>スキル</td></tr>
+      <tr><td><code>Data/Buff/</code></td><td>バフ / 状態異常</td></tr>
+      <tr><td><code>Data/Item/</code></td><td>アイテムと装備</td></tr>
+      <tr><td><code>Data/Stage/</code></td><td>ステージ</td></tr>
+      <tr><td><code>Data/StageGroup/</code></td><td>ステージグループ</td></tr>
+      <tr><td><code>Data/Terrain/</code></td><td>地形</td></tr>
+      <tr><td><code>Data/Show/</code></td><td>演出（<a href="10-showeditor.html">演出エディタ</a> 参照）</td></tr>
+      <tr><td><code>Data/CG/</code></td><td>CG画像</td></tr>
+      <tr><td><code>Data/BGM/</code></td><td>音楽リスト（<a href="05-audio.html">音楽と効果音の追加</a> 参照）</td></tr>
+      <tr><td><code>Data/Var/</code></td><td>スクリプト変数</td></tr>
+      <tr><td><code>Data/BaseData/</code></td><td>ゲーム全体の設定</td></tr>
+    </table>
+    </div>
+
+    <h2>項目名の調べ方</h2>
+    <p>項目名はゲーム内部の名前と大文字小文字まで一致する必要があります。最も確実なのは
+       <strong>演出エディタのデータテーブル機能</strong>
+       （<a href="10-showeditor.html">演出エディタ</a> 参照）で、各テーブルの全項目が見られます。</p>
+    <div class="ok">
+      <strong>わざと近い名前を書く手もあります</strong>
+      存在しない項目名を書くと、ゲームが候補を提示します：<br>
+      <code>TheItem に項目「IconImage」はありません。「IconName」ですか？</code><br>
+      資料を探すより速いです。
+    </div>
+
+    <h2>新規追加には ID が必要</h2>
+    <div class="warn">
+      <strong>新規データの <code>ID</code> は 0 より大きくないとスキップされます</strong>
+      <code>ID</code> が 0 以下のデータは表計算のプレースホルダ行とみなされ、ゲームに出ません。<br>
+      <strong>9000 以上を推奨</strong> &mdash; ゲーム本体が後から追加する内容との衝突を避けられます。<br>
+      既存データを変更する場合は <code>ID</code> 不要です（元の値が保持されます）。
+    </div>
+
+    <h2>型：引用符が必要なとき</h2>
+    <p>JSONは数値と文字列で書き方が違い、ゲームの項目型と一致させる必要があります。</p>
+<pre><code>{
+  "Name": "SuperPotion",
+  "SellPrice": 500,               数値、引用符なし
+  "AddHP": 999,                   数値、引用符なし
+  "Name_I2": "スーパーポーション",  文字列、引用符あり
+  "Atk": "20"                     文字列、引用符あり（下記参照）
+}</code></pre>
+
+    <div class="warn">
+      <strong>装備の能力値項目は数値ではなく「文字列」です</strong>
+      <code>Atk</code> / <code>MaxHP</code> / <code>AtkPercent</code> といった項目には
+      <strong>計算式の文字列</strong>が入るため、<code>"Atk": 20</code> ではなく
+      <code>"Atk": "20"</code> と書きます。<br>
+      これによりレベルに応じた数値変化が可能になっています。引用符が要るか迷ったら、
+      <strong>ゲーム本体の同種データがどう書かれているか</strong>を見て真似してください。
+    </div>
+
+    <h2>リスト型の項目</h2>
+    <p>複数の値を持てる項目は、JSONでは配列で書きます：</p>
+<pre><code>{
+  "Name": "あるキャラ",
+  "Skill": ["斬撃", "強斬", "旋回斬"]
+}</code></pre>
+    <div class="warn">
+      <strong>配列は「まるごと置き換え」で、追加ではありません</strong>
+      こう書くとそのキャラのスキルは<strong>この3つだけ</strong>になり、元のものは消えます。<br>
+      元のスキルを残して追加したいなら、<strong>元のものも一緒に並べてください</strong>。<br>
+      なぜ追加方式にしないか：同じパッチが2回適用されると
+      <code>["斬撃","強斬","斬撃","強斬"]</code> になってしまいます。置き換えのほうが予測可能です。
+    </div>
+
+    <h3>カンマ区切りの項目</h3>
+    <p>内部的に「カンマ区切りの1つの文字列」として保持される項目もあります
+       （アイテムの <code>Tag</code> など）。どちらの書き方でも同じ意味です：</p>
+<pre><code>"Tag": "戦闘中使用可,果物"
+"Tag": ["戦闘中使用可", "果物"]</code></pre>
+
+    <h2>例：既存アイテムの変更</h2>
+    <p><code>Data/Item/HerbPrice.json</code></p>
+<pre><code>{
+  "Name": "薬草",
+  "SellPrice": 500
+}</code></pre>
+    <p>売値だけが変わり、他は何も変わりません。</p>
+
+    <h2>例：アイテムの追加</h2>
+    <p><code>Data/Item/SuperPotion.json</code></p>
+<pre><code>{
+  "Name": "SuperPotion",
+  "Name_I2": "スーパーポーション",
+  "Desc": "飲むととても強くなる",
+  "Type": "アイテム",
+  "IconName": "Potion",
+  "SellPrice": 1000,
+  "AddHP": 999,
+  "AddMP": 99
+}</code></pre>
+    <div class="note">
+      <strong><code>IconName</code> はゲーム本体の画像を借りられます</strong>
+      既存アイコン名を書けばその画像が使われます。自作画像を使う場合は
+      <a href="04-images.html">画像の追加</a> を参照。
+    </div>
+
+    <h2>例：敵を強化する</h2>
+    <p><code>Data/Enemy/SlimeBuff.json</code></p>
+<pre><code>{
+  "Name": "スライム",
+  "MaxHP": "200",
+  "Atk": "30"
+}</code></pre>
+
+    <h2>多言語対応</h2>
+    <p>ゲームは繁体字中国語 / 簡体字中国語 / 英語 / 日本語 / 韓国語 / ロシア語に対応しています。
+       末尾が <code>_I2</code> の名前・説明項目が翻訳システムに渡されます。</p>
+    <div class="warn">
+      <strong><code>Name_I2</code> を書き忘れると名前が空欄になります</strong>
+      <code>Name</code> は内部識別子にすぎず、<strong>プレイヤーが見るのは
+      <code>Name_I2</code></strong> です。<code>Name</code> だけ書いた場合、
+      ゲーム内で名前も説明も空欄になり、エラーも出ません。<br>
+      多言語対応をしない場合でも<strong>必ず <code>Name_I2</code> を書いてください</strong>
+      &mdash; 母語をそのまま入れれば十分です。
+    </div>
+    <div class="warn">
+      <strong>文字列の末尾に句読点を置かないでください</strong>
+      翻訳システムは末尾の句読点を区切り文字として扱うため、検索が失敗します。<br>
+      <code>"大ダメージを与える。"</code> ではなく <code>"大ダメージを与える"</code> と書いてください。<br>
+      文中の読点も半角スペースに置き換えるのが安全です。
+    </div>
+
+    <h2>適用順序</h2>
+    <p>MODデータはゲーム起動時に適用されます：</p>
+    <ol>
+      <li>ゲームが自身のデータを読み込む</li>
+      <li>MODが順番に重ねられる（後のMODが前のMODを上書き）</li>
+    </ol>
+    <p>MODは常に最上層なので、あなたの変更は必ず反映されます。
+       MOD同士の競合については <a href="08-conflict.html">複数MODの共存</a> を参照。</p>
+
+    <div class="warn">
+      <strong>編集後はタイトルから入り直してください</strong>
+      データは<strong>新規開始</strong>と<strong>セーブ読み込み</strong>時にマージされます。
+      タイトルに戻ってもう一度入るだけで反映され、
+      <strong>ゲームの再起動は不要</strong>です。進行中のセッションは変わりません。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ja', page: 3 });</script>
+</body>
+</html>
