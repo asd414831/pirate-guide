@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="视觉化编辑剧情演出的工具。这是什么、能做什么、怎么取得。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>演出编辑器</h1>
+    <p class="lead">用视觉化工具写演出，不用手打指令、不用背参数。</p>
+
+    <h2>这是什么</h2>
+    <p>演出编辑器是一个网页工具，用来编辑游戏的剧情演出。它把
+       <a href="06-shows.html">演出与发放内容</a> 那些指令变成可以点击的界面：</p>
+    <ul>
+      <li>从列表挑指令，不用记名字和参数顺序</li>
+      <li>选背景、立绘、表情时直接看到缩略图</li>
+      <li>边写边预览对话框和立绘的实际样子</li>
+      <li>输出成模组可以直接用的 JSON</li>
+    </ul>
+
+    <div class="ok">
+      <strong>手打指令与用编辑器的差别</strong>
+      手打要记得 <code>&lt;Image&gt;</code> 第一段是槽位、第二段才是角色名；
+      要自己确认立绘文件名有没有打错；要自己数逗号。<br>
+      编辑器把这些变成菜单和缩略图。长一点的演出（十几行以上）用编辑器快得多。
+    </div>
+
+    <h2>能做什么</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>功能</th><th>说明</th></tr>
+      <tr><td>指令菜单</td><td>所有演出指令分类列出，附参数说明</td></tr>
+      <tr><td>素材浏览</td><td>背景、立绘、表情、贴纸都有缩略图可以挑</td></tr>
+      <tr><td>即时预览</td><td>看到对话框、立绘位置、明暗变化的实际效果</td></tr>
+      <tr><td>模组素材</td><td>可以加载你自己模组的图，跟本体素材一起挑</td></tr>
+      <tr><td>数据表字段</td><td>列出每张数据表有哪些字段 —— 查字段名时很有用</td></tr>
+      <tr><td>导出 JSON</td><td>输出成 <code>Data/Show/</code> 可以直接放的格式</td></tr>
+    </table>
+    </div>
+
+    <h2>不用编辑器也可以</h2>
+    <div class="note">
+      <strong>演出就是纯文字的 JSON，用记事本写完全可行</strong>
+      <a href="06-shows.html">演出与发放内容</a> 和
+      <a href="07-stages.html">关卡与敌人</a> 两章有完整的示例可以照抄。<br>
+      短演出（例如只放 <code>&lt;AddRole&gt;</code> 的 AutoRun）用记事本反而更快。
+    </div>
+
+    <h2>怎么取得</h2>
+    <div class="warn">
+      <strong>编辑器不在这个网站上</strong>
+      取得方式请看游戏的官方公告或社群管道。
+    </div>
+
+    <h2>查字段名的替代方法</h2>
+    <p>编辑器最实用的功能之一是查数据表字段。没有编辑器时的替代方法：</p>
+    <ol>
+      <li><strong>看官方示例模组</strong> —— <code>Mods/</code> 底下的示例已经示范了大部分常用字段</li>
+      <li><strong>看本体数据怎么写的</strong> —— 想改某个道具，先找到游戏里类似的道具，照它的格式写</li>
+      <li><strong>看游戏的错误提示</strong> —— 字段名打错时，游戏会提示
+          “没有字段“XXX”，你想找“YYY”吗？”，直接告诉你正确的名字</li>
+    </ol>
+    <div class="ok">
+      <strong>第 3 点很好用</strong>
+      故意打一个接近的字段名，游戏的提示就会告诉你正确拼法。
+      比翻文件快。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 10 });</script>
+</body>
+</html>

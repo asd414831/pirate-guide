@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="模组怎么改游戏数值与加新内容。合并规则、13 张数据表、实际示例。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>修改游戏数据</h1>
+    <p class="lead">模组最主要的功能。改既有的数值，或凭空加新内容。</p>
+
+    <h2>基本规则</h2>
+<pre><code>Mods/&lt;你的模组&gt;/Data/&lt;表名&gt;/&lt;任意文件名&gt;.json</code></pre>
+    <ul>
+      <li><strong>文件夹名决定改哪张表</strong> —— <code>Data/Item/</code> 改道具，<code>Data/Role/</code> 改角色</li>
+      <li><strong>一个 JSON 档就是一笔数据</strong> —— 一个道具一个档，不要把多笔塞进一个档</li>
+      <li><strong>文件名不重要</strong> —— 游戏看的是文件里的 <code>Name</code> 字段。文件名纯粹给你自己好认</li>
+    </ul>
+
+    <div class="note">
+      <strong>写 <code>Item</code> 或 <code>TheItem</code> 都可以</strong>
+      游戏内部的表名是 <code>TheItem</code>，文件夹写 <code>Item</code> 时会自动补上 <code>The</code>。
+      两种写法都收，少一个踩雷点。
+    </div>
+
+    <h2>合并规则（最重要的一节）</h2>
+    <p>游戏已经有一整份数据。你的 JSON 是<strong>叠在上面</strong>，不是取代它。
+       比对的依据是 <code>Name</code> 字段：</p>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>你的 <code>Name</code></th><th>结果</th></tr>
+      <tr>
+        <td>游戏里<strong>已经有</strong>同名的</td>
+        <td>就地修改。<strong>只改你写到的字段</strong>，其他字段保持原值</td>
+      </tr>
+      <tr>
+        <td>游戏里<strong>没有</strong>同名的</td>
+        <td>新增一笔，加在列表最后面</td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>只写你要改的字段就好</strong>
+      想让某个道具卖贵一点，整个文件只要两行：<br>
+      <code>{ "Name": "药草", "SellPrice": 500 }</code><br>
+      其他字段（名称、图标、效果）完全不受影响。
+    </div>
+
+    <div class="warn">
+      <strong>没有“删除”功能</strong>
+      模组不能移除游戏既有的内容。想让某个东西不出现，用 <code>UnlockCon</code>
+      设一个永远不成立的条件来隐藏它，而不是试图删除。
+    </div>
+
+    <div class="aside-note">
+      因为设计者&hellip;不想做。他想避免不必要的麻烦。
+    </div>
+
+    <h2>Name 是身份证</h2>
+    <div class="warn">
+      <strong><code>Name</code> 打错 = 变成新增</strong>
+      想改“药草”但打成“药革”，游戏不会报错 —— 它会认为你要<strong>新增</strong>一个叫“药革”的道具。
+      结果：原本的药草没变，多了一个奇怪的新道具。<br>
+      模组没生效时，<strong>第一个要检查的就是 <code>Name</code> 有没有打错</strong>（包含全形半形、空格）。
+    </div>
+
+    <h2>可以改哪些表</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>文件夹</th><th>内容</th></tr>
+      <tr><td><code>Data/Role/</code></td><td>我方角色</td></tr>
+      <tr><td><code>Data/Enemy/</code></td><td>敌人</td></tr>
+      <tr><td><code>Data/Skill/</code></td><td>技能</td></tr>
+      <tr><td><code>Data/Buff/</code></td><td>Buff / 状态</td></tr>
+      <tr><td><code>Data/Item/</code></td><td>道具与装备</td></tr>
+      <tr><td><code>Data/Stage/</code></td><td>关卡</td></tr>
+      <tr><td><code>Data/StageGroup/</code></td><td>关卡群组</td></tr>
+      <tr><td><code>Data/Terrain/</code></td><td>地形</td></tr>
+      <tr><td><code>Data/Show/</code></td><td>演出（见 <a href="10-showeditor.html">演出编辑器</a>）</td></tr>
+      <tr><td><code>Data/CG/</code></td><td>CG 图</td></tr>
+      <tr><td><code>Data/BGM/</code></td><td>音乐列表（见 <a href="05-audio.html">加入音乐音效</a>）</td></tr>
+      <tr><td><code>Data/Var/</code></td><td>剧本变量</td></tr>
+      <tr><td><code>Data/BaseData/</code></td><td>游戏全域设定</td></tr>
+    </table>
+    </div>
+
+    <h2>字段名怎么查</h2>
+    <p>字段名要跟游戏内部一致，大小写也要对。最可靠的查法是<strong>用演出编辑器的数据表功能</strong>
+       （见 <a href="10-showeditor.html">演出编辑器</a>），它会列出每张表的所有字段。</p>
+    <div class="warn">
+      <strong>字段名打错会被安静忽略</strong>
+      把 <code>SellPrice</code> 打成 <code>Sellprice</code>（小写 p），游戏不会报错，
+      那一行就是<strong>没有效果</strong>。改完没反应时要检查大小写。
+    </div>
+
+    <h2>型别：什么时候加引号</h2>
+    <p>JSON 的数字和文字写法不同，要跟游戏的字段型别对上。</p>
+<pre><code>{
+  "Name": "超强药水",
+  "SellPrice": 500,          数字，不加引号
+  "AddHP": 999,              数字，不加引号
+  "Name_I2": "超强药水",     文字，要加引号
+  "Atk": "20"                文字，要加引号（见下方说明）
+}</code></pre>
+
+    <div class="warn">
+      <strong>装备的能力值字段是“文字”，不是数字</strong>
+      <code>Atk</code> / <code>MaxHP</code> / <code>AtkPercent</code> 这类字段存的是<strong>算式字符串</strong>，
+      所以要写成 <code>"Atk": "20"</code> 而不是 <code>"Atk": 20</code>。<br>
+      这样设计是为了让数值能随等级变化。不确定某栏要不要加引号时，
+      <strong>去看游戏本体同类型的数据怎么写的</strong>，照抄那个格式。
+    </div>
+
+    <h2>新增内容要填 ID</h2>
+    <div class="warn">
+      <strong>新增的数据 <code>ID</code> 必须大于 0，否则会被跳过</strong>
+      <code>ID</code> 是 0 或负数的数据被视为占位列，不会出现在游戏里。<br>
+      <strong>建议用 9000 以上的数字</strong>，避开游戏本体未来新增的内容。<br>
+      修改既有数据时不用填 <code>ID</code>（原本的会保留）。
+    </div>
+
+    <h2>列表型字段</h2>
+    <p>有些字段可以放多个值，JSON 写成数组：</p>
+<pre><code>{
+  "Name": "某个角色",
+  "Skill": ["斩击", "重斩", "回旋斩"]
+}</code></pre>
+    <div class="warn">
+      <strong>数组是“整条取代”，不是“追加”</strong>
+      上面这样写，该角色的技能就<strong>只有这三个</strong>，原本的会被换掉。<br>
+      想保留原有技能再加新的，你得<strong>把原有的也一起列出来</strong>。<br>
+      为什么不做成追加：同一个模组被套用两次时，追加会变成
+      <code>["斩击","重斩","斩击","重斩"]</code>。取代的行为才是可预期的。
+    </div>
+
+    <h3>逗号分隔的字段</h3>
+    <p>有些字段游戏内部存成“一串用逗号隔开的文字”（例如道具的 <code>Tag</code>）。
+       这种字段两种写法都可以，效果一样：</p>
+<pre><code>"Tag": "战斗中可用,水果"
+"Tag": ["战斗中可用", "水果"]</code></pre>
+
+    <h2>示例：改既有道具</h2>
+    <p><code>Data/Item/药草改价.json</code></p>
+<pre><code>{
+  "Name": "药草",
+  "SellPrice": 500
+}</code></pre>
+    <p>只有卖价变了，其他一切不动。</p>
+
+    <h2>示例：新增道具</h2>
+    <p><code>Data/Item/SuperPotion.json</code></p>
+<pre><code>{
+  "Name": "超强药水",
+  "Name_I2": "超强药水",
+  "Desc": "喝下去会变得很强",
+  "Type": "道具",
+  "IconName": "Potion",
+  "SellPrice": 1000,
+  "AddHP": 999,
+  "AddMP": 99
+}</code></pre>
+    <div class="note">
+      <strong><code>IconName</code> 可以借用本体的图</strong>
+      填游戏既有的图标名称就会用那张图。想用自己画的图见
+      <a href="04-images.html">加入图片</a>。
+    </div>
+
+    <h2>示例：让敌人变强</h2>
+    <p><code>Data/Enemy/史莱姆强化.json</code></p>
+<pre><code>{
+  "Name": "史莱姆",
+  "MaxHP": "200",
+  "Atk": "30"
+}</code></pre>
+
+    <h2>多语言</h2>
+    <p>游戏支持繁中 / 简中 / 英文 / 日文 / 韩文 / 俄文。
+       名称与说明字段带 <code>_I2</code> 的是给翻译系统用的。</p>
+    <div class="warn">
+      <strong>漏填 <code>Name_I2</code> 会让名字整个空白</strong>
+      <code>Name</code> 只是内部用的识别码，<strong>玩家看到的是 <code>Name_I2</code></strong>。
+      只填 <code>Name</code> 没填 <code>Name_I2</code> 的话，游戏里名字和介绍都会是空的，
+      而且不会有任何错误消息。<br>
+      不做多语言也<strong>一定要填 <code>Name_I2</code></strong>，直接填你的母语文字就好。
+    </div>
+    <div class="warn">
+      <strong>文字结尾不要放标点符号</strong>
+      翻译系统会把结尾的标点当成分隔符，导致翻译查不到。<br>
+      不要写 <code>"造成大量伤害。"</code>，要写 <code>"造成大量伤害"</code>。<br>
+      句中的逗号也建议<strong>换成半形空格</strong>：<code>"场景过场中 无法存档"</code>。
+    </div>
+
+    <h2>套用顺序</h2>
+    <p>模组数据在游戏开机时套用，顺序是：</p>
+    <ol>
+      <li>游戏加载自己的数据</li>
+      <li>模组依序叠上去（多个模组时，后面的盖前面的）</li>
+    </ol>
+    <p>模组永远叠在最上层，所以你的修改一定生效。多个模组互相冲突的情况见
+       <a href="08-conflict.html">多模组共存</a>。</p>
+
+    <div class="warn">
+      <strong>改完要回标题重新进入游戏</strong>
+      数据在“开始新游戏”与“读取存档”时合并。改完文件后回标题再进一次就会生效，
+      <strong>不需要关掉游戏重开</strong>。进行中的游戏不会即时变动。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 3 });</script>
+</body>
+</html>

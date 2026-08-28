@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="模组没生效怎么查。错误消息对照表、按症状分类的检查列表。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>疑难排解</h1>
+    <p class="lead">模组没反应时照这章查。九成问题是 JSON 格式或名字打错。</p>
+
+    <h2>先做这三件事</h2>
+    <ol>
+      <li><strong>回标题画面，再“开始新游戏”或“读取存档”</strong> —— 数据在这两个时机才合并，这是最常见的原因</li>
+      <li><strong>确认模组是启用状态</strong> —— 标题画面 → 模组，开关要是打开的</li>
+      <li><strong>把 JSON 贴到线上检查工具验一次</strong> —— 搜索“JSON validator”，任何一个都行</li>
+    </ol>
+    <div class="ok">
+      <strong>大部分问题到这里就解决了</strong>
+      还是不行的话往下看按症状分类的检查。
+    </div>
+
+    <h2>症状：模组列表里没有我的模组</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>检查</th><th>说明</th></tr>
+      <tr><td>有 <code>mod.json</code> 吗</td><td><strong>最常见原因。</strong>没有这个档，文件夹会被完全忽略</td></tr>
+      <tr><td>文件名对吗</td><td>必须正好是 <code>mod.json</code>，不是 <code>Mod.json</code> 或 <code>mod.json.txt</code></td></tr>
+      <tr><td>放对地方了吗</td><td><code>Mods/你的模组/mod.json</code>，不是 <code>Mods/mod.json</code></td></tr>
+      <tr><td>层数对吗</td><td>只扫 <code>Mods/</code> 的<strong>直接子文件夹</strong>。放到孙层不会被找到</td></tr>
+      <tr><td>有“模组”按钮吗</td><td>手机版和 Demo / 试玩版没有模组功能</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>小心 Windows 隐藏扩展名</strong>
+      记事本存档时容易变成 <code>mod.json.txt</code>，而 Windows 默认不显示 <code>.txt</code>
+      —— 看起来叫 <code>mod.json</code>，实际不是。<br>
+      在文件资源管理器开启“检视 → 扩展名”确认。
+    </div>
+
+    <h2>症状：模组出现在列表但被标记为坏掉</h2>
+    <p>代表 <code>mod.json</code> 存在但格式错误。</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>常见错误</th><th>示例</th></tr>
+      <tr><td>最后一个字段多了逗号</td><td><code>"author": "某人",</code> 后面就是 <code>}</code></td></tr>
+      <tr><td>中间字段漏了逗号</td><td>两行之间没有 <code>,</code></td></tr>
+      <tr><td>用了单引号</td><td><code>'name'</code> 应该是 <code>"name"</code></td></tr>
+      <tr><td>引号没关</td><td><code>"name": "我的模组</code></td></tr>
+      <tr><td>用了反斜线没跳脱</td><td><code>"icon": "art\icon.png"</code> 应该用 <code>/</code></td></tr>
+      <tr><td>文件不是 UTF-8</td><td>中文变乱码时的原因。存档时选 UTF-8</td></tr>
+    </table>
+    </div>
+
+    <h2>症状：模组有启用，但数据没生效</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>检查</th><th>说明</th></tr>
+      <tr><td><code>Name</code> 有打错吗</td><td><strong>最常见原因。</strong>打错就变成“新增一笔”而不是“修改”。注意全形半形、空格、简繁</td></tr>
+      <tr><td>字段名大小写对吗</td><td><code>SellPrice</code> 不是 <code>Sellprice</code>。打错会被安静忽略</td></tr>
+      <tr><td>文件夹名对吗</td><td><code>Data/Item/</code> 不是 <code>Data/Items/</code></td></tr>
+      <tr><td>JSON 放对层数了吗</td><td>必须是 <code>Data/&lt;表名&gt;/文件.json</code>。直接放 <code>Data/文件.json</code> 不会被加载</td></tr>
+      <tr><td>该加引号的加了吗</td><td>装备能力值字段是文字，要写 <code>"Atk": "20"</code></td></tr>
+      <tr><td>回标题重进了吗</td><td>改完要回标题“开始新游戏”或“读取存档”才会套用</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>数据放在 <code>Data/</code> 底下但没有子文件夹 = 不会加载</strong>
+      旧版的模组格式是直接放 <code>Data/*.json</code>，<strong>现在已经不支持</strong>。
+      必须放进表名文件夹：<code>Data/Item/我的道具.json</code>。<br>
+      旧格式的 <code>.csv</code> 档也不再读取。
+    </div>
+
+    <h2>症状：名字或介绍是空白的</h2>
+    <div class="warn">
+      <strong>漏填 <code>Name_I2</code></strong>
+      <code>Name</code> 只是内部识别码，<strong>玩家看到的是 <code>Name_I2</code></strong>。<br>
+      不做多语言也一定要填 <code>Name_I2</code>，直接写你的母语就好。
+    </div>
+
+    <h2>症状：图片没出现</h2>
+    <p>见 <a href="04-images.html">加入图片</a> 的检查列表。最常见的是：</p>
+    <ul>
+      <li>文件夹写成 <code>Image/</code>（漏了 s），正确是 <code>Images/</code></li>
+      <li>子文件夹名大小写错（<code>Rolehead</code> vs <code>RoleHead</code>）</li>
+      <li>数据里的 <code>ImageName</code> 多写了 <code>.png</code></li>
+      <li>文件其实是 JPG 改成 <code>.png</code> 的（要真的转档）</li>
+    </ul>
+
+    <h2>症状：音乐没声音</h2>
+    <p>见 <a href="05-audio.html">加入音乐音效</a> 的检查列表。最常见的是：</p>
+    <ul>
+      <li>放了音频文件但没在 <code>Data/BGM/</code> 注册</li>
+      <li>注册的 <code>Name</code> 跟音频文件文件名不一致</li>
+      <li>开机后太快测试（音频文件在背景加载，等几秒再试）</li>
+      <li>文件格式不支持（只吃 OGG / MP3 / WAV）</li>
+    </ul>
+
+    <div class="ok">
+      <strong>字段名打错时，游戏会告诉你正确的名字</strong>
+      实际的消息长这样：
+<pre><code>[ModPatch] Item/ExamplePotion.json 第 1 笔：
+  TheItem 没有字段“IconImage”，跳过。你想找“IconName”吗？</code></pre>
+      所以不确定字段名时，<strong>故意打一个接近的</strong>，
+      游戏的提示会告诉你正确拼法。比翻文件快。
+    </div>
+
+    <div class="aside-note">
+      那是个友善又可爱的小服务。
+    </div>
+
+    <h2>看游戏的错误消息</h2>
+    <p>游戏会把模组加载的过程写进日志。里面有明确的错误原因，比猜快得多。</p>
+    <p>日志位置：</p>
+<pre><code>C:\Users\&lt;你的使用者名&gt;\AppData\LocalLow\&lt;公司名&gt;\&lt;游戏名&gt;\Player.log</code></pre>
+    <div class="note">
+      <strong>怎么找</strong>
+      在文件资源管理器的位址栏粘贴 <code>%USERPROFILE%\AppData\LocalLow</code> 按 Enter，
+      然后往下找游戏的文件夹。
+    </div>
+    <p>用记事本开启，搜索 <code>[Mod</code> 就能看到所有模组相关消息。</p>
+
+    <h2>消息对照表</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>消息片段</th><th>意思</th><th>怎么修</th></tr>
+      <tr>
+        <td><code>mod.json 解析失败</code></td>
+        <td>JSON 格式错误</td>
+        <td>用 JSON 检查工具验证 <code>mod.json</code></td>
+      </tr>
+      <tr>
+        <td><code>略过“XXX”：mod.json 解析失败</code></td>
+        <td>整个模组被跳过</td>
+        <td>同上。修好格式后重开</td>
+      </tr>
+      <tr>
+        <td><code>没有</code>…<code>.json</code>（提到 Data 底下）</td>
+        <td>JSON 直接放在 <code>Data/</code>，没放进表名文件夹</td>
+        <td>移到 <code>Data/&lt;表名&gt;/</code> 底下</td>
+      </tr>
+      <tr>
+        <td><code>.csv 已不再</code>…</td>
+        <td>用了旧版格式</td>
+        <td>改写成 JSON，放进表名文件夹</td>
+      </tr>
+      <tr>
+        <td><code>读取失败</code></td>
+        <td>文件读不到或格式坏</td>
+        <td>检查该文件的 JSON 格式与编码（要 UTF-8）</td>
+      </tr>
+      <tr>
+        <td><code>部分数据套用失败</code></td>
+        <td>字段名或型别有问题</td>
+        <td>消息后面会说是哪个字段，照着改</td>
+      </tr>
+      <tr>
+        <td><code>不是合法的 PNG，略过</code></td>
+        <td>文件不是真的 PNG</td>
+        <td>用绘图软件重新输出成 PNG，不要只改扩展名</td>
+      </tr>
+      <tr>
+        <td><code>不支持的音频文件格式，略过</code></td>
+        <td>音频文件格式不对</td>
+        <td>转成 OGG / MP3 / WAV</td>
+      </tr>
+      <tr>
+        <td><code>音频文件解码后是空的</code></td>
+        <td>音频文件坏了或是 0 字节</td>
+        <td>重新输出音频文件</td>
+      </tr>
+      <tr>
+        <td><code>已套用 N 个模组、共 M 个数据</code></td>
+        <td><strong>这是成功消息</strong></td>
+        <td>数字对不对？少了就是有文件被跳过，往上找警告</td>
+      </tr>
+    </table>
+    </div>
+    <div class="ok">
+      <strong>找“已套用 N 个模组”这行最快</strong>
+      它会告诉你实际加载了几个模组、几个数据文件。数字跟你预期的不符，
+      就往上翻看有什么警告。
+    </div>
+
+    <h2>还是解决不了</h2>
+    <p>回报问题时请附上：</p>
+    <ul>
+      <li>你的 <code>mod.json</code> 内容</li>
+      <li>出问题的那个 JSON 档内容</li>
+      <li>模组的文件夹结构（截图或文字都行）</li>
+      <li><code>Player.log</code> 里所有含 <code>[Mod</code> 的行</li>
+    </ul>
+    <div class="note">
+      <strong>游戏内建回报功能</strong>
+      游戏中按 <strong>F10</strong> 可以开启问题回报，会自动附上必要的信息。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 9 });</script>
+</body>
+</html>

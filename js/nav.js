@@ -8,6 +8,7 @@
 
 const LANGS = [
   { code: 'zh-TW', label: '繁體中文' },
+  { code: 'zh-CN', label: '简体中文' },
   { code: 'en',    label: 'English'  },
   { code: 'ja',    label: '日本語'   },
 ];
@@ -35,6 +36,27 @@ const CHAPTERS = {
       '演出編輯器',
     ],
   },
+  'zh-CN': {
+    brandTitle: '海盗模组制作手册',
+    brandSub:   'Pirate Mod Making Guide',
+    home:       '总览',
+    langLabel:  '语言',
+    prev:       '上一章',
+    next:       '下一章',
+    items: [
+      '快速开始',
+      'mod.json 字段',
+      '修改游戏数据',
+      '添加图片',
+      '添加音乐音效',
+      '演出与发放内容',
+      '关卡与敌人',
+      '多模组共存',
+      '疑难排解',
+      '演出编辑器',
+    ],
+  },
+
   'en': {
     brandTitle: 'Pirate Mod Making Guide',
     brandSub:   'for mod authors',

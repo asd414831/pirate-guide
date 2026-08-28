@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="模组加入 BGM 与音效。支持格式、命名规则、加载时机的注意事项。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>加入音乐音效</h1>
+    <p class="lead">模组可以带自己的 BGM 和音效。</p>
+
+    <h2>基本规则</h2>
+<pre><code>Mods/&lt;你的模组&gt;/Music/&lt;任意子文件夹&gt;/&lt;音文件名&gt;.ogg</code></pre>
+    <div class="table-wrap">
+    <table>
+      <tr><th>项目</th><th>说明</th></tr>
+      <tr><td>支持格式</td><td>OGG / MP3 / WAV</td></tr>
+      <tr><td>推荐格式</td><td><strong>OGG</strong> —— 文件小、加载快、无授权问题</td></tr>
+      <tr><td>子文件夹</td><td>随你怎么分，<strong>不影响查找</strong></td></tr>
+    </table>
+    </div>
+
+    <h2>命名是“纯文件名”，不含路径</h2>
+    <div class="warn">
+      <strong>这点跟图片不同，最容易搞混</strong>
+      音乐的子文件夹<strong>纯粹给你自己整理用</strong>，游戏查找时只看文件名。<br>
+      <code>Music/BGM/MyTheme.ogg</code> 和 <code>Music/随便/乱/MyTheme.ogg</code>
+      对游戏来说<strong>完全一样</strong>，都是“MyTheme”。
+    </div>
+    <p>所以下面这两种放法效果相同：</p>
+<pre><code>Music/
+├── BGM/
+│   └── MyTheme.ogg          → 游戏认得的名字是 "MyTheme"
+└── Sfx/
+    └── se_MyHit.ogg         → 游戏认得的名字是 "se_MyHit"</code></pre>
+<pre><code>Music/
+├── MyTheme.ogg              → 一样是 "MyTheme"
+└── se_MyHit.ogg             → 一样是 "se_MyHit"</code></pre>
+
+    <div class="warn">
+      <strong>不同文件夹撞名 = 其中一个消失</strong>
+      因为查找只看文件名，<code>Music/BGM/Theme.ogg</code> 和
+      <code>Music/Sfx/Theme.ogg</code> 会互相冲突，只有一个会生效。<br>
+      建议自己加前缀避开：<code>BGM_</code> / <code>se_</code>。
+    </div>
+
+    <h2>加一首 BGM</h2>
+    <p><strong>两个步骤，缺一个都没声音。</strong></p>
+
+    <h3>1. 放音频文件</h3>
+<pre><code>MyMod/
+└── Music/
+    └── BGM/
+        └── BGM_MyTheme.ogg</code></pre>
+
+    <h3>2. 注册到 BGM 列表</h3>
+    <p><code>Data/BGM/MyTheme.json</code></p>
+<pre><code>{
+  "Name": "BGM_MyTheme",
+  "ID": 9201,
+  "Desc": "曲子的说明文字",
+  "Path": "BGM_MyTheme.ogg",
+  "Maker": "作曲者"
+}</code></pre>
+    <div class="warn">
+      <strong>只放音频文件不注册，或只注册不放音频文件，都是安静失败</strong>
+      <ul>
+        <li>只放音频文件 → 游戏里没有任何地方会用到它</li>
+        <li>只注册 → 列表里看得到名字，播放时<strong>没有声音</strong></li>
+      </ul>
+      两种情况都不会有错误消息。
+    </div>
+    <div class="warn">
+      <strong><code>ID</code> 必须大于 0，否则不会出现在列表</strong>
+      <code>ID</code> 是 0 或负数的数据会被当成占位列跳过。<br>
+      建议用 9000 以上的数字，避开游戏本体未来新增的内容。
+    </div>
+    <div class="note">
+      <strong>其他字段</strong>
+      <ul>
+        <li><code>Name</code> —— 要跟音频文件文件名一致（不含 <code>.ogg</code>）</li>
+        <li><code>Desc</code> —— 曲子的说明文字</li>
+        <li><code>Path</code> —— 纯显示用，写音频文件文件名就好</li>
+        <li><code>Maker</code> —— 作曲者</li>
+      </ul>
+    </div>
+    <div class="note">
+      <strong>音乐列表默认是锁著的</strong>
+      玩家第一次在游戏里实际播到这首时会自动解锁，不用另外设定。
+    </div>
+
+    <h2>换掉本体的音乐</h2>
+    <p>用<strong>跟本体一样的文件名</strong>，就会盖掉。不需要注册（本体已经注册过了）：</p>
+<pre><code>Music/BGM_Title.ogg      &lt;-- 换掉标题画面音乐</code></pre>
+    <div class="ok">
+      <strong>模组音频文件优先于本体音频文件</strong>
+      跟图片一样的规则。想做“全部换成自己的配乐”的模组完全可行。
+    </div>
+
+    <h2>音效</h2>
+    <p>音效跟 BGM 走同一个文件夹，规则完全一样。差别只在<strong>音效不需要注册到列表</strong>
+       —— 它是由技能或演出指定名字来播放的。</p>
+<pre><code>Music/Sfx/se_MyHit.ogg</code></pre>
+    <p>然后在技能或演出里指定播放 <code>se_MyHit</code>。</p>
+
+    <h2>加载时机（重要）</h2>
+    <div class="warn">
+      <strong>音频文件在背景慢慢加载，开机后前几秒可能还没好</strong>
+      跟图片不同，音频文件（尤其 MP3）要花时间解码。游戏的做法是：<br>
+      开机时<strong>先记住有哪些文件</strong>（很快），然后<strong>在背景逐个解码</strong>。<br>
+      所以“游戏刚开机的前几秒”播放模组音乐，可能会没声音或播到本体的音乐。
+      等一下再播就正常了。
+    </div>
+    <div class="aside-note">
+      要改成同步的话，得动游戏里每一个播音乐的地方。所以就这样了。
+    </div>
+
+    <div class="note">
+      <strong>这不是 bug，也不需要处理</strong>
+      实际游玩时玩家不会在开机瞬间就进到用模组音乐的场景。
+      但你自己测试时如果“第一次没声音、再试一次就有”，原因就是这个。
+    </div>
+
+    <h2>文件大小建议</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>用途</th><th>建议</th><th>理由</th></tr>
+      <tr><td>BGM</td><td>OGG，2～5 MB</td><td>循环播放的曲子，用 OGG 压缩效率最好</td></tr>
+      <tr><td>音效</td><td>OGG 或 WAV，&lt; 500 KB</td><td>短音效用 WAV 也可以，解码最快</td></tr>
+      <tr><td>避免</td><td>大档 WAV</td><td>一首 WAV 的 BGM 可能 50 MB 以上，加载慢又占空间</td></tr>
+    </table>
+    </div>
+
+    <h2>检查列表</h2>
+    <p>没声音的时候按顺序检查：</p>
+    <ol>
+      <li>音频文件放在 <code>Music/</code> 底下吗？</li>
+      <li>格式是 OGG / MP3 / WAV 吗？（不是改扩展名，要真的转档）</li>
+      <li>要当 BGM 的话，<code>Data/BGM/</code> 有注册吗？</li>
+      <li>注册的 <code>Name</code> 跟音频文件文件名完全一致吗？（不含扩展名）</li>
+      <li>有跟其他音频文件撞名吗？</li>
+      <li>是不是开机后太快就测试了？（等几秒再试）</li>
+      <li>回标题重新“开始新游戏”或“读取存档”了吗？</li>
+    </ol>
+
+    <div class="warn">
+      <strong>音乐的授权是你的责任</strong>
+      发布模组时请确认你有权使用那些音频文件。使用他人作品前要取得授权，
+      或选择明确标示可自由使用的素材。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 5 });</script>
+</body>
+</html>

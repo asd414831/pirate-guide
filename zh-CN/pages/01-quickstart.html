@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="五分钟做出第一个海盗模组。文件夹放哪、mod.json 怎么写、怎么启用。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>快速开始</h1>
+    <p class="lead">目标：五分钟内做出一个会动的模组，确认整条流程通了。</p>
+
+    <h2>1. 找到模组文件夹</h2>
+    <p>模组放在游戏安装目录底下：</p>
+<pre><code>&lt;游戏安装文件夹&gt;/Pirate_Data/StreamingAssets/Mods/</code></pre>
+    <p>最快的找法：<strong>进游戏 → 标题画面 → 模组管理 → 开启文件夹</strong>。游戏会直接帮你开，不用自己翻。</p>
+
+    <figure>
+      <img src="../../assets/ui-modlist-off.png" alt="模組管理面板，列出四個範例模組">
+      <figcaption>
+        标题画面的<strong>模组管理</strong>。游戏附带四个官方示例模组
+        —— 不确定某个字段怎么写时，按<strong>开启文件夹</strong>去看它们怎么做的。<br>
+        左下角的<strong>模组目录</strong>会直接开启 <code>Mods/</code>。
+      </figcaption>
+    </figure>
+
+    <div class="note">
+      <strong>如果没有 Mods 文件夹</strong>
+      自己建一个就行，名字要正好是 <code>Mods</code>。<br>
+      如果标题画面连“模组”按钮都没有，代表你的版本不支持模组
+      —— 手机版和 Demo / 试玩版都没有这个功能。
+    </div>
+
+    <h2>2. 建立你的模组文件夹</h2>
+    <p>在 <code>Mods/</code> 底下建一个文件夹。名字自订，建议用英文和数字，避免空格：</p>
+<pre><code>Mods/
+└── MyFirstMod/</code></pre>
+
+    <div class="warn">
+      <strong>文件夹名称是模组的身份证</strong>
+      游戏用文件夹名记住“这个模组有没有被启用”。<br>
+      <strong>改名字 = 变成另一个模组</strong>，启用状态会归零，玩家要重新打开。发布后就不要再改。
+    </div>
+
+    <h2>3. 写 mod.json</h2>
+    <p>在你的模组文件夹里建一个 <code>mod.json</code>。<strong>没有这个档，游戏不会认为那是模组</strong>，
+       连列表都不会出现。</p>
+<pre><code>{
+  "name": "我的第一个模组",
+  "author": "你的名字",
+  "version": "1.0",
+  "description": "测试用。加了一个超强药水。"
+}</code></pre>
+    <p>所有字段都可以省略，缺了会用默认值。详细说明见
+       <a href="02-modjson.html">mod.json 字段</a>。</p>
+
+    <h2>4. 加一笔数据</h2>
+    <p>数据放在 <code>Data/&lt;表名&gt;/</code> 底下，<strong>一个 JSON 档就是一笔数据</strong>。
+       这里加一个道具：</p>
+<pre><code>MyFirstMod/
+├── mod.json
+└── Data/
+    └── Item/
+        └── SuperPotion.json</code></pre>
+    <p><code>SuperPotion.json</code> 的内容：</p>
+<pre><code>{
+  "Name": "超强药水",
+  "Name_I2": "超强药水",
+  "Desc": "喝下去会变得很强",
+  "Type": "道具",
+  "AddHP": 999
+}</code></pre>
+
+    <div class="warn">
+      <strong>文件夹名决定改哪张表</strong>
+      <code>Data/Item/</code> 改的是道具表，<code>Data/Role/</code> 改角色表。<br>
+      写 <code>Item</code> 或 <code>TheItem</code> 都会被接受（游戏会自动补上 <code>The</code>）。<br>
+      <strong>文件名不重要</strong>，游戏看的是文件里面的 <code>Name</code> 字段。
+    </div>
+
+    <h2>5. 启用并测试</h2>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/ui-modlist-off.png" alt="啟用前：灰底，按鈕是「啟用」" style="max-width:420px">
+        <span class="fig-label">启用前 —— 灰底，按钮写<strong>启用</strong></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/ui-modlist-on.png" alt="啟用後：金底，按鈕變「停用」" style="max-width:420px">
+        <span class="fig-label">启用后 —— 金底，按钮变<strong>停用</strong></span>
+      </div>
+      <figcaption>
+        左上角的<strong>已启用 N / M</strong> 是快速确认的地方。<br>
+        列表顺序 = 套用顺序（由上至下），左边的三条线可以拖曳排序
+        —— 多个模组冲突时靠这个决定谁赢（见 <a href="08-conflict.html">多模组共存</a>）。
+      </figcaption>
+    </figure>
+
+    <ol>
+      <li>回到游戏，<strong>标题画面 → 模组管理</strong></li>
+      <li>找到“我的第一个模组”，按<strong>启用</strong></li>
+      <li><strong>回到标题画面，再“开始新游戏”或“读取存档”</strong></li>
+      <li>进游戏看道具列表，应该有“超强药水”</li>
+    </ol>
+
+    <div class="warn">
+      <strong>改完要回标题重新进入游戏</strong>
+      模组数据在“开始新游戏”与“读取存档”这两个时机合并。
+      改完文件或切换启用状态后，<strong>回到标题画面再进一次游戏</strong>就会生效
+      —— <strong>不需要关掉游戏重开</strong>。<br>
+      已经在进行中的游戏不会即时变动，要回标题再进来。
+    </div>
+
+    <h2>成功了吗？</h2>
+    <figure>
+      <img src="../../assets/ui-shop-potion.png" alt="商店清單裡出現「範例藥水 $100」">
+      <figcaption>
+        官方示例模组“示例道具”启用后的实际结果 ——
+        商店多了一个 <strong>示例药水 $100</strong>。<br>
+        你自己的道具也会这样出现（有填 <code>SellPrice</code> 的话）。
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>看到新道具 → 整条流程通了</strong>
+      接下来看 <a href="03-data.html">修改游戏数据</a>，学怎么改既有内容、有哪些字段可以填。
+    </div>
+    <div class="note">
+      <strong>没看到 → 去疑难排解</strong>
+      <a href="09-troubleshoot.html">疑难排解</a> 有错误消息对照表和检查列表。
+      九成的问题是 JSON 格式打错（少一个逗号、多一个逗号）。
+    </div>
+
+    <h2>完整的模组长什么样</h2>
+    <p>一个用到全部功能的模组结构：</p>
+<pre><code>MyMod/
+├── mod.json              名片档（必要）
+├── icon.png              列表缩略图（选配）
+├── Data/                 数据表
+│   ├── Item/
+│   │   └── SuperPotion.json
+│   ├── Role/
+│   │   └── NewHero.json
+│   └── Skill/
+│       └── MegaSlash.json
+├── Images/               图片
+│   ├── RoleHead/
+│   │   └── NewHero.png
+│   └── Role/
+│       └── NewHero.png
+└── Music/                音乐与音效
+    ├── BGM/
+    │   └── BGM_MyTheme.ogg
+    └── Sfx/
+        └── se_MyHit.ogg</code></pre>
+    <p>各部分的详细规则在后面的章节。</p>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 1 });</script>
+</body>
+</html>

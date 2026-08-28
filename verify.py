@@ -3,7 +3,7 @@
 import io, os, re, sys, glob
 
 ROOT = r'd:\pirate-guide'
-LANGS = ['zh-TW', 'en', 'ja']
+LANGS = ['zh-TW', 'zh-CN', 'en', 'ja']
 SLUGS = ['01-quickstart','02-modjson','03-data','04-images','05-audio',
          '06-shows','07-stages','08-conflict','09-troubleshoot','10-showeditor']
 

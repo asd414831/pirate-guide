@@ -38,6 +38,7 @@
   <div class="sub">Pirate Mod Making Guide &middot; パイレーツ MOD制作ガイド</div>
 
   <a class="big" href="zh-TW/index.html"><div class="l">繁體中文</div><div class="r">模組製作手冊</div></a>
+  <a class="big" href="zh-CN/index.html"><div class="l">简体中文</div><div class="r">模组制作手册</div></a>
   <a class="big" href="en/index.html"><div class="l">English</div><div class="r">Mod Making Guide</div></a>
   <a class="big" href="ja/index.html"><div class="l">日本語</div><div class="r">MOD制作ガイド</div></a>
 
@@ -56,7 +57,11 @@
 
   var l = (navigator.language || 'en').toLowerCase();
   var target = null;
-  if (l.indexOf('zh') === 0) target = 'zh-TW/index.html';       // 簡體讀者暫時也看繁中
+  // 分開判斷：zh-cn / zh-hans / zh-sg 走簡體，其餘中文走繁體
+  if (l.indexOf('zh-cn') === 0 || l.indexOf('zh-hans') === 0 || l.indexOf('zh-sg') === 0) {
+    target = 'zh-CN/index.html';
+  }
+  else if (l.indexOf('zh') === 0) target = 'zh-TW/index.html';
   else if (l.indexOf('ja') === 0) target = 'ja/index.html';
   else target = 'en/index.html';
 

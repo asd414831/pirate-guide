@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="mod.json 每个字段的意思、默认值、以及写错会发生什么事。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>mod.json 字段</h1>
+    <p class="lead">模组的名片档。决定玩家在模组列表里看到什么。</p>
+
+    <h2>放哪里</h2>
+<pre><code>Mods/&lt;你的模组文件夹&gt;/mod.json</code></pre>
+    <div class="warn">
+      <strong>没有 mod.json = 不是模组</strong>
+      游戏扫描 <code>Mods/</code> 时，只把“含有 <code>mod.json</code> 的子文件夹”当成模组。
+      少了这个档，你的文件夹会被完全忽略，连列表都不会出现（也不会有错误消息）。
+    </div>
+
+    <h2>完整示例</h2>
+<pre><code>{
+  "name": "更难的海盗",
+  "author": "某位玩家",
+  "version": "1.2.0",
+  "description": "敌人变强，掉落变少。\n适合二轮以后游玩。",
+  "icon": "icon.png"
+}</code></pre>
+
+    <h2>字段表</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>字段</th><th>型别</th><th>缺少时</th><th>说明</th></tr>
+      <tr>
+        <td><code>name</code></td><td>文字</td><td>用文件夹名</td>
+        <td>模组列表显示的名称。可以用任何语言。</td>
+      </tr>
+      <tr>
+        <td><code>author</code></td><td>文字</td><td>显示“未知作者”</td>
+        <td>你的名字或昵称。</td>
+      </tr>
+      <tr>
+        <td><code>version</code></td><td>文字</td><td>显示“-”</td>
+        <td>纯显示用。游戏<strong>不会</strong>比较版本大小，写 <code>1.0</code> 或 <code>v2-beta</code> 都行。</td>
+      </tr>
+      <tr>
+        <td><code>description</code></td><td>文字</td><td>空白</td>
+        <td>说明。可以换行，用 <code>\n</code>。</td>
+      </tr>
+      <tr>
+        <td><code>icon</code></td><td>文字</td><td><code>icon.png</code></td>
+        <td>缩略图的相对路径。文件不存在时显示默认底图。</td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>所有字段都可以省略</strong>
+      连空的 <code>{}</code> 都能运作 —— 游戏会用文件夹名当显示名称。
+      少写一个字段不会让模组坏掉，这是刻意的设计。
+    </div>
+
+    <h2>缩略图</h2>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/modicon-role.png" alt="模組縮圖範例">
+        <span class="fig-label">300×300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/modicon-stage.png" alt="模組縮圖範例">
+        <span class="fig-label">300×300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/modicon-item.png" alt="模組縮圖範例">
+        <span class="fig-label">512×512</span>
+      </div>
+      <figcaption>
+        官方示例模组的缩略图。<strong>建议正方形、512×512 以内</strong>。
+        没放的话会显示默认底图。
+      </figcaption>
+    </figure>
+
+    <p>默认会找模组文件夹底下的 <code>icon.png</code>。想换文件名或放子文件夹：</p>
+<pre><code>{
+  "icon": "art/my-thumbnail.png"
+}</code></pre>
+    <p>路径是相对于<strong>模组文件夹</strong>，不是相对于 <code>Mods/</code>。</p>
+
+    <h2>换行怎么写</h2>
+    <p>JSON 的字符串不能直接按 Enter 换行，要用 <code>\n</code>：</p>
+<pre><code>{
+  "description": "第一行\n第二行\n\n空一行后的第三行"
+}</code></pre>
+    <div class="warn">
+      <strong>Windows 路径的反斜线要跳脱</strong>
+      JSON 里 <code>\</code> 是特殊字元。<code>icon</code> 路径<strong>请用正斜线</strong>
+      <code>art/icon.png</code>，不要写 <code>art\icon.png</code>。
+      真的要写反斜线得打两个 <code>\</code>，很容易出错，不建议。
+    </div>
+
+    <h2>写坏了会怎样</h2>
+    <p>如果 <code>mod.json</code> 存在但格式错误（少逗号、多逗号、引号没关），
+       <strong>模组还是会出现在列表里，但会被标记为坏掉</strong>。</p>
+    <div class="aside-note">
+      格式写坏的模组不会消失，会列在那里标成坏的。因为直接消失的话你只会觉得
+      “文件放错地方了吗”然后找一小时。
+    </div>
+    <p>常见的 JSON 错误：</p>
+<pre><code>{
+  "name": "我的模组",
+  "author": "某人",     &lt;-- 最后一个字段不能有逗号
+}
+
+{
+  "name": "我的模组"
+  "author": "某人"      &lt;-- 中间的字段漏了逗号
+}
+
+{
+  'name': '我的模组'    &lt;-- JSON 只能用双引号，不能用单引号
+}</code></pre>
+    <div class="note">
+      <strong>用 VS Code 编辑可以避开九成问题</strong>
+      它会即时标红格式错误。或者把文件内容贴到任何线上 JSON 检查工具验一次。
+    </div>
+
+    <h2>文件夹名不要改</h2>
+    <div class="warn">
+      <strong>启用状态绑在文件夹名上，不是 <code>name</code> 字段</strong>
+      游戏用文件夹名记住玩家有没有启用这个模组。<br>
+      改 <code>mod.json</code> 的 <code>name</code>：安全，只是显示名称变了。<br>
+      改<strong>文件夹名</strong>：对游戏来说变成另一个模组，启用状态归零，玩家要重新打开。
+      发布之后就不要再改文件夹名。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 2 });</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="把自己画的 PNG 放进海盗。文件夹结构、命名规则、覆盖本体素材。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>加入图片</h1>
+    <p class="lead">模组可以带自己的美术。放进 <code>Images/</code> 就会被加载。</p>
+
+    <h2>基本规则</h2>
+<pre><code>Mods/&lt;你的模组&gt;/Images/&lt;照抄游戏的结构&gt;/&lt;图名&gt;.png</code></pre>
+    <div class="ok">
+      <strong>照抄游戏本体的文件夹结构就对了</strong>
+      不需要记任何特殊规则。游戏里角色头像放在 <code>RoleHead/</code>，
+      你的模组也放 <code>Images/RoleHead/</code>。就这样。
+    </div>
+
+    <h2>示例</h2>
+<pre><code>MyMod/
+├── mod.json
+├── Data/
+│   └── Role/
+│       └── NewHero.json
+└── Images/
+    ├── RoleHead/
+    │   └── NewHero.png      角色头像
+    └── Role/
+        └── NewHero.png      角色立绘</code></pre>
+
+    <h3>文件夹对照表</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>文件夹</th><th>内容</th><th>数据表字段</th></tr>
+      <tr><td><code>Images/Role/</code></td><td>立绘（角色与敌人共用）</td><td><code>PSB</code></td></tr>
+      <tr><td><code>Images/RoleHead/</code></td><td>头像</td><td><code>ImageName</code> / <code>EyeImageName</code></td></tr>
+      <tr><td><code>Images/Icon/</code></td><td>道具与 buff 图标</td><td><code>IconName</code></td></tr>
+      <tr><td><code>Images/Background/</code></td><td>背景图</td><td><code>FightBackground</code>、剧本 <code>&lt;BG&gt;</code></td></tr>
+      <tr><td><code>Images/Sticker/</code></td><td>贴纸小图</td><td>剧本 <code>&lt;Sticker&gt;</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong><code>IconName</code> 要含子路径</strong>
+      图标放 <code>Images/Icon/Buff/MyIcon.png</code> 时，
+      <code>IconName</code> 填 <code>"Icon/Buff/MyIcon"</code>。<br>
+      其他字段（<code>PSB</code> / <code>ImageName</code>）只填文件名就好。
+    </div>
+    <p>然后在 <code>Data/Role/NewHero.json</code> 里指定图名：</p>
+<pre><code>{
+  "Name": "新角色",
+  "Name_I2": "新角色",
+  "ImageName": "NewHero"
+}</code></pre>
+    <div class="note">
+      <strong>图名不含文件夹也不含 <code>.png</code></strong>
+      放的是 <code>Images/RoleHead/NewHero.png</code>，
+      数据里填的是 <code>"NewHero"</code>。游戏自己知道要去哪个文件夹找。
+    </div>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-head.png" alt="RoleHead：頭像，300x300 方形">
+        <span class="fig-label"><code>RoleHead/Nausea.png</code><br>300×300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Role：立繪，直立長方形">
+        <span class="fig-label"><code>Role/Nausea/…</code><br>900×1479</span>
+      </div>
+      <figcaption>
+        同一个角色的<strong>头像</strong>与<strong>立绘</strong>是两张不同的图，
+        放在不同文件夹、尺寸也不同。两个都要准备。
+      </figcaption>
+    </figure>
+
+    <h2>格式</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>项目</th><th>要求</th></tr>
+      <tr><td>文件格式</td><td>PNG</td></tr>
+      <tr><td>透明背景</td><td>支持（头像和立绘通常需要）</td></tr>
+      <tr><td>尺寸</td><td>没有硬性限制，但<strong>建议跟本体同类型的图一致</strong>，不然会显示得太大或太小</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>尺寸怎么抓</strong>
+      去看游戏本体同类型的图多大，照着做。角色立绘跟道具图标的尺寸差很多，
+      用错会在游戏里看起来很奇怪（不会坏，只是难看）。
+    </div>
+
+    <h2>覆盖本体的图</h2>
+    <p>用<strong>跟本体一样的路径和文件名</strong>，就会盖掉本体那张。</p>
+<pre><code>Images/RoleHead/主角.png      &lt;-- 换掉主角的头像</code></pre>
+    <div class="ok">
+      <strong>模组图优先于本体图</strong>
+      这是刻意的设计 —— 想做“换立绘”“换 UI 风格”的模组应该办得到。
+      不需要任何额外设定，同名就会盖掉。
+    </div>
+    <div class="warn">
+      <strong>文件名要完全一致，包含中文字</strong>
+      本体的图如果叫 <code>主角.png</code>，你的文件名也得是 <code>主角.png</code>。
+      差一个字（或全形半形不同）就不会覆盖，而是变成一张没人用的新图。
+    </div>
+
+    <h2>立绘的表情与服装差分</h2>
+    <p>立绘有两种摆法，看你要不要差分。</p>
+
+    <h3>(A) 不要差分 —— 一张图到底</h3>
+<pre><code>Images/Role/Nausea.png</code></pre>
+
+    <h3>(B) 要差分 —— 改放成文件夹</h3>
+<pre><code>Images/Role/Nausea/Body/Body_Normal.png
+Images/Role/Nausea/Body/Body_Dark.png
+Images/Role/Nausea/Face/Face_Normal.png
+Images/Role/Nausea/Face/Face_Laugh.png</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Body_Normal：完整的全身圖">
+        <span class="fig-label"><code>Body/Body_Normal.png</code></span>
+      </div>
+      <div class="fig-op">+</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-face-laugh.png" alt="Face_Laugh：畫布同樣是全身尺寸，只有臉的部分有內容">
+        <span class="fig-label"><code>Face/Face_Laugh.png</code></span>
+      </div>
+      <div class="fig-op">=</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="兩張同座標疊起來的結果">
+        <span class="fig-label">游戏显示的结果</span>
+      </div>
+      <figcaption>
+        棋盘格 = 透明区域。<strong>注意中间那张</strong> ——
+        <code>Face_Laugh.png</code> 只有脸的部分有内容，但<strong>画布是完整的全身尺寸</strong>。
+        引擎把两张同座标叠起来，所以表情不需要设定位置。
+      </figcaption>
+    </figure>
+
+    <div class="warn">
+      <strong>这是最常犯的错</strong>
+      很多人以为表情图只要画“一张脸”那么大。<strong>不是</strong> ——
+      表情图也要是全身尺寸的画布，脸以外全部透明。<br>
+      裁切成小图的话，叠上去会出现在左上角。
+    </div>
+
+    <h4>换服装也是同一套机制</h4>
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-normal.png" alt="Body_Normal + Face_Normal">
+        <span class="fig-label"><code>Normal</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="Body_Normal + Face_Laugh">
+        <span class="fig-label"><code>Normal</code> + <code>Laugh</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-normal.png" alt="Body_Dark + Face_Normal">
+        <span class="fig-label"><code>Dark</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-laugh.png" alt="Body_Dark + Face_Laugh">
+        <span class="fig-label"><code>Dark</code> + <code>Laugh</code></span>
+      </div>
+      <figcaption>
+        2 套服装 × 2 种表情 = 4 种组合，只需要 4 张图（2 个 Body + 2 个 Face）。<br>
+        剧本用 <code>&lt;Image&gt;Mid,Nausea,Laugh,Dark</code> 指定组合。
+      </figcaption>
+    </figure>
+
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>规则</th><th>说明</th></tr>
+      <tr><td>文件夹名 = 群组名</td><td>目前有 <code>Body</code>（身体 / 服装）与 <code>Face</code>（表情）两种</td></tr>
+      <tr><td>文件名 = 图层名</td><td><strong>要自己加 <code>Body_</code> / <code>Face_</code> 前缀</strong></td></tr>
+      <tr><td>每张都是全身图</td><td>完整尺寸、背景透明、<strong>全部同样大小</strong></td></tr>
+      <tr><td>叠图顺序</td><td>同座标直接叠起来，<code>Face</code> 叠在 <code>Body</code> 之上</td></tr>
+    </table>
+    </div>
+
+    <div class="warn">
+      <strong>每张差分图都要画成“完整尺寸的全身图”</strong>
+      引擎是把它们<strong>同座标叠起来</strong>，不是把表情贴到脸的位置。<br>
+      所以表情图也要是全尺寸、只有脸的部分有内容、其他透明。
+      <strong>不需要（也无法）设定表情的位置。</strong>
+    </div>
+
+    <h3>默认显示哪一张</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>情况</th><th>结果</th></tr>
+      <tr><td>群组里有 <code>&lt;群组&gt;_Normal</code></td><td>默认显示它</td></tr>
+      <tr><td>群组里<strong>没有</strong> <code>Normal</code></td><td>该群组<strong>默认全部不显示</strong></td></tr>
+    </table>
+    </div>
+    <p>例如只放了 <code>Face_Laugh.png</code>，平常就是没表情，等剧本叫它才出现。</p>
+
+    <div class="warn">
+      <strong>建议一定要放 <code>Face_Normal.png</code></strong>
+      “回想之境 &gt; 船员”点进立绘可以翻看所有表情差分，
+      <strong><code>&lt;群组&gt;_Normal</code> 固定排在第一页</strong>
+      —— 那就是玩家点进去先看到的那一张。<br>
+      没有额外表情时，把 <code>Face_Normal.png</code> 画成<strong>全透明</strong>就好
+      （<code>Body</code> 图本身已经有脸）。
+    </div>
+    <div class="note">
+      <strong>表情页的排序</strong>
+      页序是<strong>文件名字母序</strong>，但 <code>Normal</code> 一定第一页。<br>
+      想多一页“刻意的无表情”，照本体惯例放 <code>Face_Null.png</code>（全透明）——
+      名字含 <code>Null</code> 的表情会被固定排到<strong>最后一页</strong>。
+    </div>
+
+    <h3>剧本怎么切换差分</h3>
+    <div class="warn">
+      <strong><code>&lt;Image&gt;</code> 的第 1 段是“槽位”，不是角色名</strong>
+      槽位有 <code>Mid</code> / <code>Left</code> / <code>Right</code>。
+      角色名从<strong>第 2 段</strong>才开始。
+    </div>
+<pre><code>&lt;Image&gt;Mid,Nausea,Laugh        脸换成 Face_Laugh
+&lt;Image&gt;Mid,Nausea,,Dark        身体换成 Body_Dark
+&lt;Image&gt;Mid,Nausea,Laugh,Dark   两个一起换
+&lt;Image&gt;Mid,Nausea,-            该群组全部关掉
+&lt;Image&gt;Mid                     清掉该槽的立绘
+&lt;Image&gt;                        清掉三个槽</code></pre>
+    <p>表情和服装都<strong>省略前缀</strong> —— 写 <code>Laugh</code> 不是 <code>Face_Laugh</code>。</p>
+
+    <p>另外两个同族指令<strong>没有槽位参数</strong>，直接从角色名开始：</p>
+<pre><code>&lt;MateImage&gt;Nausea,Laugh        主画面立绘
+&lt;EnemyImage&gt;艾玛,Emma,Shock    战斗中换敌人立绘</code></pre>
+    <div class="note">
+      <strong><code>&lt;EnemyImage&gt;</code> 的第 1 段是敌人的数据 <code>Name</code></strong>
+      第 2 段起才是“PSB名,表情,服装”。
+    </div>
+    <div class="note">
+      <strong>找不到指定的差分时</strong>
+      游戏会提示（例“群组【Face】找不到【Face_Angry】”），
+      画面上那个群组会变成全部不显示。
+    </div>
+
+    <h2>子文件夹的意义</h2>
+    <p>跟音乐不同，<strong>图片的文件夹结构有意义</strong>：</p>
+<pre><code>Images/RoleHead/Nausea.png    &lt;-- 头像
+Images/Role/Nausea.png        &lt;-- 立绘</code></pre>
+    <p>这两张是不同的图，游戏会分别去对应文件夹找。放错文件夹 = 找不到。</p>
+    <div class="warn">
+      <strong>这点跟音乐刚好相反</strong>
+      <a href="05-audio.html">音乐</a>的子文件夹纯粹给你整理用，不影响查找。
+      图片的子文件夹<strong>是查找路径的一部分</strong>，不能乱放。
+    </div>
+
+    <h2>内存</h2>
+    <div class="note">
+      <strong>所有图在开机时全部加载并常驻</strong>
+      几张到几十张没问题。如果你的模组有上百张高分辨率图，
+      玩家的内存用量会明显上升 —— 这是你自己的取舍。
+    </div>
+
+    <h2>检查列表</h2>
+    <p>图没出现的时候按顺序检查：</p>
+    <ol>
+      <li>文件是 <code>.png</code> 吗？（不是 <code>.jpg</code> 改名）</li>
+      <li>放在 <code>Images/</code> 底下吗？（不是 <code>Image/</code>，有 s）</li>
+      <li>子文件夹名对吗？（<code>RoleHead</code> 不是 <code>Rolehead</code>）</li>
+      <li>数据里的 <code>ImageName</code> 跟文件名一致吗？（不含 <code>.png</code>）</li>
+      <li>用差分文件夹的话，文件名有加 <code>Body_</code> / <code>Face_</code> 前缀吗？</li>
+      <li>差分图都是同样尺寸的全身图吗？</li>
+      <li>回标题重新“开始新游戏”或“读取存档”了吗？</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 4 });</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="AutoRun 演出、把角色与关卡发给玩家、主画面对话。模组唯一能主动做事的机制。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>演出与发放内容</h1>
+    <p class="lead">写进数据表只代表“这东西存在”。玩家还没有它。这章讲怎么真的发给玩家。</p>
+
+    <div class="warn">
+      <strong>这是最容易漏掉的一步</strong>
+      你在 <code>Data/Role/</code> 加了一个角色，数据完全正确 ——
+      但玩家永远不会拿到他。<br>
+      道具有价格字段可以自动上架，<strong>角色和关卡没有</strong>。
+      唯一的发放途径是演出指令。
+    </div>
+
+    <h2>演出是什么</h2>
+    <p>演出（Show）是一串游戏指令。可以是剧情对话，也可以是纯粹的数据操作。
+       放在 <code>Data/Show/</code>，一个演出一个档。</p>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;新角色"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>演出只有四个字段</strong>
+      <code>ID</code> / <code>Name</code> / <code>Tag</code> / <code>Shows</code>。
+      没有说明字段，写了会被跳过。
+    </div>
+
+    <h2>AutoRun：模组唯一能主动做事的钩子</h2>
+    <p><code>Tag</code> 填 <code>AutoRun</code>，这个演出就会在
+       <strong>开新游戏 / 读取存档后</strong>自动播放。</p>
+<pre><code>Data/Show/AutoRun.json
+
+{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;新角色",
+    "&lt;AddItem&gt;超强药水,1"
+  ]
+}</code></pre>
+
+    <div class="warn">
+      <strong>AutoRun 每次都会跑，不是只跑一次</strong>
+      每次“开始新游戏”和“读取存档”都会执行一遍。<br>
+      这通常无害 —— <code>&lt;AddRole&gt;</code> / <code>&lt;AddItem&gt;</code>
+      对已经持有的对象会直接跳过，不会重复给、也不会把等级打回 1。
+    </div>
+
+    <p>真的只想跑一次，自己用标志包起来：</p>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;if&gt;{我的模组已初始化}==0",
+    "&lt;AddRole&gt;新角色",
+    "&lt;Var&gt;我的模组已初始化,=,1",
+    "&lt;endif&gt;"
+  ]
+}</code></pre>
+
+    <div class="note">
+      <strong><code>Name</code> 直接用你的模组名称</strong>
+      <code>Name</code> 是合并用的 key，两个模组的 AutoRun 同名时后面的会盖掉前面的
+      （不会有警告）。用模组名当 <code>Name</code> 就不会撞到别人。
+    </div>
+
+    <div class="note">
+      <strong><code>Tag</code> 是“包含”判定，不是“等于”</strong>
+      <code>"Tag": "AutoRun,剧情"</code> 也算 AutoRun。大小写不敏感，写
+      <code>autorun</code> 也认得。
+    </div>
+
+    <h2>发放角色</h2>
+<pre><code>"&lt;AddRole&gt;新角色</code></pre>
+    <p>参数是角色数据表的 <code>Name</code>（不是 <code>Name_I2</code>）。</p>
+    <div class="warn">
+      <strong>角色要出现在“回想之境 &gt; 船员”还需要两个条件</strong>
+      <ul>
+        <li><code>ID</code> 大于 0</li>
+        <li><code>Name</code> 不是空的</li>
+      </ul>
+      两个条件不满足时，即使 <code>&lt;AddRole&gt;</code> 执行了也看不到。
+    </div>
+
+    <figure>
+      <img src="../../assets/ui-mod-role.png" alt="模組角色出現在船員列表，有自己的立繪與技能">
+      <figcaption>
+        官方示例模组“示例角色”的成果 —— 完全由模组加入的角色，
+        自带立绘、头像、素质与技能组（<code>杀意感知</code> / <code>暗夜陶醉</code> /
+        <code>重力场</code> 都是模组自己加的）。<br>
+        这一切的前提是 AutoRun 演出里那一行 <code>&lt;AddRole&gt;矮额</code>
+        —— <strong>没有它，数据再完整玩家也拿不到</strong>。
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="../../assets/ui-mod-role-slot.png" alt="模組角色排在船員清單的最後面">
+      <figcaption>
+        <strong>模组新增的内容一律追加在列表尾端。</strong>
+        找不到自己加的角色时，把列表卷到最下面 —— 通常就在那里。
+      </figcaption>
+    </figure>
+
+    <h2>发放关卡</h2>
+    <p><strong>两行都不能省。</strong></p>
+<pre><code>"&lt;AddStageGroup&gt;模组",
+"&lt;AddStage&gt;模组试炼 深渊"</code></pre>
+    <div class="warn">
+      <strong>少了 <code>&lt;AddStageGroup&gt;</code> 关卡就看不到</strong>
+      关卡必须挂在一个群组底下。没有群组，玩家在关卡菜单里找不到它。<br>
+      游戏内建了一个叫“模组”的群组可以直接用。
+    </div>
+    <div class="ok">
+      <strong>重复执行是安全的</strong>
+      已经持有的群组和关卡不会被加第二次。
+    </div>
+
+    <h2>发放道具</h2>
+<pre><code>"&lt;AddItem&gt;超强药水,1"</code></pre>
+    <div class="note">
+      <strong>道具通常不需要 AutoRun</strong>
+      道具有 <code>SellPrice</code> 这类字段，填了就会出现在商店里让玩家买。
+      只有“想直接送给玩家”时才需要 <code>&lt;AddItem&gt;</code>。
+    </div>
+
+    <h2>AutoRun 要注意的一件事</h2>
+    <div class="warn">
+      <strong>存档停在剧情中间时，AutoRun 会跟那段剧情同时进行</strong>
+      读档时如果刚好续播一段剧情，AutoRun 会跟它抢画面。<br>
+      <strong>建议 AutoRun 只放纯数据指令</strong> ——
+      <code>&lt;AddRole&gt;</code> / <code>&lt;AddItem&gt;</code> /
+      <code>&lt;AddStage&gt;</code> / <code>&lt;Var&gt;</code> 这类。<br>
+      想写对话和节奏，放到<strong>关卡的胜利演出</strong>里更自然（见下一章）。
+    </div>
+    <div class="ok">
+      <strong>多个模组的 AutoRun 是串行的</strong>
+      一个播完才播下一个，顺序 = 模组管理页的排序（由上而下）。<br>
+      所以你在 AutoRun 里写 <code>&lt;Wait&gt;</code> 安排节奏时，
+      不会被别的模组插话。
+    </div>
+
+    <h2>命名惯例：补既有的演出位</h2>
+    <p>游戏有些地方是用<strong>固定名称</strong>去找演出的。把 <code>Name</code>
+       取成那个名字，就会在对应时机被叫到 —— 不需要 <code>Tag</code>。</p>
+
+    <h3>主画面角色对话</h3>
+    <p>玩家在主画面点角色立绘时播放。名称规则：</p>
+<pre><code>主画面角色对话_&lt;角色的 Name&gt;</code></pre>
+    <p>例如角色的 <code>Name</code> 是“新角色”：</p>
+<pre><code>Data/Show/RoomTalk.json
+
+{
+  "Name": "主画面角色对话_新角色",
+  "Shows": [
+    "&lt;Var&gt;主画面对话值,+,1",
+    "&lt;if&gt;{主画面对话值}&gt;3",
+    "&lt;Var&gt;主画面对话值,=,1",
+    "&lt;endif&gt;",
+    "&lt;if&gt;{主画面对话值}==1",
+    "&lt;MateImage&gt;NewHero",
+    "&lt;MateTalk&gt;{目前主画面角色名称}：安安",
+    "&lt;elseif&gt;{主画面对话值}==2",
+    "&lt;MateTalk&gt;{目前主画面角色名称}：又是你",
+    "&lt;elseif&gt;",
+    "&lt;MateTalk&gt;{目前主画面角色名称}：没事别乱点",
+    "&lt;endif&gt;"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>没补这个演出不会报错</strong>
+      模组角色在主画面只会站着不说话。想让他有反应就要补。<br>
+      用的是角色数据表的 <code>Name</code>，不是翻译后的显示名称。
+    </div>
+
+    <h2>常用指令速查</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>指令</th><th>作用</th></tr>
+      <tr><td><code>&lt;AddRole&gt;角色Name</code></td><td>给玩家一个角色</td></tr>
+      <tr><td><code>&lt;AddItem&gt;道具Name,数量</code></td><td>给玩家道具</td></tr>
+      <tr><td><code>&lt;AddStageGroup&gt;群组名</code></td><td>解锁关卡群组</td></tr>
+      <tr><td><code>&lt;AddStage&gt;关卡Name</code></td><td>解锁关卡</td></tr>
+      <tr><td><code>&lt;Var&gt;变量,=,值</code></td><td>设定变量（<code>=</code> / <code>+</code> / <code>-</code>）</td></tr>
+      <tr><td><code>&lt;if&gt;条件</code> … <code>&lt;endif&gt;</code></td><td>条件判断，中间可用 <code>&lt;elseif&gt;</code></td></tr>
+      <tr><td><code>&lt;Talk&gt;内容</code></td><td>对话。不带内容 = 关掉对话框</td></tr>
+      <tr><td><code>&lt;MateTalk&gt;内容</code></td><td>主画面对话</td></tr>
+      <tr><td><code>&lt;Wait&gt;秒数</code></td><td>等待</td></tr>
+      <tr><td><code>&lt;BG&gt;背景名,秒数,颜色</code></td><td>切背景。<code>&lt;BG&gt;,1</code> = 淡出</td></tr>
+      <tr><td><code>&lt;Image&gt;槽位,角色,表情,服装</code></td><td>立绘。不带参数 = 清掉全部</td></tr>
+      <tr><td><code>&lt;MateImage&gt;角色,表情,服装</code></td><td>主画面立绘（没有槽位参数）</td></tr>
+      <tr><td><code>&lt;BGM&gt;音乐名</code></td><td>切音乐</td></tr>
+      <tr><td><code>&lt;Sfx&gt;音效名</code></td><td>播音效</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>完整的指令列表在演出编辑器里</strong>
+      指令很多，而且有不少参数细节。用<a href="10-showeditor.html">演出编辑器</a>
+      写演出可以边选边看说明，不用背。
+    </div>
+
+    <h2>对话的写法惯例</h2>
+    <p>说话者写成“名字：内容”：</p>
+<pre><code>"&lt;Talk&gt;新角色：早安。"</code></pre>
+    <div class="ok">
+      <strong>名字对得上角色数据时会自动上色并打聚光灯</strong>
+      用的是角色数据表的 <code>Name</code>。对不上就只是普通文字，不会报错。
+    </div>
+
+    <h3>剧情段的开头与结尾</h3>
+    <p>照抄游戏本体的写法：</p>
+<pre><code>"&lt;BG&gt;MyBG,0,#00000000",      背景先设好、全透明
+"&lt;BG&gt;MyBG,1,#FFFFFF",        1 秒淡入
+"&lt;Talk&gt;某人：开场对白。",
+"&lt;Talk&gt;",                    关掉对话框
+"&lt;Image&gt;",                   清掉立绘
+"&lt;BG&gt;,1"                     背景淡出</code></pre>
+
+    <h2>检查列表</h2>
+    <p>角色 / 关卡加了但玩家看不到：</p>
+    <ol>
+      <li>有写 AutoRun 演出吗？（<strong>最常见原因</strong>）</li>
+      <li><code>Tag</code> 有含 <code>AutoRun</code> 吗？</li>
+      <li><code>&lt;AddRole&gt;</code> 的参数是数据表的 <code>Name</code> 吗？（不是 <code>Name_I2</code>）</li>
+      <li>数据的 <code>ID</code> 大于 0 吗？</li>
+      <li>关卡有写 <code>&lt;AddStageGroup&gt;</code> 吗？</li>
+      <li>回标题重新“开始新游戏”或“读取存档”了吗？</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 6 });</script>
+</body>
+</html>

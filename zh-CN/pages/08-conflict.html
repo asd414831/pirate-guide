@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="多个模组同时启用时谁赢。套用顺序、冲突处理、给作者的建议。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>多模组共存</h1>
+    <p class="lead">玩家可以同时开很多模组。这章讲冲突时谁赢。</p>
+
+    <h2>套用顺序</h2>
+    <p>游戏开机时的顺序：</p>
+    <ol>
+      <li>加载游戏本体的数据</li>
+      <li>依模组列表顺序，一个一个叠上去</li>
+    </ol>
+    <div class="ok">
+      <strong>后套用的赢</strong>
+      列表里比较后面的模组，会盖掉前面的。数据表、图片、音乐都是同一个规则。
+    </div>
+
+    <h2>什么情况叫冲突</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>类型</th><th>冲突条件</th><th>结果</th></tr>
+      <tr><td>数据表</td><td>两个模组改<strong>同一个 <code>Name</code> 的同一个字段</strong></td><td>后面的值赢</td></tr>
+      <tr><td>图片</td><td>两个模组放<strong>同路径同文件名</strong>的图</td><td>后面的图赢</td></tr>
+      <tr><td>音乐</td><td>两个模组放<strong>同文件名</strong>的音频文件</td><td>后面的音频文件赢</td></tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>改不同字段不会冲突</strong>
+      A 模组改药草的 <code>SellPrice</code>，B 模组改药草的 <code>Desc</code>
+      —— 两个都会生效，因为合并只覆写“有写到的字段”。<br>
+      这是模组兼容性比想像中好的主要原因。
+    </div>
+
+    <h2>玩家可以调顺序</h2>
+    <p>模组管理页面可以手动排序。玩家遇到冲突时，可以把想要优先的模组排到后面。</p>
+    <div class="note">
+      <strong>所以“无法兼容”通常不是真的无法兼容</strong>
+      两个模组打架时，先请玩家试着调整顺序。真正无解的情况是
+      “两个模组都需要同一个字段是不同的值”。
+    </div>
+
+    <h2>给作者的建议</h2>
+
+    <h3>1. 改最少的字段</h3>
+    <div class="ok">
+      <strong>只写你真的要改的字段</strong>
+      想让道具卖贵一点，就只写 <code>Name</code> 和 <code>SellPrice</code>。<br>
+      不要为了“完整”把整笔数据的所有字段都复制进来 ——
+      那会让你的模组跟每一个改同一笔数据的模组冲突，而且游戏更新后你的旧值会盖掉新的。
+    </div>
+
+    <h3>2. 新增内容用独特的名字</h3>
+    <p>新增道具 / 角色 / 技能时，<code>Name</code> 建议加上自己的前缀：</p>
+<pre><code>"Name": "MyMod_超强药水"</code></pre>
+    <p>这样不会意外撞到别人的新增内容，也不会撞到游戏未来新增的内容。</p>
+    <div class="note">
+      <strong>前缀只影响内部识别，玩家看不到</strong>
+      玩家看到的是 <code>Name_I2</code>，所以 <code>Name</code> 写多丑都没关系。
+    </div>
+
+    <h3>3. 图片和音乐也加前缀</h3>
+<pre><code>Images/RoleHead/MyMod_NewHero.png
+Music/BGM_MyMod_Theme.ogg</code></pre>
+    <p>除非你<strong>刻意</strong>要覆盖本体或别人的素材，否则加前缀避免撞名。</p>
+
+    <h3>4. 在 description 写清楚你改了什么</h3>
+<pre><code>{
+  "description": "改动：\n- 所有敌人 HP x2\n- 药草卖价 500\n\n会跟其他调整敌人数值的模组冲突。"
+}</code></pre>
+    <p>玩家才知道遇到问题时该关掉哪个。</p>
+
+    <h2>模组不能互相依赖</h2>
+    <div class="warn">
+      <strong>没有“依赖”机制</strong>
+      你不能宣告“我的模组需要先装 XX 模组”。游戏不会检查，也不会提示。<br>
+      如果你的模组真的依赖另一个模组的内容（例如引用了它新增的道具名），
+      请在 <code>description</code> 里写清楚，并自行处理“对方没装”时的情况。
+    </div>
+
+    <h2>一个模组坏掉不会拖垮其他</h2>
+    <div class="ok">
+      <strong>错误是隔离的</strong>
+      某个模组的某个 JSON 档格式错误，只有那个文件被跳过。
+      同模组的其他文件、其他模组都正常运作。<br>
+      所以玩家开了十个模组其中一个坏掉，游戏还是能玩 —— 只是那部分内容没生效。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 8 });</script>
+</body>
+</html>

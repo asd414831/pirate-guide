@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="海盗 游戏的模组制作手册。教你加道具、改数值、放自己的图和音乐。">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>海盗 模组制作手册</h1>
+    <p class="lead">不用写程序。会用记事本，就能做模组。</p>
+
+    <p>这份手册教你怎么帮《海盗》做模组 —— 加新道具、改角色数值、换立绘、放自己的 BGM。
+       全部靠编辑文字档完成，不需要任何开发工具，也不需要重新编译游戏。</p>
+
+    <div class="ok">
+      <strong>五分钟就能做出第一个模组</strong>
+      建一个文件夹、写一个 <code>mod.json</code>、放一个 JSON 档。就这样。
+      直接跳到 <a href="pages/01-quickstart.html">快速开始</a>。
+    </div>
+
+    <h2>你可以做什么</h2>
+    <ul>
+      <li><strong>改数值</strong> —— 角色、敌人、技能、Buff、道具、关卡、地形…游戏的 13 张数据表全部可改</li>
+      <li><strong>加新内容</strong> —— 不只是改既有的，可以凭空加新道具 / 新角色 / 新技能</li>
+      <li><strong>带自己的美术</strong> —— PNG 放进 <code>Images/</code> 就会被加载，可以加新立绘或换掉本体素材</li>
+      <li><strong>带自己的音乐</strong> —— OGG / MP3 / WAV 放进 <code>Music/</code>，BGM 和音效都支持</li>
+      <li><strong>做整套战斗内容</strong> —— 自订敌人、敌人 AI、多波次关卡、战斗背景</li>
+      <li><strong>写剧情演出</strong> —— 对话、立绘、表情差分、关卡的开场与结局</li>
+    </ul>
+
+    <h2>你不能做什么</h2>
+    <ul>
+      <li><strong>删除既有内容</strong> —— 模组只能“改”和“加”，没有删除功能。想隐藏东西要用
+          <code>UnlockCon</code>（见 <a href="pages/03-data.html">修改游戏数据</a>）</li>
+      <li><strong>加新程序逻辑</strong> —— 不能写 C#。但剧本指令和演出系统的组合已经很自由</li>
+      <li><strong>在手机版使用</strong> —— 模组功能是桌机版限定</li>
+    </ul>
+
+    <h2>章节</h2>
+    <div class="cards"></div>
+
+    <h2>需要准备什么</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>用途</th><th>工具</th><th>说明</th></tr>
+      <tr><td>编辑 JSON</td><td>记事本 / VS Code / Notepad++</td><td>任何纯文字编辑器都行。推荐 VS Code，会帮你检查 JSON 格式</td></tr>
+      <tr><td>做图</td><td>任何绘图软件</td><td>输出 PNG 即可</td></tr>
+      <tr><td>做音乐</td><td>任何音讯软件</td><td>输出 OGG / MP3 / WAV</td></tr>
+      <tr><td>做剧情演出</td><td>演出编辑器</td><td>视觉化工具，见 <a href="pages/10-showeditor.html">演出编辑器</a></td></tr>
+    </table>
+    </div>
+
+    <div class="note">
+      <strong>这份手册的内容是跟着游戏程序走的</strong>
+      里面写的规则（合并方式、文件夹结构、优先级）都对照实际实作。
+      如果你发现手册跟游戏行为不一致，那是手册过时了 —— 请回报。
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../js/nav.js"></script>
+<script>
+buildNav({ lang: 'zh-CN', page: 0 });
+buildCards('zh-CN', [
+  '建立第一個模組。資料夾放哪、最小可運作範例。',
+  '模組的名片檔。每個欄位是什麼意思、缺了會怎樣。',
+  '改數值與加新內容。合併規則、13 張資料表、型別與範例。',
+  '把自己的 PNG 放進遊戲。資料夾對照、立繪表情差分、覆蓋本體素材。',
+  '加入 BGM 與音效。支援格式、命名規則、載入時機的注意事項。',
+  '把角色與關卡真的發給玩家。AutoRun、指令速查、主畫面對話。',
+  '自訂敵人與戰鬥。敵人 AI、波次、戰鬥背景、關卡劇情。',
+  '多個模組同時啟用時誰贏。排序、衝突、給作者的建議。',
+  '模組沒生效怎麼查。錯誤訊息對照表、按症狀分類的檢查清單。',
+  '視覺化編輯劇情演出。這是什麼、能做什麼、怎麼取得。',
+]);
+</script>
+</body>
+</html>

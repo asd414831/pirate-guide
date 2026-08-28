@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海盗模组手册</title>
+<meta name="description" content="自订敌人、敌人 AI、关卡波次、战斗背景与关卡剧情。">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="菜单">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>关卡与敌人</h1>
+    <p class="lead">做一整套自己的战斗内容。敌人、AI、波次、背景、剧情。</p>
+
+    <h2>敌人</h2>
+    <p><code>Data/Enemy/Emma.json</code></p>
+<pre><code>{
+  "Name": "艾玛",
+  "ID": 9201,
+  "PSB": "Emma,Normal,Normal",
+  "WellTerrain": "洞窟",
+  "StartHP": 420, "LvAddHP": 18,
+  "StartAtk": 48, "LvAddAtk": 1,
+  "Pos_y": -1120, "Sca": 48,
+  "DoID":    ["1",          "1",           "1"],
+  "DoCON":   ["",           "{Turn}%4==3", "{Turn}%3==0"],
+  "DoSkill": ["连环普通拳", "急速疗愈",    "防御"]
+}</code></pre>
+
+    <h3>敌人 AI：三条平行列表</h3>
+    <p><code>DoID</code> / <code>DoCON</code> / <code>DoSkill</code>
+       是<strong>对齐的三条列表</strong>。同一个位置是同一条规则。</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>字段</th><th>意义</th></tr>
+      <tr><td><code>DoID</code></td><td>权重。数字越大越常被抽中。填 <code>-1</code> = 开场被动（该格 <code>DoSkill</code> 必须是被动技能）</td></tr>
+      <tr><td><code>DoCON</code></td><td>发动条件。空字符串 = 永远成立</td></tr>
+      <tr><td><code>DoSkill</code></td><td>技能名。要对得上游戏既有的，或你自己在 <code>Data/Skill/</code> 加的</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>三条长度不一致时以最短的为准</strong>
+      多出来的会被<strong>安静忽略</strong>，不会报错。要自己数好。
+    </div>
+    <p>上面的示例读起来是：</p>
+    <ul>
+      <li>平常用“连环普通拳”</li>
+      <li>第 3、7、11… 回合用“急速疗愈”（<code>{Turn}%4==3</code>）</li>
+      <li>第 3、6、9… 回合用“防御”（<code>{Turn}%3==0</code>）</li>
+    </ul>
+
+    <h3>敌人立绘的位置与大小</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>字段</th><th>说明</th></tr>
+      <tr><td><code>Pos_y</code></td><td>立绘在战斗画面的垂直位置。杂鱼大多在 <code>-1120</code> 附近</td></tr>
+      <tr><td><code>Sca</code></td><td>缩放。杂鱼大多在 <code>70</code>～<code>80</code></td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong><code>Sca</code> 要配合你那张 PNG 的实际像素高度</strong>
+      <strong>图越高，<code>Sca</code> 要越小。</strong><br>
+      示例的艾玛原图是 1475×2020，所以 <code>Sca</code> 用 48。<br>
+      同样的画面高度换成 1000×1600 的图，就要填 60 左右。
+    </div>
+    <figure>
+      <img src="../../assets/emma-body-normal.png" alt="艾瑪的立繪，原圖 1475x2020" style="max-height:300px">
+      <figcaption>
+        官方示例的艾玛，原图 <strong>1475×2020</strong>，战斗中用
+        <code>Sca: 48</code> / <code>Pos_y: -1120</code>。<br>
+        同样的画面高度换成 1000×1600 的图就要填 60 左右 —— <strong>图越高，<code>Sca</code> 越小</strong>。
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>最快的做法：抄一只体型相近的既有敌人</strong>
+      找游戏里大小差不多的敌人，把它的 <code>Pos_y</code> / <code>Sca</code> 抄过来再微调。
+    </div>
+    <div class="note">
+      <strong>调整立绘不用重开游戏</strong>
+      改完存档，回标题重新“开始新游戏”或“读取存档”就会套用。
+    </div>
+
+    <h3>敌人立绘放哪</h3>
+    <p>跟角色完全同一套规则（见<a href="04-images.html">加入图片</a>），
+       差别只在敌人的字段叫 <code>PSB</code>。</p>
+<pre><code>Images/Role/Emma/Body/Body_Normal.png
+Images/Role/Emma/Face/Face_Normal.png
+Images/Role/Emma/Face/Face_Sad.png
+Images/Role/Emma/Face/Face_Shock.png</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/emma-body-normal.png" alt="Body_Normal">
+        <span class="fig-label"><code>Body_Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-composite-shock.png" alt="Body + Face_Shock">
+        <span class="fig-label">+ <code>Face_Shock</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-face-sad.png" alt="Face_Sad 單獨看">
+        <span class="fig-label"><code>Face_Sad</code> 单独看</span>
+      </div>
+      <figcaption>
+        艾玛的 4 张图（1 个 Body + 3 个 Face）。
+        <strong>最右边是 <code>Face_Sad.png</code> 单独的样子</strong> ——
+        每张表情图都是完整的全身画布，脸以外透明。棋盘格 = 透明。
+      </figcaption>
+    </figure>
+    <p><code>PSB</code> 的三段是“PSB名,表情,服装”：</p>
+<pre><code>"PSB": "Emma,Normal,Normal"</code></pre>
+    <p>对应到 <code>Images/Role/<strong>Emma</strong>/Face/Face_<strong>Normal</strong></code>
+       与 <code>Images/Role/<strong>Emma</strong>/Body/Body_<strong>Normal</strong></code>。</p>
+    <div class="ok">
+      <strong>角色与敌人可以共用同一组立绘</strong>
+      示例的艾玛先当敌人出场，打赢之后用同一个 <code>PSB</code> 加入队伍。<br>
+      两张表各填自己的 <code>Pos_y</code> / <code>Sca</code>
+      —— 战斗画面与主画面的取景不同。
+    </div>
+
+    <h2>关卡</h2>
+    <p><code>Data/Stage/AbyssTrial.json</code></p>
+<pre><code>{
+  "Name": "模组试炼 深渊",
+  "ID": 9201,
+  "Group": "模组",
+  "Tag": "战斗",
+  "Rank": 1,
+  "FightWinExp": "60", "FightWinMoney": "60",
+  "FightWhere": "洞窟",
+  "FightBackground": "Background_ModAbyss, Background_ModAbyss_Night",
+  "FightBGM": "BGM_Fight2",
+  "EnemyLv": ["3", "5"],
+  "Enemys":  ["艾玛", "艾玛, 幽灵水母"],
+  "GetItem": ["苹果"],
+  "GetItemProbability": ["0.5"]
+}</code></pre>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>字段</th><th>说明</th></tr>
+      <tr><td><code>Group</code></td><td>关卡菜单的群组。游戏内建了一个叫“模组”的群组可以直接用</td></tr>
+      <tr><td><code>Tag</code></td><td>没有“战斗”的话只播演出、不开战</td></tr>
+      <tr><td><code>FightWhere</code></td><td>场地，影响地形相性</td></tr>
+      <tr><td><code>FightBackground</code></td><td>战斗背景。逗号分隔可以每波换一张</td></tr>
+      <tr><td><code>FightBGM</code></td><td>战斗音乐。逗号分隔可以每波换一首</td></tr>
+    </table>
+    </div>
+
+    <h3>波次</h3>
+    <div class="warn">
+      <strong><code>Enemys</code> 的一个元素 = 一个波次</strong>
+      同一波要出多只时用逗号隔开。
+    </div>
+<pre><code>"Enemys": ["艾玛", "艾玛, 幽灵水母"]     第一波 1 只、第二波 2 只
+"Enemys": ["艾玛,幽灵水母"]              一波 2 只（空格有没有都认得）</code></pre>
+    <div class="note">
+      <strong>敌人可以直接用游戏既有的</strong>
+      上面的“幽灵水母”就是游戏本体的敌人，不一定要自己新增。
+    </div>
+
+    <div class="warn">
+      <strong>同一波不要放两只同名的敌人</strong>
+      不要写 <code>"艾玛, 艾玛"</code>。<br>
+      游戏有不少地方是用<strong>名字</strong>回查敌人在场上的位置，
+      两只同名时永远只查得到第一只 —— 第二只的特效座标和目标锁定会跑到第一只身上。<br>
+      想让同款敌人出两只，<strong>复制一份数据改个名字</strong>
+      （游戏本体的“骑士 / 骑士B / 骑士C”就是这样做的）。<br>
+      跨波次同名没问题（每波开始前会整批清掉重生）。
+    </div>
+
+    <div class="aside-note">
+      这告诉我们不要把名字当 key。但这款游戏已经来不及了。
+    </div>
+
+    <h3>平行对齐的列表</h3>
+    <p>这些字段是“一个元素一个波次”或“同位置是同一项”：</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>字段组</th><th>对齐方式</th></tr>
+      <tr><td><code>Enemys</code> / <code>EnemyLv</code></td><td>一个元素 = 一个波次</td></tr>
+      <tr><td><code>FightBackground</code> / <code>FightBGM</code></td><td>逗号分隔，一个 = 一个波次</td></tr>
+      <tr><td><code>GetItem</code> / <code>GetItemProbability</code></td><td>同位置 = 同一项掉落</td></tr>
+    </table>
+    </div>
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss.png" alt="第一波的背景">
+        <span class="fig-label">第 1 波<br><code>Background_ModAbyss</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss-night.png" alt="第二波的背景">
+        <span class="fig-label">第 2 波<br><code>Background_ModAbyss_Night</code></span>
+      </div>
+      <figcaption>
+        <code>FightBackground</code> 用逗号分隔就能每波换一张。<br>
+        背景图是 <strong>960×540</strong>，放在 <code>Images/Background/</code>。
+      </figcaption>
+    </figure>
+
+    <div class="note">
+      <strong>列表比波数短时会自动沿用</strong>
+      <code>EnemyLv</code> 不够长时游戏会自动算等级；
+      <code>FightBackground</code> / <code>FightBGM</code> 不够时沿用第一个。
+    </div>
+
+    <h2>关卡剧情</h2>
+    <p>三个字段可以挂演出，值就是演出的 <code>Name</code>：</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>字段</th><th>时机</th></tr>
+      <tr><td><code>StartShow</code></td><td>进关卡、开打之前</td></tr>
+      <tr><td><code>FightWinShow</code></td><td>打赢之后</td></tr>
+      <tr><td><code>FightLoseShow</code></td><td>打输之后</td></tr>
+    </table>
+    </div>
+    <p>三个都是选填，留空就没有那段演出。演出本身放在 <code>Data/Show/</code>
+       （见<a href="06-shows.html">演出与发放内容</a>）。</p>
+
+    <h3>开场演出示例</h3>
+<pre><code>Data/Show/StageStart.json
+
+{
+  "Name": "模组试炼 深渊_开场",
+  "Tag": "剧情",
+  "Shows": [
+    "&lt;BG&gt;Background_ModAbyss,0,#00000000",
+    "&lt;BG&gt;Background_ModAbyss,1,#FFFFFF",
+    "&lt;Var&gt;TalkBoxTopDownDontShow,=,0",
+    "&lt;Talk&gt;深渊的最底层，传来了不合时宜的圣歌。",
+    "&lt;Image&gt;Mid,Emma,Normal",
+    "&lt;Talk&gt;艾玛：……♪",
+    "&lt;Image&gt;Mid,Emma,Shock",
+    "&lt;ImageShake&gt;Mid",
+    "&lt;Talk&gt;艾玛：啊，有客人。",
+    "&lt;Talk&gt;",
+    "&lt;Image&gt;",
+    "&lt;BG&gt;,1"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>惯例</strong>
+      <ul>
+        <li>开头 <code>&lt;BG&gt;名称,0,#00000000</code> + <code>&lt;BG&gt;名称,1,#FFFFFF</code> = 背景淡入</li>
+        <li><code>&lt;Talk&gt;</code> 不带内容 = 关掉对话框</li>
+        <li><code>&lt;Image&gt;</code> 不带参数 = 清掉三个槽的立绘</li>
+        <li>结尾 <code>&lt;BG&gt;,1</code> 把背景淡出，让战斗画面接手</li>
+      </ul>
+    </div>
+
+    <h3>“打赢才入队”</h3>
+    <p>比 AutoRun 更自然的角色发放方式 —— AutoRun 是“一启用就给”，
+       放在胜利演出则是“玩家打赢才拿到”：</p>
+<pre><code>"&lt;Image&gt;Mid,Emma,Laugh",
+"&lt;Talk&gt;艾玛：那么，照约定，从今天起我就跟着你们了。",
+"&lt;Talk&gt;",
+"&lt;Image&gt;",
+"&lt;AddRole&gt;艾玛",
+"&lt;BG&gt;,1"</code></pre>
+    <div class="ok">
+      <strong>重复通关不用自己加标志</strong>
+      <code>&lt;AddRole&gt;</code> 对已经持有的角色是安全的 ——
+      直接跳过，不会重复给、也不会把等级打回 1。
+    </div>
+
+    <h2>战斗中的回合演出</h2>
+    <p>战斗进行中的每个回合开始时也可以插演出。这种<strong>不用填在关卡字段里</strong>，
+       命名对上就会被叫到：</p>
+<pre><code>{关卡Name}_Wave{波次}_{PlayerTurn|EnemyTurn}{该波第几回合}</code></pre>
+    <p>波次与回合都从 1 开始。例如：</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>演出 Name</th><th>时机</th></tr>
+      <tr><td><code>模组试炼 深渊_Wave2_PlayerTurn1</code></td><td>第二波、玩家的第一个回合</td></tr>
+      <tr><td><code>模组试炼 深渊_Wave2_PlayerTurn</code></td><td>第二波的<strong>每个</strong>玩家回合</td></tr>
+      <tr><td><code>模组试炼 深渊_PlayerTurn3</code></td><td>整场的第 3 回合（不分波次）</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>带数字的优先于不带数字的</strong>
+      同时存在 <code>_PlayerTurn1</code> 和 <code>_PlayerTurn</code> 时，
+      第一回合会播带数字的那个。
+    </div>
+
+    <h3>战斗中演出的惯例不同</h3>
+    <p>剧情段用背景图，<strong>战斗中用 <code>null</code> 加半透明黑当遮罩</strong>，
+       盖在战斗画面上：</p>
+<pre><code>"&lt;BG&gt;null,0,#00000000",
+"&lt;BG&gt;null,0.5,#000000CC",      把战斗画面压暗
+"&lt;Wait&gt;1",
+"&lt;Image&gt;Mid,Emma,Shock",
+"&lt;Talk&gt;艾玛：等一下，你们是认真的吗？",
+"&lt;Talk&gt;",
+"&lt;Image&gt;",
+"&lt;BG&gt;,0.5",                    收掉遮罩，回到战斗
+"&lt;EnemyImage&gt;艾玛,Emma,Sad"    顺手换掉场上那只的表情</code></pre>
+    <div class="warn">
+      <strong><code>&lt;EnemyImage&gt;</code> 要放在遮罩收掉<em>之后</em></strong>
+      放在遮罩还盖着的时候换表情，玩家看不到变化。
+    </div>
+    <div class="note">
+      <strong><code>&lt;EnemyImage&gt;</code> 的第一段是敌人的数据 <code>Name</code></strong>
+      第二段起才是“PSB名,表情,服装”。跟 <code>&lt;Image&gt;</code> 的槽位参数不同。
+    </div>
+
+    <h2>让玩家真的看得到关卡</h2>
+    <div class="warn">
+      <strong>写进数据表只代表“关卡存在”，玩家还没有它</strong>
+      要靠 AutoRun 演出发给玩家，<strong>两行都不能省</strong>：
+    </div>
+<pre><code>Data/Show/AutoRun.json
+
+{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddStageGroup&gt;模组",
+    "&lt;AddStage&gt;模组试炼 深渊"
+  ]
+}</code></pre>
+    <p>详见<a href="06-shows.html">演出与发放内容</a>。</p>
+
+    <h2>技能</h2>
+    <p>技能放 <code>Data/Skill/</code>。角色的技能字段有一个容易写错的对应规则：</p>
+    <div class="warn">
+      <strong><code>Skill</code> 的前 4 个是“基础技能”，第 5 个起才吃条件</strong>
+      <code>Skill</code> 前 4 个一开始就会，不需要条件。<br>
+      第 5 个之后<strong>依序</strong>对应 <code>ElseSkillCon</code>：
+<pre><code>Skill[4] &lt;- ElseSkillCon[0]
+Skill[5] &lt;- ElseSkillCon[1]
+...</code></pre>
+      所以 <code>ElseSkillCon</code> <strong>不需要</strong>为前 4 个技能补空字符串。
+    </div>
+
+    <h2>官方示例模组</h2>
+    <div class="ok">
+      <strong>游戏附带了完整示例</strong>
+      <code>Mods/</code> 底下有官方示例模组，把整套关卡内容示范了一遍 ——
+      自订敌人（含表情差分）、两波关卡（每波换背景）、开场 / 胜利 / 失败三段剧情，
+      以及“打赢才入队”的角色。<br>
+      <strong>不确定某个字段怎么写时，去看示例怎么做的。</strong>
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'zh-CN', page: 7 });</script>
+</body>
+</html>
