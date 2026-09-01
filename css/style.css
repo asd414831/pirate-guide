@@ -107,7 +107,8 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px 14px;
+  /* 上下等距 —— 之前是 12/14，下面多 2px，跟上下的分隔線一比就看得出來偏心 */
+  padding: 13px 20px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 12px;
 }
