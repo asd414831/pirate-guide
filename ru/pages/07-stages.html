@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Руководство по модам Pirate</title>
+<meta name="description" content="Свои враги, ИИ противника, волны этапа, боевые фоны и заставки этапов.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Меню">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Этапы и враги</h1>
+    <p class="lead">Как собрать полноценный бой. Враги, ИИ, волны, фоны, заставки.</p>
+
+    <h2>Враги</h2>
+    <p><code>Data/Enemy/Emma.json</code></p>
+<pre><code>{
+  "Name": "Emma",
+  "ID": 9201,
+  "PSB": "Emma,Normal,Normal",
+  "WellTerrain": "Cave",
+  "StartHP": 420, "LvAddHP": 18,
+  "StartAtk": 48, "LvAddAtk": 1,
+  "Pos_y": -1120, "Sca": 48,
+  "DoID":    ["1",          "1",           "1"],
+  "DoCON":   ["",           "{Turn}%4==3", "{Turn}%3==0"],
+  "DoSkill": ["Combo Punch", "Rapid Heal", "Defend"]
+}</code></pre>
+
+    <h3>ИИ противника: три параллельных списка</h3>
+    <p><code>DoID</code> / <code>DoCON</code> / <code>DoSkill</code> &mdash; это
+       <strong>три выровненных списка</strong>. Один и тот же индекс во всех трёх — это одно правило.</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Поле</th><th>Значение</th></tr>
+      <tr><td><code>DoID</code></td><td>Вес. Чем больше, тем чаще выбирается. <code>-1</code> означает пассивку на старте боя (навык в этом слоте <code>DoSkill</code> должен быть пассивным)</td></tr>
+      <tr><td><code>DoCON</code></td><td>Условие срабатывания. Пустая строка — всегда истинно</td></tr>
+      <tr><td><code>DoSkill</code></td><td>Имя навыка. Должно совпадать с навыком игры или с добавленным вами в <code>Data/Skill/</code></td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>Списки разной длины обрезаются по самому короткому</strong>
+      Лишнее <strong>молча игнорируется</strong>, без ошибок. Считайте сами.
+    </div>
+    <p>Пример выше читается так:</p>
+    <ul>
+      <li>Обычно применяет «Combo Punch»</li>
+      <li>На ходах 3, 7, 11&hellip; применяет «Rapid Heal» (<code>{Turn}%4==3</code>)</li>
+      <li>На ходах 3, 6, 9&hellip; применяет «Defend» (<code>{Turn}%3==0</code>)</li>
+    </ul>
+
+    <h3>Положение и масштаб портрета</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Поле</th><th>Примечания</th></tr>
+      <tr><td><code>Pos_y</code></td><td>Положение по вертикали на боевом экране. У обычных врагов около <code>-1120</code></td></tr>
+      <tr><td><code>Sca</code></td><td>Масштаб. У обычных врагов около <code>70</code>&ndash;<code>80</code></td></tr>
+    </table>
+    </div>
+
+    <figure>
+      <img src="../../assets/emma-body-normal.png" alt="Портрет Эммы, исходное изображение 1475x2020" style="max-height:300px">
+      <figcaption>
+        Эмма из официального примера, исходное изображение <strong>1475&times;2020</strong>,
+        отрисовано при <code>Sca: 48</code> / <code>Pos_y: -1120</code>.<br>
+        Для той же высоты на экране изображению 1000&times;1600 понадобилось бы примерно 60 &mdash;
+        <strong>чем выше изображение, тем меньше <code>Sca</code></strong>.
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>Самый быстрый подход: скопируйте существующего врага похожего сложения</strong>
+      Найдите в игре врага примерно нужного размера, скопируйте его <code>Pos_y</code> / <code>Sca</code>,
+      а затем подстройте.
+    </div>
+    <div class="note">
+      <strong>Для настройки портретов перезапуск игры не нужен</strong>
+      Сохраните файл, вернитесь на главный экран, начните новую игру или загрузите сохранение — и всё применится.
+    </div>
+
+    <h3>Куда кладутся портреты врагов</h3>
+    <p>Правила точно те же, что и для персонажей (см. <a href="04-images.html">Добавление изображений</a>);
+       разница лишь в том, что поле называется <code>PSB</code>.</p>
+<pre><code>Images/Role/Emma/Body/Body_Normal.png
+Images/Role/Emma/Face/Face_Normal.png
+Images/Role/Emma/Face/Face_Sad.png
+Images/Role/Emma/Face/Face_Shock.png</code></pre>
+    <p>Три части <code>PSB</code> — это «имя PSB, лицо, тело»:</p>
+<pre><code>"PSB": "Emma,Normal,Normal"</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/emma-body-normal.png" alt="Body_Normal">
+        <span class="fig-label"><code>Body_Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-composite-shock.png" alt="Body плюс Face_Shock">
+        <span class="fig-label">+ <code>Face_Shock</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/emma-face-sad.png" alt="Face_Sad отдельно">
+        <span class="fig-label"><code>Face_Sad</code> отдельно</span>
+      </div>
+      <figcaption>
+        Четыре изображения Эммы (1 Body + 3 Face).
+        <strong>Справа — сам файл <code>Face_Sad.png</code></strong> &mdash;
+        каждое изображение выражения представляет собой холст во весь рост, где всё, кроме лица, прозрачно.
+        Шахматная клетка — это прозрачность.
+      </figcaption>
+    </figure>
+
+    <div class="ok">
+      <strong>Персонажи и враги могут использовать один набор портретов</strong>
+      Эмма из примера сначала появляется как враг, а после победы вступает в отряд, используя тот же
+      <code>PSB</code>.<br>
+      У каждой таблицы свои <code>Pos_y</code> / <code>Sca</code> &mdash; боевой экран и главный экран
+      кадрируют её по-разному.
+    </div>
+
+    <h2>Этапы</h2>
+    <p><code>Data/Stage/AbyssTrial.json</code></p>
+<pre><code>{
+  "Name": "Abyss Trial",
+  "ID": 9201,
+  "Group": "Mods",
+  "Tag": "Battle",
+  "Rank": 1,
+  "FightWinExp": "60", "FightWinMoney": "60",
+  "FightWhere": "Cave",
+  "FightBackground": "Background_ModAbyss, Background_ModAbyss_Night",
+  "FightBGM": "BGM_Fight2",
+  "EnemyLv": ["3", "5"],
+  "Enemys":  ["Emma", "Emma, Jellyfish"],
+  "GetItem": ["Apple"],
+  "GetItemProbability": ["0.5"]
+}</code></pre>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>Поле</th><th>Примечания</th></tr>
+      <tr><td><code>Group</code></td><td>Группа в меню этапов. В игре есть встроенная группа <code>Mods</code></td></tr>
+      <tr><td><code>Tag</code></td><td>Без «Battle» этап только проигрывает постановку и боя не начинает</td></tr>
+      <tr><td><code>FightWhere</code></td><td>Место действия; влияет на соответствие типов местности</td></tr>
+      <tr><td><code>FightBackground</code></td><td>Боевой фон. Через запятую — по одному на волну</td></tr>
+      <tr><td><code>FightBGM</code></td><td>Боевая музыка. Через запятую — по одной на волну</td></tr>
+    </table>
+    </div>
+
+    <h3>Волны</h3>
+    <div class="warn">
+      <strong>Один элемент <code>Enemys</code> — это одна волна</strong>
+      Несколько врагов в одной волне перечисляются в одной строке через запятую.
+    </div>
+<pre><code>"Enemys": ["Emma", "Emma, Jellyfish"]     волна 1: один враг, волна 2: два
+"Enemys": ["Emma,Jellyfish"]              одна волна из двух (пробелы необязательны)</code></pre>
+    <div class="note">
+      <strong>Можно использовать врагов самой игры</strong>
+      «Jellyfish» выше — враг из базовой игры: добавлять своего не обязательно.
+    </div>
+
+    <div class="warn">
+      <strong>Никогда не ставьте двух врагов с одинаковым именем в одну волну</strong>
+      Не пишите <code>"Emma, Emma"</code>.<br>
+      Несколько частей игры ищут врагов <strong>по имени</strong>, чтобы определить их место на поле.
+      При двух одинаковых именах находится только первый &mdash; координаты эффектов и выбор цели
+      второго попадут в первого.<br>
+      Чтобы выставить двух одинаковых, <strong>сделайте копию данных под другим именем</strong>
+      (собственные «Knight / Knight B / Knight C» игры сделаны именно так).<br>
+      Одинаковое имя в разных волнах — нормально (каждая волна очищается и появляется заново).
+    </div>
+
+    <h3>Параллельные списки</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Пара полей</th><th>Выравнивание</th></tr>
+      <tr><td><code>Enemys</code> / <code>EnemyLv</code></td><td>один элемент = одна волна</td></tr>
+      <tr><td><code>FightBackground</code> / <code>FightBGM</code></td><td>через запятую, по одному на волну</td></tr>
+      <tr><td><code>GetItem</code> / <code>GetItemProbability</code></td><td>один индекс = одна и та же добыча</td></tr>
+    </table>
+    </div>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss.png" alt="Фон первой волны">
+        <span class="fig-label">Волна 1<br><code>Background_ModAbyss</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/bg-abyss-night.png" alt="Фон второй волны">
+        <span class="fig-label">Волна 2<br><code>Background_ModAbyss_Night</code></span>
+      </div>
+      <figcaption>
+        Перечислите <code>FightBackground</code> через запятую, чтобы фон менялся с каждой волной.<br>
+        Фоны имеют размер <strong>960&times;540</strong> и лежат в <code>Images/Background/</code>.
+      </figcaption>
+    </figure>
+
+    <div class="note">
+      <strong>Короткие списки используются повторно</strong>
+      Если <code>EnemyLv</code> закончился, игра вычисляет уровни сама;
+      <code>FightBackground</code> / <code>FightBGM</code> возвращаются к первому элементу.
+    </div>
+
+    <h2>Заставки этапа</h2>
+    <p>Три поля принимают имена постановок:</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Поле</th><th>Когда</th></tr>
+      <tr><td><code>StartShow</code></td><td>При входе, до боя</td></tr>
+      <tr><td><code>FightWinShow</code></td><td>После победы</td></tr>
+      <tr><td><code>FightLoseShow</code></td><td>После поражения</td></tr>
+    </table>
+    </div>
+    <p>Все три необязательны. Сами постановки лежат в <code>Data/Show/</code>
+       (см. <a href="06-shows.html">Постановки и выдача контента</a>).</p>
+
+    <h3>Пример вступительной постановки</h3>
+<pre><code>Data/Show/StageStart.json
+
+{
+  "Name": "Abyss Trial_Start",
+  "Tag": "Story",
+  "Shows": [
+    "&lt;BG&gt;Background_ModAbyss,0,#00000000",
+    "&lt;BG&gt;Background_ModAbyss,1,#FFFFFF",
+    "&lt;Talk&gt;Из глубин бездны донёсся неуместный гимн.",
+    "&lt;Image&gt;Mid,Emma,Normal",
+    "&lt;Talk&gt;Emma: &hellip;&hellip;&#9834;",
+    "&lt;Image&gt;Mid,Emma,Shock",
+    "&lt;ImageShake&gt;Mid",
+    "&lt;Talk&gt;Emma: О. Гости.",
+    "&lt;Talk&gt;",
+    "&lt;Image&gt;",
+    "&lt;BG&gt;,1"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>Соглашения</strong>
+      <ul>
+        <li>Вступительные <code>&lt;BG&gt;имя,0,#00000000</code> + <code>&lt;BG&gt;имя,1,#FFFFFF</code> плавно проявляют фон</li>
+        <li><code>&lt;Talk&gt;</code> без текста закрывает окно диалога</li>
+        <li><code>&lt;Image&gt;</code> без аргументов очищает все три слота портретов</li>
+        <li>Завершающий <code>&lt;BG&gt;,1</code> убирает фон, чтобы его сменил боевой экран</li>
+      </ul>
+    </div>
+
+    <h3>«Вступает в отряд только после победы»</h3>
+    <p>Более естественный способ выдать персонажа, чем AutoRun: AutoRun отдаёт его сразу при
+       включении мода, а постановка победы заставляет игрока его заслужить:</p>
+<pre><code>&lt;Image&gt;Mid,Emma,Laugh
+&lt;Talk&gt;Emma: Что ж. Как договаривались — с сегодняшнего дня я с вами.
+&lt;Talk&gt;
+&lt;Image&gt;
+&lt;AddRole&gt;Emma
+&lt;BG&gt;,1</code></pre>
+    <div class="ok">
+      <strong>Для повторных прохождений флаг не нужен</strong>
+      <code>&lt;AddRole&gt;</code> безопасен для персонажа, который у игрока уже есть &mdash;
+      команда просто пропускается, без дубликатов и сброса уровня.
+    </div>
+
+    <h2>Постановки по ходам внутри боя</h2>
+    <p>Постановки могут запускаться и в начале любого хода во время боя. На них
+       <strong>не нужно ссылаться из данных этапа</strong> &mdash; достаточно совпадения имени:</p>
+<pre><code>{ИмяЭтапа}_Wave{n}_{PlayerTurn|EnemyTurn}{ход}</code></pre>
+    <p>Волны и ходы считаются с 1. Например:</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Имя постановки</th><th>Когда</th></tr>
+      <tr><td><code>Abyss Trial_Wave2_PlayerTurn1</code></td><td>Волна 2, первый ход игрока</td></tr>
+      <tr><td><code>Abyss Trial_Wave2_PlayerTurn</code></td><td><strong>Каждый</strong> ход игрока в волне 2</td></tr>
+      <tr><td><code>Abyss Trial_PlayerTurn3</code></td><td>Ход 3 всего боя (в любой волне)</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>Вариант с номером побеждает вариант без номера</strong>
+      Если есть и <code>_PlayerTurn1</code>, и <code>_PlayerTurn</code>, на первом ходу проиграется
+      вариант с номером.
+    </div>
+
+    <h3>Внутри боя соглашения другие</h3>
+    <p>В сюжетных фрагментах используется фоновое изображение, а <strong>внутри боя &mdash;
+       <code>null</code> плюс полупрозрачная чёрная накладка</strong> поверх боевого экрана:</p>
+<pre><code>&lt;BG&gt;null,0,#00000000
+&lt;BG&gt;null,0.5,#000000CC      затемнить боевой экран
+&lt;Wait&gt;1
+&lt;Image&gt;Mid,Emma,Shock
+&lt;Talk&gt;Emma: Погодите — вы серьёзно?
+&lt;Talk&gt;
+&lt;Image&gt;
+&lt;BG&gt;,0.5                    убрать накладку, вернуться к бою
+&lt;EnemyImage&gt;Emma,Emma,Sad   сменить её выражение на поле</code></pre>
+    <div class="warn">
+      <strong><code>&lt;EnemyImage&gt;</code> должен идти <em>после</em> снятия накладки</strong>
+      Смените выражение, пока экран ещё затемнён, — и игрок этого не увидит.
+    </div>
+
+    <h2>Как сделать этап видимым для игрока</h2>
+    <div class="warn">
+      <strong>Одни данные означают лишь, что этап существует &mdash; у игрока его нет</strong>
+      Выдайте его постановкой AutoRun. <strong>Нужны обе строки</strong>:
+    </div>
+<pre><code>Data/Show/AutoRun.json
+
+{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddStageGroup&gt;Mods",
+    "&lt;AddStage&gt;Abyss Trial"
+  ]
+}</code></pre>
+    <p>См. <a href="06-shows.html">Постановки и выдача контента</a>.</p>
+
+    <h2>Навыки</h2>
+    <p>Навыки лежат в <code>Data/Skill/</code>. У полей навыков персонажа есть одно правило
+       соответствия, в котором легко ошибиться:</p>
+    <div class="warn">
+      <strong>Первые 4 элемента <code>Skill</code> — базовые навыки; условия начинаются с 5-го</strong>
+      Первые четыре доступны с самого начала и условий не требуют.<br>
+      С пятого они соответствуют <strong>по порядку</strong> полю <code>ElseSkillCon</code>:
+<pre><code>Skill[4] &lt;- ElseSkillCon[0]
+Skill[5] &lt;- ElseSkillCon[1]
+&hellip;</code></pre>
+      То есть <code>ElseSkillCon</code> <strong>не</strong> нужны пустые заглушки для первых четырёх.
+    </div>
+
+    <h2>Официальные моды-примеры</h2>
+    <div class="ok">
+      <strong>Вместе с игрой поставляется полный пример</strong>
+      В папке <code>Mods/</code> есть официальный пример, охватывающий целый этап:
+      свой враг с вариантами выражений, этап из двух волн со сменой фона на каждой волне,
+      заставки вступления / победы / поражения и персонаж, вступающий в отряд после победы.<br>
+      <strong>Если не уверены, как записать поле, посмотрите туда.</strong>
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ru', page: 7 });</script>
+</body>
+</html>

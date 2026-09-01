@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Руководство по модам Pirate</title>
+<meta name="description" content="Как перенести свои PNG в Pirate. Карта папок, варианты выражений, замена игровой графики.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Меню">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Добавление изображений</h1>
+    <p class="lead">Моды могут поставлять свою графику. Положите её в <code>Images/</code>, и она загрузится.</p>
+
+    <h2>Базовое правило</h2>
+<pre><code>Mods/&lt;ваш мод&gt;/Images/&lt;повторите структуру игры&gt;/&lt;имя&gt;.png</code></pre>
+    <div class="ok">
+      <strong>Просто повторите структуру папок самой игры</strong>
+      Никаких особых правил запоминать не нужно. Игра держит портреты персонажей в
+      <code>RoleHead/</code> &mdash; значит, ваш мод кладёт их в <code>Images/RoleHead/</code>. Вот и всё.
+    </div>
+
+    <h2>Пример</h2>
+<pre><code>MyMod/
+&#9500;&#9472;&#9472; mod.json
+&#9500;&#9472;&#9472; Data/
+&#9474;   &#9492;&#9472;&#9472; Role/
+&#9474;       &#9492;&#9472;&#9472; NewHero.json
+&#9492;&#9472;&#9472; Images/
+    &#9500;&#9472;&#9472; RoleHead/
+    &#9474;   &#9492;&#9472;&#9472; NewHero.png      иконка лица
+    &#9492;&#9472;&#9472; Role/
+        &#9492;&#9472;&#9472; NewHero.png      полный портрет</code></pre>
+
+    <h3>Карта папок</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Папка</th><th>Содержимое</th><th>Поле данных</th></tr>
+      <tr><td><code>Images/Role/</code></td><td>Полные портреты (персонажи и враги)</td><td><code>PSB</code></td></tr>
+      <tr><td><code>Images/RoleHead/</code></td><td>Иконки лиц</td><td><code>ImageName</code> / <code>EyeImageName</code></td></tr>
+      <tr><td><code>Images/Icon/</code></td><td>Иконки предметов и бафов</td><td><code>IconName</code></td></tr>
+      <tr><td><code>Images/Background/</code></td><td>Фоны</td><td><code>FightBackground</code>, команда <code>&lt;BG&gt;</code></td></tr>
+      <tr><td><code>Images/Sticker/</code></td><td>Графика стикеров</td><td>команда <code>&lt;Sticker&gt;</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong><code>IconName</code> включает вложенный путь</strong>
+      Иконка по адресу <code>Images/Icon/Buff/MyIcon.png</code> указывается как
+      <code>"Icon/Buff/MyIcon"</code>.<br>
+      Остальные поля (<code>PSB</code>, <code>ImageName</code>) принимают только имя файла.
+    </div>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-head.png" alt="RoleHead: квадратная иконка лица, 300x300">
+        <span class="fig-label"><code>RoleHead/Nausea.png</code><br>300&times;300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Role: высокий полный портрет">
+        <span class="fig-label"><code>Role/Nausea/&hellip;</code><br>900&times;1479</span>
+      </div>
+      <figcaption>
+        <strong>Иконка лица</strong> и <strong>полный портрет</strong> одного персонажа &mdash; это два
+        разных изображения в двух разных папках и разного размера. Нужны оба.
+      </figcaption>
+    </figure>
+
+    <p>Затем укажите их в данных:</p>
+<pre><code>{
+  "Name": "NewHero",
+  "Name_I2": "Новый герой",
+  "ImageName": "NewHero"
+}</code></pre>
+    <div class="note">
+      <strong>Без папки и без <code>.png</code></strong>
+      Файл лежит по адресу <code>Images/RoleHead/NewHero.png</code>, а в данных написано
+      <code>"NewHero"</code>. Игра сама знает, в какой папке искать.
+    </div>
+
+    <h2>Варианты выражений и одежды</h2>
+    <p>Портреты бывают двух видов — в зависимости от того, нужны ли вам варианты.</p>
+
+    <h3>(A) Без вариантов — одно изображение</h3>
+<pre><code>Images/Role/Nausea.png</code></pre>
+
+    <h3>(B) С вариантами — вместо файла папка</h3>
+<pre><code>Images/Role/Nausea/Body/Body_Normal.png
+Images/Role/Nausea/Body/Body_Dark.png
+Images/Role/Nausea/Face/Face_Normal.png
+Images/Role/Nausea/Face/Face_Laugh.png</code></pre>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-body-normal.png" alt="Body_Normal: фигура целиком">
+        <span class="fig-label"><code>Body/Body_Normal.png</code></span>
+      </div>
+      <div class="fig-op">+</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-face-laugh.png" alt="Face_Laugh: тот же размер холста, нарисовано только лицо">
+        <span class="fig-label"><code>Face/Face_Laugh.png</code></span>
+      </div>
+      <div class="fig-op">=</div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="Два слоя, наложенные друг на друга">
+        <span class="fig-label">что показывает игра</span>
+      </div>
+      <figcaption>
+        Шахматная клетка — это прозрачность. <strong>Посмотрите на среднее изображение</strong>:
+        в <code>Face_Laugh.png</code> нарисовано только лицо, но <strong>холст — во весь
+        рост</strong>. Движок складывает слои по одним и тем же координатам, поэтому выражениям
+        не нужны никакие координаты.
+      </figcaption>
+    </figure>
+
+    <div class="warn">
+      <strong>Это самая частая ошибка</strong>
+      Многие думают, что изображение выражения должно быть размером с лицо.
+      <strong>Нет</strong> &mdash; это должен быть холст во весь рост, где всё, кроме лица,
+      прозрачно.<br>
+      Обрежете его — и оно окажется в левом верхнем углу.
+    </div>
+
+    <div class="table-wrap">
+    <table>
+      <tr><th>Правило</th><th>Подробности</th></tr>
+      <tr><td>Имя папки = имя группы</td><td>Сейчас это <code>Body</code> (тело / одежда) и <code>Face</code> (выражение)</td></tr>
+      <tr><td>Имя файла = имя слоя</td><td><strong>Префикс <code>Body_</code> / <code>Face_</code> добавляете вы сами</strong></td></tr>
+      <tr><td>Каждое изображение — в полный размер</td><td>Полный холст, прозрачный фон, <strong>все одного размера</strong></td></tr>
+      <tr><td>Порядок наложения</td><td>Складываются по одинаковым координатам, <code>Face</code> поверх <code>Body</code></td></tr>
+    </table>
+    </div>
+
+    <h4>Сочетание одежды и выражений</h4>
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-normal.png" alt="Body_Normal плюс Face_Normal">
+        <span class="fig-label"><code>Normal</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-normal-laugh.png" alt="Body_Normal плюс Face_Laugh">
+        <span class="fig-label"><code>Normal</code> + <code>Laugh</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-normal.png" alt="Body_Dark плюс Face_Normal">
+        <span class="fig-label"><code>Dark</code> + <code>Normal</code></span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/nausea-dark-laugh.png" alt="Body_Dark плюс Face_Laugh">
+        <span class="fig-label"><code>Dark</code> + <code>Laugh</code></span>
+      </div>
+      <figcaption>
+        2 наряда &times; 2 выражения = 4 сочетания всего из 4 изображений (2 Body + 2 Face).<br>
+        Сценарий выбирает сочетание командой <code>&lt;Image&gt;Mid,Nausea,Laugh,Dark</code>.
+      </figcaption>
+    </figure>
+
+    <h3>Какой вариант показывается по умолчанию</h3>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Ситуация</th><th>Результат</th></tr>
+      <tr><td>в группе есть <code>&lt;Группа&gt;_Normal</code></td><td>показывается он</td></tr>
+      <tr><td>в группе <strong>нет</strong> <code>Normal</code></td><td>вся группа <strong>по умолчанию скрыта</strong></td></tr>
+    </table>
+    </div>
+    <p>То есть если вы поставляете только <code>Face_Laugh.png</code>, обычно выражения не будет
+       вовсе, пока его не запросит сценарий.</p>
+
+    <div class="warn">
+      <strong>Всегда добавляйте <code>Face_Normal.png</code></strong>
+      В галерее команды игрок может листать все варианты выражений, и
+      <strong><code>&lt;Группа&gt;_Normal</code> всегда первая страница</strong> &mdash; именно её
+      он видит, открыв портрет.<br>
+      Если дополнительных выражений нет, сделайте <code>Face_Normal.png</code>
+      <strong>полностью прозрачным</strong> (лицо уже нарисовано на изображении Body).
+    </div>
+    <div class="note">
+      <strong>Порядок страниц галереи</strong>
+      По алфавиту по имени файла, кроме <code>Normal</code> — он всегда первый.<br>
+      Если нужна отдельная страница «без выражения», следуйте соглашению игры и добавьте
+      <code>Face_Null.png</code> (полностью прозрачный) &mdash; имена, содержащие <code>Null</code>,
+      закрепляются на <strong>последней</strong> странице.
+    </div>
+
+    <h3>Переключение вариантов из сценария</h3>
+    <div class="warn">
+      <strong>Первый аргумент <code>&lt;Image&gt;</code> — это слот, а не персонаж</strong>
+      Слоты: <code>Mid</code> / <code>Left</code> / <code>Right</code>. Имя персонажа начинается
+      со <strong>второго</strong> аргумента.
+    </div>
+<pre><code>&lt;Image&gt;Mid,Nausea,Laugh        лицо становится Face_Laugh
+&lt;Image&gt;Mid,Nausea,,Dark        тело становится Body_Dark
+&lt;Image&gt;Mid,Nausea,Laugh,Dark   и то, и другое сразу
+&lt;Image&gt;Mid,Nausea,-            полностью скрыть эту группу
+&lt;Image&gt;Mid                     очистить этот слот
+&lt;Image&gt;                        очистить все три слота</code></pre>
+    <p>У выражений и одежды <strong>префикс не пишется</strong> &mdash; указывайте <code>Laugh</code>,
+       а не <code>Face_Laugh</code>.</p>
+
+    <p>Две похожие команды <strong>не принимают аргумент слота</strong> и начинаются с имени персонажа:</p>
+<pre><code>&lt;MateImage&gt;Nausea,Laugh        портрет на главном экране
+&lt;EnemyImage&gt;Emma,Emma,Shock    заменить портрет врага прямо в бою</code></pre>
+    <div class="note">
+      <strong>Первый аргумент <code>&lt;EnemyImage&gt;</code> — это <code>Name</code> врага из данных</strong>
+      «Имя PSB, выражение, одежда» начинается со второго аргумента.
+    </div>
+    <div class="note">
+      <strong>Если вариант не найден</strong>
+      Игра пишет это в журнал (например <em>group [Face] has no [Face_Angry]</em>), и группа скрывается.
+    </div>
+
+    <h2>Формат</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Пункт</th><th>Требование</th></tr>
+      <tr><td>Формат файла</td><td>PNG</td></tr>
+      <tr><td>Прозрачность</td><td>Поддерживается (для портретов и иконок обычно обязательна)</td></tr>
+      <tr><td>Размеры</td><td>Жёсткого ограничения нет, но <strong>ориентируйтесь на такую же графику самой игры</strong>, иначе изображение будет слишком большим или слишком мелким</td></tr>
+    </table>
+    </div>
+
+    <h2>Замена игровой графики</h2>
+    <p>Используйте <strong>тот же путь и то же имя файла</strong>, что у оригинала, и победит ваш файл.</p>
+<pre><code>Images/RoleHead/Rackham.png      &lt;-- заменяет иконку лица Рэкхема</code></pre>
+    <div class="ok">
+      <strong>Изображения мода имеют приоритет над игровыми</strong>
+      Так задумано &mdash; «заменить портреты» и «перерисовать интерфейс» должны быть возможными
+      модами. Никакой дополнительной настройки: достаточно совпадения имени.
+    </div>
+    <div class="warn">
+      <strong>Имя файла должно совпадать в точности</strong>
+      Один символ мимо — и это уже не замена, а новое изображение, которое никто не использует.
+    </div>
+
+    <h2>Здесь вложенные папки важны</h2>
+    <p>В отличие от аудио, <strong>структура папок изображений участвует в поиске</strong>:</p>
+<pre><code>Images/RoleHead/Nausea.png    &lt;-- иконка лица
+Images/Role/Nausea.png        &lt;-- полный портрет</code></pre>
+    <p>Это два разных изображения. Положите одно не в ту папку — и оно просто не найдётся.</p>
+    <div class="warn">
+      <strong>С аудио всё наоборот</strong>
+      Вложенные папки <a href="05-audio.html">аудио</a> нужны только вам для порядка и на поиск
+      не влияют. Вложенные папки изображений <strong>входят в путь</strong>.
+    </div>
+
+    <h2>Память</h2>
+    <div class="note">
+      <strong>Все изображения загружаются при запуске и остаются в памяти</strong>
+      Несколько штук или несколько десятков — нормально. Если в моде сотни изображений высокого
+      разрешения, игроки заметят расход памяти &mdash; это решение автора.
+    </div>
+
+    <h2>Контрольный список</h2>
+    <p>Если изображение не показывается, по порядку:</p>
+    <ol>
+      <li>Это настоящий <code>.png</code>? (а не переименованный JPG)</li>
+      <li>Он внутри <code>Images/</code>? (с буквой s)</li>
+      <li>Вложенная папка написана верно? (<code>RoleHead</code>, а не <code>Rolehead</code>)</li>
+      <li><code>ImageName</code> совпадает с именем файла? (без <code>.png</code>)</li>
+      <li>Используете папки вариантов &mdash; добавили префикс <code>Body_</code> / <code>Face_</code>?</li>
+      <li>Все изображения вариантов одного размера, во весь рост?</li>
+      <li>Вы вернулись на главный экран и начали новую игру или загрузили сохранение?</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ru', page: 4 });</script>
+</body>
+</html>

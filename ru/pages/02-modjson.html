@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Руководство по модам Pirate</title>
+<meta name="description" content="Разбор всех полей mod.json: что означают, значения по умолчанию и что будет при ошибке в файле.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Меню">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Поля mod.json</h1>
+    <p class="lead">Удостоверение мода. Именно оно решает, что игрок увидит в списке модов.</p>
+
+    <h2>Куда его положить</h2>
+<pre><code>Mods/&lt;папка вашего мода&gt;/mod.json</code></pre>
+    <div class="warn">
+      <strong>Нет mod.json — нет мода</strong>
+      Просматривая <code>Mods/</code>, игра считает модами только те вложенные папки,
+      <em>в которых есть <code>mod.json</code></em>. Без него папка полностью игнорируется &mdash;
+      в списке она не появится, и сообщения об ошибке тоже не будет.
+    </div>
+
+    <h2>Полный пример</h2>
+<pre><code>{
+  "name": "Harder Pirates",
+  "author": "Некий игрок",
+  "version": "1.2.0",
+  "description": "Враги бьют сильнее, добыча выпадает реже.\nРассчитано на новую игру+.",
+  "icon": "icon.png"
+}</code></pre>
+
+    <h2>Справочник полей</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Поле</th><th>Тип</th><th>Если не указано</th><th>Примечания</th></tr>
+      <tr>
+        <td><code>name</code></td><td>текст</td><td>берётся имя папки</td>
+        <td>Отображаемое имя в списке модов. Любой язык.</td>
+      </tr>
+      <tr>
+        <td><code>author</code></td><td>текст</td><td>показывается «Автор неизвестен»</td>
+        <td>Ваше имя или ник.</td>
+      </tr>
+      <tr>
+        <td><code>version</code></td><td>текст</td><td>показывается «-»</td>
+        <td>Только для отображения. Игра <strong>никогда</strong> не сравнивает версии &mdash;
+            <code>1.0</code> и <code>v2-beta</code> одинаково допустимы.</td>
+      </tr>
+      <tr>
+        <td><code>description</code></td><td>текст</td><td>пусто</td>
+        <td>Описание. Для переноса строки используйте <code>\n</code>.</td>
+      </tr>
+      <tr>
+        <td><code>icon</code></td><td>текст</td><td><code>icon.png</code></td>
+        <td>Относительный путь к миниатюре. Если файла нет, подставляется стандартное изображение.</td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="ok">
+      <strong>Все поля необязательны</strong>
+      Работает даже пустой <code>{}</code> &mdash; игра возьмёт имя папки.
+      Пропуск поля никогда не ломает мод. Так задумано.
+    </div>
+
+    <h2>Миниатюра</h2>
+
+    <figure class="fig-row">
+      <div class="fig-item">
+        <img src="../../assets/modicon-role.png" alt="Пример миниатюры мода">
+        <span class="fig-label">300&times;300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/modicon-stage.png" alt="Пример миниатюры мода">
+        <span class="fig-label">300&times;300</span>
+      </div>
+      <div class="fig-item">
+        <img src="../../assets/modicon-item.png" alt="Пример миниатюры мода">
+        <span class="fig-label">512&times;512</span>
+      </div>
+      <figcaption>
+        Миниатюры официальных модов-примеров. Рекомендуется <strong>квадрат, 512&times;512 или
+        меньше</strong>. Без миниатюры подставляется стандартное изображение.
+      </figcaption>
+    </figure>
+
+    <p>По умолчанию игра ищет <code>icon.png</code> в папке мода. Чтобы использовать другое имя
+       или вложенную папку:</p>
+<pre><code>{
+  "icon": "art/my-thumbnail.png"
+}</code></pre>
+    <p>Путь считается от <strong>папки вашего мода</strong>, а не от <code>Mods/</code>.</p>
+
+    <h2>Переносы строк</h2>
+    <p>Строки JSON не могут содержать настоящий перенос строки &mdash; используйте <code>\n</code>:</p>
+<pre><code>{
+  "description": "Первая строка\nВторая строка\n\nТретья после пустой"
+}</code></pre>
+    <div class="warn">
+      <strong>Экранируйте обратные слэши в путях Windows</strong>
+      <code>\</code> в JSON — особый символ. <strong>Используйте прямые слэши</strong> в пути
+      <code>icon</code> &mdash; <code>art/icon.png</code>, а не <code>art\icon.png</code>.
+      Настоящий обратный слэш нужно удваивать (<code>\\</code>), и здесь легко ошибиться.
+    </div>
+
+    <h2>Что будет при ошибке в файле</h2>
+    <p>Если <code>mod.json</code> есть, но содержит синтаксическую ошибку (пропущенная запятая,
+       лишняя запятая, незакрытая кавычка), <strong>мод всё равно появится в списке, но будет
+       помечен как повреждённый</strong>.</p>
+    <div class="ok">
+      <strong>Так задумано</strong>
+      Если бы повреждённые моды просто исчезали, игрок решил бы, что файлы лежат не там,
+      и не смог бы это проверить. Показать мод и пометить его — значит сказать:
+      «он на месте, но с ним что-то не так».
+    </div>
+    <p>Частые ошибки JSON:</p>
+<pre><code>{
+  "name": "My Mod",
+  "author": "Кто-то",     &lt;-- лишняя запятая в последнем поле
+}
+
+{
+  "name": "My Mod"
+  "author": "Кто-то"      &lt;-- нет запятой между полями
+}
+
+{
+  'name': 'My Mod'         &lt;-- JSON требует двойных кавычек
+}</code></pre>
+    <div class="note">
+      <strong>Правка в VS Code избавляет от девяти таких ошибок из десяти</strong>
+      Он подсвечивает синтаксические ошибки прямо при вводе. Как вариант — вставьте файл
+      в любой онлайн-валидатор JSON.
+    </div>
+
+    <h2>Не переименовывайте папку</h2>
+    <div class="warn">
+      <strong>Состояние «включён» привязано к имени папки, а не к полю <code>name</code></strong>
+      Менять <code>name</code> в <code>mod.json</code> безопасно: меняется только отображаемое имя.<br>
+      Менять <strong>имя папки</strong> — для игры это другой мод: состояние «включён» сбросится,
+      и игрокам придётся включать его заново. Не переименовывайте после выпуска.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ru', page: 2 });</script>
+</body>
+</html>

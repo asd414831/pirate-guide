@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Руководство по модам Pirate</title>
+<meta name="description" content="Постановки AutoRun, выдача персонажей и этапов игроку, диалоги в комнате. Единственная зацепка, которой мод может воспользоваться сам.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Меню">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Постановки и выдача контента</h1>
+    <p class="lead">Записать данные — значит лишь создать вещь. У игрока её всё ещё нет.
+       Эта глава о том, как её действительно передать.</p>
+
+    <div class="warn">
+      <strong>Именно этот шаг обычно пропускают</strong>
+      Вы добавляете персонажа в <code>Data/Role/</code>, данные идеальны &mdash;
+      и игрок его никогда не получит.<br>
+      У предметов есть поле цены, поэтому они сами попадают в магазин.
+      <strong>У персонажей и этапов такого поля нет.</strong> Выдать их можно только командой постановки.
+    </div>
+
+    <h2>Что такое постановка</h2>
+    <p>Постановка — это список игровых команд. Это может быть сюжетный диалог или чистая работа
+       с данными. Постановки лежат в <code>Data/Show/</code>, по одной на файл.</p>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;NewHero"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>У постановки ровно четыре поля</strong>
+      <code>ID</code> / <code>Name</code> / <code>Tag</code> / <code>Shows</code>.
+      Поля описания нет; если его добавить, оно ничего не сделает.
+    </div>
+
+    <h2>AutoRun: единственная зацепка, которой мод может воспользоваться сам</h2>
+    <p>Задайте <code>Tag</code> равным <code>AutoRun</code>, и постановка проиграется автоматически
+       <strong>после «Новой игры» и после «Загрузки игры»</strong>.</p>
+<pre><code>Data/Show/AutoRun.json
+
+{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;NewHero",
+    "&lt;AddItem&gt;SuperPotion,1"
+  ]
+}</code></pre>
+
+    <div class="warn">
+      <strong>AutoRun выполняется каждый раз, а не один раз</strong>
+      Он срабатывает при каждой «Новой игре» и каждой «Загрузке игры».<br>
+      Обычно это безвредно &mdash; <code>&lt;AddRole&gt;</code> и <code>&lt;AddItem&gt;</code>
+      пропускают то, что у игрока уже есть. Они не создают дубликатов и не сбрасывают уровни.
+    </div>
+
+    <p>Если вам действительно нужен однократный запуск, поставьте защиту через переменную:</p>
+<pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;if&gt;{MyModInitialised}==0",
+    "&lt;AddRole&gt;NewHero",
+    "&lt;Var&gt;MyModInitialised,=,1",
+    "&lt;endif&gt;"
+  ]
+}</code></pre>
+
+    <div class="note">
+      <strong>В качестве <code>Name</code> используйте имя своего мода</strong>
+      <code>Name</code> — это ключ слияния; если у двух модов постановки AutoRun названы одинаково,
+      более поздняя молча перезапишет более раннюю. Имя мода избавляет от таких столкновений.
+    </div>
+
+    <div class="note">
+      <strong><code>Tag</code> проверяется на «содержит», а не на равенство</strong>
+      <code>"Tag": "AutoRun,Story"</code> тоже считается AutoRun. Регистр не важен, поэтому
+      <code>autorun</code> тоже работает.
+    </div>
+
+    <h2>Выдача персонажа</h2>
+<pre><code>&lt;AddRole&gt;NewHero</code></pre>
+    <p>Аргумент — это <code>Name</code> персонажа из таблицы данных (а не
+       <code>Name_I2</code>).</p>
+
+    <figure>
+      <img src="../../assets/ui-mod-role.png" alt="Персонаж из мода в списке команды со своим портретом и навыками">
+      <figcaption>
+        Результат официального мода «Example Role» &mdash; персонаж, целиком добавленный модом,
+        со своим портретом, иконкой лица, характеристиками и набором навыков
+        (<code>Killing Intent</code>, <code>Night Rapture</code> и <code>Gravity Field</code>
+        тоже определены модом).<br>
+        Без одной строки <code>&lt;AddRole&gt;</code> до игрока не дойдёт ничего
+        &mdash; <strong>какими бы полными ни были данные</strong>.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="../../assets/ui-mod-role-slot.png" alt="Персонаж из мода стоит в самом конце списка команды">
+      <figcaption>
+        <strong>Содержимое модов всегда дописывается в конец списка.</strong>
+        Не находите добавленного персонажа? Прокрутите вниз — обычно он там.
+      </figcaption>
+    </figure>
+
+    <div class="warn">
+      <strong>Ещё два условия для галереи команды</strong>
+      <ul>
+        <li><code>ID</code> больше 0</li>
+        <li><code>Name</code> не пустое</li>
+      </ul>
+      Без них персонаж останется невидимым даже после выполнения <code>&lt;AddRole&gt;</code>.
+    </div>
+
+    <h2>Выдача этапа</h2>
+    <p><strong>Нужны обе строки.</strong></p>
+<pre><code>&lt;AddStageGroup&gt;Mods
+&lt;AddStage&gt;Abyss Trial</code></pre>
+    <div class="warn">
+      <strong>Без <code>&lt;AddStageGroup&gt;</code> этап невидим</strong>
+      Этапы должны крепиться к группе. Нет группы — нет места для этапа в меню этапов.<br>
+      В игре есть встроенная группа <code>Mods</code>, которую можно использовать напрямую.
+    </div>
+    <div class="ok">
+      <strong>Повторный запуск безопасен</strong>
+      Группы и этапы, которые у игрока уже есть, второй раз не добавляются.
+    </div>
+
+    <h2>Выдача предметов</h2>
+<pre><code>&lt;AddItem&gt;SuperPotion,1</code></pre>
+    <div class="note">
+      <strong>Предметам обычно AutoRun не нужен</strong>
+      Задайте <code>SellPrice</code>, и предмет появится в магазине, где игрок сможет его купить.
+      <code>&lt;AddItem&gt;</code> нужен только для прямой выдачи.
+    </div>
+
+    <h2>Одна оговорка про AutoRun</h2>
+    <div class="warn">
+      <strong>Если сохранение прервано на середине сюжета, AutoRun выполняется параллельно с ним</strong>
+      Загрузка сохранения, продолжающего заставку, означает, что AutoRun борется с ней за экран.<br>
+      <strong>Держите в AutoRun только команды работы с данными</strong> &mdash;
+      <code>&lt;AddRole&gt;</code>, <code>&lt;AddItem&gt;</code>, <code>&lt;AddStage&gt;</code>,
+      <code>&lt;Var&gt;</code>.<br>
+      Для диалогов и темпа лучше подходит <strong>постановка победы на этапе</strong>
+      (см. следующую главу).
+    </div>
+    <div class="ok">
+      <strong>Постановки AutoRun разных модов выполняются одна за другой</strong>
+      Никогда одновременно. Порядок — это порядок в списке модов (сверху вниз).<br>
+      Поэтому <code>&lt;Wait&gt;</code> в вашем AutoRun работает как задумано &mdash;
+      никакой другой мод не вмешается.
+    </div>
+
+    <h2>Соглашения об именах: как занять готовые слоты постановок</h2>
+    <p>Разные части игры ищут постановки по <strong>фиксированному имени</strong>. Назовите свою
+       постановку так же, и она будет вызвана &mdash; <code>Tag</code> не нужен.</p>
+
+    <h3>Диалог персонажа на главном экране</h3>
+    <p>Проигрывается, когда игрок нажимает на портрет персонажа на главном экране:</p>
+<pre><code>RoomTalk_&lt;Name персонажа&gt;</code></pre>
+    <p>Для персонажа, у которого <code>Name</code> равно <code>NewHero</code>:</p>
+<pre><code>Data/Show/RoomTalk.json
+
+{
+  "Name": "RoomTalk_NewHero",
+  "Shows": [
+    "&lt;Var&gt;RoomTalkCount,+,1",
+    "&lt;if&gt;{RoomTalkCount}&gt;3",
+    "&lt;Var&gt;RoomTalkCount,=,1",
+    "&lt;endif&gt;",
+    "&lt;if&gt;{RoomTalkCount}==1",
+    "&lt;MateImage&gt;NewHero",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: Привет.",
+    "&lt;elseif&gt;{RoomTalkCount}==2",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: Опять ты.",
+    "&lt;elseif&gt;",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: Хватит меня тыкать.",
+    "&lt;endif&gt;"
+  ]
+}</code></pre>
+    <div class="note">
+      <strong>Пропустить это не ошибка</strong>
+      Персонаж просто будет молча стоять на главном экране. Добавьте постановку, если хотите реакций.<br>
+      Обратите внимание: используется <code>Name</code> из таблицы данных, а не переведённое отображаемое имя.
+    </div>
+
+    <h2>Справочник команд</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Команда</th><th>Действие</th></tr>
+      <tr><td><code>&lt;AddRole&gt;Name</code></td><td>Выдать игроку персонажа</td></tr>
+      <tr><td><code>&lt;AddItem&gt;Name,количество</code></td><td>Выдать предметы</td></tr>
+      <tr><td><code>&lt;AddStageGroup&gt;имя</code></td><td>Открыть группу этапов</td></tr>
+      <tr><td><code>&lt;AddStage&gt;Name</code></td><td>Открыть этап</td></tr>
+      <tr><td><code>&lt;Var&gt;имя,=,значение</code></td><td>Задать переменную (<code>=</code> / <code>+</code> / <code>-</code>)</td></tr>
+      <tr><td><code>&lt;if&gt;условие</code> &hellip; <code>&lt;endif&gt;</code></td><td>Условие, между ними может быть <code>&lt;elseif&gt;</code></td></tr>
+      <tr><td><code>&lt;Talk&gt;текст</code></td><td>Диалог. Без текста закрывает окно диалога</td></tr>
+      <tr><td><code>&lt;MateTalk&gt;текст</code></td><td>Диалог на главном экране</td></tr>
+      <tr><td><code>&lt;Wait&gt;секунды</code></td><td>Пауза</td></tr>
+      <tr><td><code>&lt;BG&gt;имя,секунды,цвет</code></td><td>Фон. <code>&lt;BG&gt;,1</code> плавно убирает его</td></tr>
+      <tr><td><code>&lt;Image&gt;слот,персонаж,лицо,тело</code></td><td>Портрет. Без аргументов очищает все</td></tr>
+      <tr><td><code>&lt;MateImage&gt;персонаж,лицо,тело</code></td><td>Портрет на главном экране (без аргумента слота)</td></tr>
+      <tr><td><code>&lt;BGM&gt;имя</code></td><td>Сменить музыку</td></tr>
+      <tr><td><code>&lt;Sfx&gt;имя</code></td><td>Проиграть звуковой эффект</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>Полный список команд есть в редакторе постановок</strong>
+      Команд много, и у них немало тонкостей в аргументах. Если писать постановки в
+      <a href="10-showeditor.html">редакторе постановок</a>, можно выбирать их из меню с описаниями,
+      а не держать в голове.
+    </div>
+
+    <h2>Соглашения о диалогах</h2>
+    <p>Записывайте говорящего в виде «Имя: текст»:</p>
+<pre><code>&lt;Talk&gt;NewHero: Доброе утро.</code></pre>
+    <div class="ok">
+      <strong>Имя, совпавшее с персонажем, автоматически окрашивается и подсвечивается</strong>
+      Сверяется с <code>Name</code> из таблицы данных. Если совпадения нет, это просто обычный
+      текст &mdash; не ошибка.
+    </div>
+
+    <h3>Как открыть и закрыть сюжетный фрагмент</h3>
+    <p>Следуйте соглашению самой игры:</p>
+<pre><code>&lt;BG&gt;MyBG,0,#00000000      задать фон, полностью прозрачный
+&lt;BG&gt;MyBG,1,#FFFFFF        проявить за 1 секунду
+&lt;Talk&gt;Кто-то: Первая реплика.
+&lt;Talk&gt;                     закрыть окно диалога
+&lt;Image&gt;                    убрать портреты
+&lt;BG&gt;,1                     плавно убрать фон</code></pre>
+
+    <h2>Контрольный список</h2>
+    <p>Персонаж или этап добавлены, но игрок их не видит:</p>
+    <ol>
+      <li>Вы написали постановку AutoRun? (<strong>самая частая причина</strong>)</li>
+      <li><code>Tag</code> содержит <code>AutoRun</code>?</li>
+      <li>Аргумент <code>&lt;AddRole&gt;</code> — это <code>Name</code> из таблицы данных?
+          (а не <code>Name_I2</code>)</li>
+      <li><code>ID</code> больше 0?</li>
+      <li>Для этапов: вы добавили <code>&lt;AddStageGroup&gt;</code>?</li>
+      <li>Вы вернулись на главный экран и начали новую игру или загрузили сохранение?</li>
+    </ol>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ru', page: 6 });</script>
+</body>
+</html>

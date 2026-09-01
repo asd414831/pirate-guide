@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Руководство по модам Pirate</title>
+<meta name="description" content="Когда мод для Pirate ничего не делает. Таблица сообщений об ошибках и проверки по симптомам.">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../../assets/icon-512.png">
+<link rel="apple-touch-icon" href="../../assets/icon-180.png">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<button class="menu-btn" aria-label="Меню">&#9776;</button>
+<div class="backdrop"></div>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="content">
+
+    <h1>Решение проблем</h1>
+    <p class="lead">Когда мод ничего не делает. В девяти случаях из десяти виноват синтаксис JSON или опечатка в имени.</p>
+
+    <h2>Сначала попробуйте эти три вещи</h2>
+    <ol>
+      <li><strong>Вернитесь на главный экран, затем «Новая игра» или «Загрузить игру»</strong>
+          &mdash; данные объединяются только в эти два момента; это самая частая причина</li>
+      <li><strong>Проверьте, что мод действительно включён</strong> &mdash; главный экран &rarr; Менеджер модов</li>
+      <li><strong>Вставьте JSON в онлайн-валидатор</strong> &mdash; найдите «JSON validator», подойдёт любой</li>
+    </ol>
+    <div class="ok">
+      <strong>На этом большинство проблем заканчивается</strong>
+      Если нет, проверки ниже сгруппированы по симптомам.
+    </div>
+
+    <h2>Симптом: мода нет в списке</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Проверка</th><th>Примечания</th></tr>
+      <tr><td>Есть ли <code>mod.json</code>?</td><td><strong>Самая частая причина.</strong> Без него папка игнорируется полностью</td></tr>
+      <tr><td>Верное ли имя файла?</td><td>Ровно <code>mod.json</code> &mdash; не <code>Mod.json</code> и не <code>mod.json.txt</code></td></tr>
+      <tr><td>Лежит ли он в нужном месте?</td><td><code>Mods/YourMod/mod.json</code>, а не <code>Mods/mod.json</code></td></tr>
+      <tr><td>Верная ли вложенность?</td><td>Просматриваются только <strong>прямые вложенные папки</strong> <code>Mods/</code></td></tr>
+      <tr><td>Есть ли вообще кнопка «Менеджер модов»?</td><td>Мобильная и демо-версии моды не поддерживают</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>Осторожно со скрытыми расширениями файлов в Windows</strong>
+      «Блокнот» легко сохраняет <code>mod.json.txt</code>, а Windows по умолчанию скрывает
+      <code>.txt</code> &mdash; выглядит как <code>mod.json</code>, но это не он.<br>
+      Чтобы проверить, включите в Проводнике <em>Вид &rarr; Расширения имён файлов</em>.
+    </div>
+
+    <h2>Симптом: мод в списке, но помечен как повреждённый</h2>
+    <p>Значит, <code>mod.json</code> есть, но в нём синтаксическая ошибка.</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Частая ошибка</th><th>Пример</th></tr>
+      <tr><td>Лишняя запятая в последнем поле</td><td><code>"author": "Кто-то",</code> и следом <code>}</code></td></tr>
+      <tr><td>Нет запятой между полями</td><td>между двумя строками отсутствует <code>,</code></td></tr>
+      <tr><td>Одинарные кавычки</td><td><code>'name'</code> должно быть <code>"name"</code></td></tr>
+      <tr><td>Незакрытая кавычка</td><td><code>"name": "My Mod</code></td></tr>
+      <tr><td>Неэкранированный обратный слэш</td><td><code>"icon": "art\icon.png"</code> &mdash; используйте <code>/</code></td></tr>
+      <tr><td>Файл не в UTF-8</td><td>Из-за этого не-ASCII текст превращается в кракозябры. Сохраняйте в UTF-8</td></tr>
+    </table>
+    </div>
+
+    <h2>Симптом: мод включён, но данные не применяются</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Проверка</th><th>Примечания</th></tr>
+      <tr><td>Опечатка в <code>Name</code>?</td><td><strong>Самая частая причина.</strong> Опечатка превращает правку в добавление. Следите за лишними пробелами и полноширинными символами</td></tr>
+      <tr><td>Верный ли регистр имени поля?</td><td><code>SellPrice</code>, а не <code>Sellprice</code></td></tr>
+      <tr><td>Верное ли имя папки?</td><td><code>Data/Item/</code>, а не <code>Data/Items/</code></td></tr>
+      <tr><td>JSON на нужной глубине?</td><td>Должно быть <code>Data/&lt;таблица&gt;/файл.json</code>. Файлы прямо в <code>Data/</code> не загружаются</td></tr>
+      <tr><td>Кавычки там, где нужно?</td><td>Поля характеристик снаряжения — текст: <code>"Atk": "20"</code></td></tr>
+      <tr><td><code>ID</code> больше 0?</td><td>Новые записи с ID 0 или отрицательным пропускаются</td></tr>
+      <tr><td>Вы заново вошли с главного экрана?</td><td>Проверьте ещё раз</td></tr>
+    </table>
+    </div>
+    <div class="warn">
+      <strong>JSON прямо внутри <code>Data/</code> не загружается никогда</strong>
+      В старом формате модов файлы лежали в <code>Data/*.json</code>. <strong>Это больше
+      не поддерживается.</strong> Они должны быть в папке таблицы: <code>Data/Item/MyItem.json</code>.<br>
+      Файлы <code>.csv</code> старого формата тоже игнорируются.
+    </div>
+
+    <h2>Симптом: название или описание пустые</h2>
+    <div class="warn">
+      <strong>Не указано <code>Name_I2</code></strong>
+      <code>Name</code> &mdash; это только внутренний идентификатор, а <strong>игроки видят
+      <code>Name_I2</code></strong>.<br>
+      Заполняйте его, даже если не делаете локализацию: просто напишите на своём языке.
+    </div>
+
+    <h2>Симптом: изображения не показываются</h2>
+    <p>См. контрольный список в главе <a href="04-images.html">Добавление изображений</a>. Обычные подозреваемые:</p>
+    <ul>
+      <li>Папка названа <code>Image/</code> (без s) вместо <code>Images/</code></li>
+      <li>Неверный регистр вложенной папки (<code>Rolehead</code> вместо <code>RoleHead</code>)</li>
+      <li>В <code>ImageName</code> указано <code>.png</code></li>
+      <li>Файл на самом деле JPG, переименованный в <code>.png</code></li>
+      <li>Изображения вариантов обрезаны до размера лица вместо холста во весь рост</li>
+    </ul>
+
+    <h2>Симптом: нет звука</h2>
+    <p>См. контрольный список в главе <a href="05-audio.html">Добавление аудио</a>. Обычные подозреваемые:</p>
+    <ul>
+      <li>Аудиофайл есть, но не зарегистрирован в <code>Data/BGM/</code></li>
+      <li>Зарегистрированное <code>Name</code> не совпадает с именем файла</li>
+      <li><code>ID</code> равен 0 или отрицателен</li>
+      <li>Проверяли слишком рано после запуска (аудио грузится в фоне — подождите несколько секунд)</li>
+      <li>Неподдерживаемый формат (только OGG / MP3 / WAV)</li>
+    </ul>
+
+    <div class="ok">
+      <strong>Если имя поля неверное, игра подскажет правильное</strong>
+      Настоящее сообщение выглядит так:
+<pre><code>[ModPatch] Item/ExamplePotion.json entry 1:
+  TheItem has no field "IconImage", skipped. Did you mean "IconName"?</code></pre>
+      Поэтому, если не уверены в имени поля, <strong>намеренно напишите что-то похожее</strong> и
+      позвольте подсказке сообщить правильное написание. Быстрее, чем искать.
+    </div>
+
+    <h2>Как читать журнал игры</h2>
+    <p>Игра записывает весь процесс загрузки модов. Там указана настоящая причина, а это лучше догадок.</p>
+    <p>Расположение журнала:</p>
+<pre><code>C:\Users\&lt;ваше имя пользователя&gt;\AppData\LocalLow\&lt;компания&gt;\&lt;игра&gt;\Player.log</code></pre>
+    <div class="note">
+      <strong>Как туда попасть</strong>
+      Вставьте <code>%USERPROFILE%\AppData\LocalLow</code> в адресную строку Проводника и нажмите
+      Enter, затем найдите папку игры.
+    </div>
+    <p>Откройте файл в текстовом редакторе и найдите <code>[Mod</code>, чтобы увидеть все сообщения,
+       связанные с модами.</p>
+
+    <h2>Справочник сообщений</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Фрагмент сообщения</th><th>Что значит</th><th>Что делать</th></tr>
+      <tr>
+        <td><code>mod.json parse failed</code></td>
+        <td>Синтаксическая ошибка JSON</td>
+        <td>Прогоните <code>mod.json</code> через валидатор JSON</td>
+      </tr>
+      <tr>
+        <td><code>skipping "XXX": mod.json parse failed</code></td>
+        <td>Весь мод пропущен</td>
+        <td>То же самое. Исправьте синтаксис и войдите в игру заново</td>
+      </tr>
+      <tr>
+        <td><code>&hellip;.json not in a table folder</code></td>
+        <td>JSON лежит прямо в <code>Data/</code></td>
+        <td>Переместите его в <code>Data/&lt;таблица&gt;/</code></td>
+      </tr>
+      <tr>
+        <td><code>.csv no longer&hellip;</code></td>
+        <td>Старый формат</td>
+        <td>Перепишите в JSON внутри папки таблицы</td>
+      </tr>
+      <tr>
+        <td><code>read failed</code></td>
+        <td>Файл не читается или повреждён</td>
+        <td>Проверьте синтаксис JSON и кодировку этого файла (нужен UTF-8)</td>
+      </tr>
+      <tr>
+        <td><code>has no field "X"&hellip; Did you mean "Y"?</code></td>
+        <td>Такого имени поля не существует</td>
+        <td>Используйте предложенное имя</td>
+      </tr>
+      <tr>
+        <td><code>not a valid PNG, skipped</code></td>
+        <td>Файл на самом деле не PNG</td>
+        <td>Переэкспортируйте в PNG, а не просто переименуйте</td>
+      </tr>
+      <tr>
+        <td><code>unsupported audio format, skipped</code></td>
+        <td>Неверный формат аудио</td>
+        <td>Сконвертируйте в OGG / MP3 / WAV</td>
+      </tr>
+      <tr>
+        <td><code>decoded audio is empty</code></td>
+        <td>Повреждённый или пустой аудиофайл</td>
+        <td>Переэкспортируйте аудио</td>
+      </tr>
+      <tr>
+        <td><code>applied N mods, M data files</code></td>
+        <td><strong>Это сообщение об успехе</strong></td>
+        <td>Совпадают ли числа? Если нет, прокрутите выше к предупреждениям</td>
+      </tr>
+    </table>
+    </div>
+    <div class="ok">
+      <strong>Сначала найдите строку «applied N mods»</strong>
+      Она говорит, сколько модов и файлов данных на самом деле загрузилось. Если число меньше
+      ожидаемого, прокрутите выше и найдите предупреждения.
+    </div>
+
+    <h2>Если всё ещё не выходит</h2>
+    <p>Сообщая о проблеме, приложите:</p>
+    <ul>
+      <li>Ваш <code>mod.json</code></li>
+      <li>Файл JSON, который не работает</li>
+      <li>Структуру папок вашего мода (скриншот или текст)</li>
+      <li>Все строки с <code>[Mod</code> из <code>Player.log</code></li>
+    </ul>
+    <div class="note">
+      <strong>Встроенная отправка отчётов об ошибках</strong>
+      Нажмите в игре <strong>F10</strong>, чтобы открыть форму отчёта: нужная информация
+      прикрепится автоматически.
+    </div>
+
+    <nav class="pager"></nav>
+  </main>
+</div>
+
+<script src="../../js/nav.js"></script>
+<script>buildNav({ lang: 'ru', page: 9 });</script>
+</body>
+</html>

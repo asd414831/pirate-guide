@@ -35,15 +35,16 @@
 <body>
 <div class="picker">
   <h1>海盜 模組製作手冊</h1>
-  <div class="sub">Pirate Mod Making Guide &middot; パイレーツ MOD制作ガイド &middot; 해적 모드 제작 가이드</div>
+  <div class="sub">Pirate Mod Making Guide &middot; パイレーツ MOD制作ガイド &middot; 해적 모드 제작 가이드 &middot; Руководство по модам</div>
 
   <a class="big" href="zh-TW/index.html"><div class="l">繁體中文</div><div class="r">模組製作手冊</div></a>
   <a class="big" href="zh-CN/index.html"><div class="l">简体中文</div><div class="r">模组制作手册</div></a>
   <a class="big" href="en/index.html"><div class="l">English</div><div class="r">Mod Making Guide</div></a>
   <a class="big" href="ja/index.html"><div class="l">日本語</div><div class="r">MOD制作ガイド</div></a>
   <a class="big" href="ko/index.html"><div class="l">한국어</div><div class="r">모드 제작 가이드</div></a>
+  <a class="big" href="ru/index.html"><div class="l">Русский</div><div class="r">Руководство по модам</div></a>
 
-  <div class="foot">選擇語言 &middot; Choose a language &middot; 言語を選択 &middot; 언어 선택</div>
+  <div class="foot">選擇語言 &middot; Choose a language &middot; 言語を選択 &middot; 언어 선택 &middot; Выбор языка</div>
 </div>
 
 <script>
@@ -65,6 +66,7 @@
   else if (l.indexOf('zh') === 0) target = 'zh-TW/index.html';
   else if (l.indexOf('ja') === 0) target = 'ja/index.html';
   else if (l.indexOf('ko') === 0) target = 'ko/index.html';
+  else if (l.indexOf('ru') === 0) target = 'ru/index.html';
   else target = 'en/index.html';
 
   try { sessionStorage.setItem('pg-picked', '1'); } catch (e) {}
