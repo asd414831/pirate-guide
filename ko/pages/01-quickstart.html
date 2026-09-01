@@ -1,0 +1,38 @@
+﻿<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>해적 모드 가이드</title><meta name="description" content="해적 게임의 모드 제작 가이드"><link rel="icon" href="../../favicon.ico" sizes="any"><link rel="icon" type="image/png" href="../../assets/icon-512.png"><link rel="apple-touch-icon" href="../../assets/icon-180.png"><link rel="stylesheet" href="../../css/style.css"></head><body><button class="menu-btn" aria-label="메뉴">☰</button><div class="backdrop"></div><div class="layout"><aside class="sidebar"></aside><main class="content"><h1>빠른 시작</h1><p class="lead">목표: 5분 안에 작동하는 모드를 만들어 전체 파이프라인이 돌아가는지 확인하는 것.</p><h2>1. 모드 폴더를 찾기</h2><p>모드는 게임 설치 디렉터리 아래에 있습니다:</p><pre><code>&lt;game install folder&gt;/Pirate_Data/StreamingAssets/Mods/</code></pre><p>거기에 가는 가장 빠른 방법:<strong>게임 실행 → 타이틀 화면 → 모드 관리자 → 폴더 열기</strong>. 게임이 그것을 열어 줍니다.</p><figure><img src="../../assets/ui-modlist-off.png" alt="Mod Manager listing four example mods"><figcaption>그<strong>모드 관리자</strong>타이틀 화면에서. 게임에는 네 개의 공식 예제 모드가 포함되어 있습니다 — 필드를 어떻게 작성해야 할지 확신이 서지 않을 때, 눌러보세요<strong>폴더 열기</strong>그리고 그들이 그것을 어떻게 했는지 보세요.<br><strong>모드 디렉토리</strong>왼쪽 아래에서 열립니다<code>Mods/</code>직접적으로.</figcaption></figure><div class="note"><strong>Mods 폴더가 없으면</strong>그냥 하나 만드세요 — 정확히 같은 이름이어야 합니다<code>Mods</code>.<br>타이틀 화면에 Mod Manager 버튼이 전혀 없으면, 당신의 빌드는 모드를 지원하지 않습니다 — 모바일 및 데모 빌드에는 이 기능이 없습니다.</div><h2>2. 모드 폴더를 만드세요</h2><p>안에 폴더를 만들기<code>Mods/</code>. 마음대로 이름을 지으세요; 영어 알파벳과 숫자가 가장 안전하며, 공백은 피하세요:</p><pre><code>Mods/
+&#9492;&#9472;&#9472; MyFirstMod/</code></pre><div class="warn"><strong>폴더 이름은 모드의 정체성입니다</strong>게임은 폴더 이름으로 '이 모드가 활성화되어 있는지'를 기억합니다.<br><strong>이름을 바꾸면 다른 모드가 됩니다</strong>— 활성화 상태가 재설정되며 플레이어가 다시 켜야 합니다. 출시 후에는 이름을 변경하지 마세요.</div><h2>3. mod.json 작성하기</h2><p>만들다<code>mod.json</code>모드 폴더 안에.<strong>이 파일이 없으면 게임에서는 이것을 모드로 간주하지 않습니다</strong>— 목록에도 나타나지 않을 거예요.</p><pre><code>{
+  "name": "My First Mod",
+  "author": "Your Name",
+  "version": "1.0",
+  "description": "Testing. Adds an absurdly strong potion."
+}</code></pre><p>모든 필드는 선택 사항이며 기본값으로 돌아갑니다. 자세한 내용은<a href="02-modjson.html">mod.json 필드</a>.</p><h2>4. 데이터 한 개 추가</h2><p>데이터가 아래로 간다<code>Data/&lt;table&gt;/</code>, 그리고<strong>하나의 JSON 파일은 하나의 항목입니다</strong>. 아이템이 있습니다:</p><pre><code>MyFirstMod/
+&#9500;&#9472;&#9472; mod.json
+&#9492;&#9472;&#9472; Data/
+    &#9492;&#9472;&#9472; Item/
+        &#9492;&#9472;&#9472; SuperPotion.json</code></pre><p>의 내용<code>SuperPotion.json</code>:</p><pre><code>{
+  "Name": "SuperPotion",
+  "Name_I2": "Super Potion",
+  "Desc": "Drink it and you get very strong",
+  "Type": "Item",
+  "AddHP": 999
+}</code></pre><div class="warn"><strong>폴더 이름이 어떤 테이블을 편집할지 결정합니다</strong><code>Data/Item/</code>항목을 편집합니다,<code>Data/Role/</code>문자를 편집합니다.<br>둘 다<code>Item</code>그리고<code>TheItem</code>허용됩니다(게임이 앞에 추가됩니다<code>The</code>너를 위해).<br><strong>파일 이름은 상관없다</strong>— 게임이 읽습니다<code>Name</code>파일 안의 필드.</div><h2>5. 활성화하고 테스트하세요</h2><figure class="fig-row"><div class="fig-item"><img src="../../assets/ui-modlist-off.png" alt="Before: grey row, button reads Enable" style="max-width:420px"><span class="fig-label">이전 — 회색 줄, 버튼에 표시됨<strong>활성화</strong></span></div><div class="fig-item"><img src="../../assets/ui-modlist-on.png" alt="After: gold row, button reads Disable" style="max-width:420px"><span class="fig-label">— 금 줄 다음, 버튼이 읽습니다<strong>비활성화</strong></span></div><figcaption>그<strong>N / M 활성화됨</strong>왼쪽 상단의 카운터는 빠른 확인입니다.<br>목록 순서는 적용 순서입니다(위에서 아래로); 왼쪽의 세 줄 핸들을 드래그하여 순서를 변경할 수 있습니다 — 이것이 모드가 충돌할 때 누가 승리하는지를 결정합니다 (참조)<a href="08-conflict.html">여러 모드</a>).</figcaption></figure><ol><li>다시 게임으로 돌아왔다,<strong>타이틀 화면 → 모드 관리자</strong></li><li>"My First Mod"을 찾아서 누르세요<strong>활성화</strong></li><li><strong>제목 화면으로 돌아간 다음 새 게임을 시작하거나 게임을 불러오세요</strong></li><li>가게를 확인하세요 — "슈퍼 포션"이 거기에 있어야 합니다</li></ol><div class="warn"><strong>변경 사항은 타이틀 화면에서 게임에 다시 들어갈 때 적용됩니다</strong>모드 데이터는 두 시점에서 병합됩니다:<strong>새 게임 시작</strong>그리고<strong>게임 불러오기</strong>
+      파일을 편집하거나 모드를 전환한 후에는 타이틀 화면으로 돌아가서 다시 들어가세요
+      &mdash;<strong>게임을 다시 시작할 필요가 없습니다</strong>.<br>이미 진행 중인 세션은 변경되지 않습니다. 타이틀 화면으로 돌아가야 합니다.</div><h2>정상적으로 작동했나요?</h2><figure><img src="../../assets/ui-shop-potion.png" alt="Shop list showing Example Potion for $100"><figcaption>공식 "예제 아이템" 모드를 활성화하면 상점이 얻는 기능은<strong>예시 물약, $100</strong>.<br>자신의 아이템도 동일한 방식으로 나타납니다(설정만 하면<code>SellPrice</code>).</figcaption></figure><div class="ok"><strong>새 항목을 확인하세요 → 전체 파이프라인이 작동합니다</strong>다음으로, 읽으세요<a href="03-data.html">게임 데이터 편집</a>기존 콘텐츠를 어떻게 수정하는지와 어떤 필드가 있는지를 배우기 위해.</div><div class="note"><strong>보이지 않으면 → 문제 해결로 이동</strong><a href="09-troubleshoot.html">문제 해결</a>오류 메시지 표가 있으며 증상별로 확인합니다. 대개 열에 아홉 번은 JSON 구문 오류(콤마 누락 또는 과다)입니다.</div><h2>완성된 모드의 폴더 구조</h2><p>모든 기능을 사용하는 모드:</p><pre><code>MyMod/
+&#9500;&#9472;&#9472; mod.json              ID card (required)
+&#9500;&#9472;&#9472; icon.png              list thumbnail (optional)
+&#9500;&#9472;&#9472; Data/                 data tables
+&#9474;   &#9500;&#9472;&#9472; Item/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; SuperPotion.json
+&#9474;   &#9500;&#9472;&#9472; Role/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; NewHero.json
+&#9474;   &#9492;&#9472;&#9472; Skill/
+&#9474;       &#9492;&#9472;&#9472; MegaSlash.json
+&#9500;&#9472;&#9472; Images/               artwork
+&#9474;   &#9500;&#9472;&#9472; RoleHead/
+&#9474;   &#9474;   &#9492;&#9472;&#9472; NewHero.png
+&#9474;   &#9492;&#9472;&#9472; Role/
+&#9474;       &#9492;&#9472;&#9472; NewHero.png
+&#9492;&#9472;&#9472; Music/                audio
+    &#9500;&#9472;&#9472; BGM/
+    &#9474;   &#9492;&#9472;&#9472; BGM_MyTheme.ogg
+    &#9492;&#9472;&#9472; Sfx/
+        &#9492;&#9472;&#9472; se_MyHit.ogg</code></pre><p>각 부분은 다음 장에서 다룹니다.</p><nav class="pager"></nav></main></div><script src="../../js/nav.js"></script><script>buildNav({ lang:'ko', page: 1 });</script></body></html>

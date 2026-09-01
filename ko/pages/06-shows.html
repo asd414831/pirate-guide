@@ -1,0 +1,52 @@
+﻿<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>해적 모드 가이드</title><meta name="description" content="해적 게임의 모드 제작 가이드"><link rel="icon" href="../../favicon.ico" sizes="any"><link rel="icon" type="image/png" href="../../assets/icon-512.png"><link rel="apple-touch-icon" href="../../assets/icon-180.png"><link rel="stylesheet" href="../../css/style.css"></head><body><button class="menu-btn" aria-label="메뉴">☰</button><div class="backdrop"></div><div class="layout"><aside class="sidebar"></aside><main class="content"><h1>연출과 콘텐츠 지급</h1><p class="lead">데이터를 기록하는 것만으로는 그 물건이 존재한다는 뜻입니다. 플레이어는 여전히 그것을 가지고 있지 않습니다. 이 장에서는 실제로 그것을 전달하는 것에 대해 다룹니다.</p><div class="warn"><strong>사람들이 놓치는 단계입니다</strong>문자 아래에 추가합니다<code>Data/Role/</code>, 데이터는 완벽하고 — 플레이어는 결코 그것들을 얻지 못할 것이다.<br>아이템에는 가격 필드가 있어서 아이템이 혼자서 상점에 나타날 수 있습니다.<strong>캐릭터와 스테이지는 그렇지 않다.</strong>그들에게 허용하는 유일한 방법은 show 명령어입니다.</div><h2>연출이란?</h2><p>연출는 게임 명령어의 목록입니다. 그것은 이야기 대화일 수도 있고 순수한 데이터 조작일 수도 있습니다. 연출는 다음에 존재합니다<code>Data/Show/</code>, 파일당 하나씩.</p><pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;NewHero"
+  ]
+}</code></pre><div class="note"><strong>연출에는 정확히 네 개의 필드가 있습니다</strong><code>ID</code>/<code>Name</code>/<code>Tag</code>/<code>Shows</code>설명 필드가 없습니다; 하나를 추가해도 아무 효과가 없습니다.</div><h2>자동 실행: 모드가 스스로 작동할 수 있는 유일한 훅</h2><p>세트<code>Tag</code>에게<code>AutoRun</code>그리고 연출가 자동으로 재생됩니다<strong>새 게임 시작 후 그리고 게임 불러오기 후</strong>.</p><pre><code>Data/Show/AutoRun.json
+
+{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;AddRole&gt;NewHero",
+    "&lt;AddItem&gt;SuperPotion,1"
+  ]
+}</code></pre><div class="warn"><strong>AutoRun은 한 번이 아니라 매번 실행됩니다</strong>새 게임 시작과 게임 불러오기 시마다 작동합니다.<br>그건 보통 무해합니다 —<code>&lt;AddRole&gt;</code>그리고<code>&lt;AddItem&gt;</code>플레이어가 이미 가지고 있는 항목은 건너뛰세요. 중복되지 않으며, 레벨도 초기화되지 않습니다.</div><p>정말로 한 번만 필요하다면, 플래그로 그것을 보호하세요:</p><pre><code>{
+  "Name": "MyMod",
+  "Tag": "AutoRun",
+  "Shows": [
+    "&lt;if&gt;{MyModInitialised}==0",
+    "&lt;AddRole&gt;NewHero",
+    "&lt;Var&gt;MyModInitialised,=,1",
+    "&lt;endif&gt;"
+  ]
+}</code></pre><div class="note"><strong>모드의 이름을 사용하세요<code>Name</code></strong><code>Name</code>병합 키입니다; 두 개의 모드가 동일한 이름의 AutoRun 연출를 가지고 있으면 나중 것이 이전 것을 조용히 덮어씁니다. 모드 이름을 사용하면 충돌을 피할 수 있습니다.</div><div class="note"><strong><code>Tag</code>같음이 아니라 '포함' 확인입니다</strong><code>"Tag": "AutoRun,Story"</code>여전히 AutoRun으로 간주됩니다. 대소문자 구분도 없습니다, 그래서<code>autorun</code>작동합니다.</div><h2>캐릭터 부여</h2><pre><code>&lt;AddRole&gt;NewHero</code></pre><p>주장은 그 캐릭터의 것이다<code>Name</code>데이터 테이블에서 (아님<code>Name_I2</code>).</p><figure><img src="../../assets/ui-mod-role.png" alt="A mod character in the crew list with its own portrait and skills"><figcaption>공식 "예제 역할" 모드의 결과 &mdash; 완전히 모드로 추가된 캐릭터로, 자체 초상화, 얼굴 아이콘, 능력치 및 기술 세트를 가지고 있습니다 (<code>Killing Intent</code>,<code>Night Rapture</code>그리고<code>Gravity Field</code>모두 모드에서 정의된 것입니까).<br>그것 없이 플레이어에게는 아무것도 전달되지 않는다<code>&lt;AddRole&gt;</code>선
+        &mdash;<strong>데이터가 아무리 완전하더라도</strong>.</figcaption></figure><figure><img src="../../assets/ui-mod-role-slot.png" alt="The mod character sits at the very end of the crew list"><figcaption><strong>모드 콘텐츠는 항상 목록의 끝에 추가됩니다.</strong>추가한 캐릭터를 찾을 수 없나요? 맨 아래로 스크롤하세요 — 보통 거기에 있습니다.</figcaption></figure><div class="warn"><strong>승무원 갤러리를 위한 두 가지 추가 조건</strong><ul><li><code>ID</code>0보다 큰</li><li><code>Name</code>비어 있지 않음</li></ul>두 가지 모두 없으면, 캐릭터는 이후에도 보이지 않은 상태로 남습니다<code>&lt;AddRole&gt;</code>달린다.</div><h2>스테이지 지급</h2><p><strong>두 줄 모두 필요합니다.</strong></p><pre><code>&lt;AddStageGroup&gt;Mods
+&lt;AddStage&gt;Abyss Trial</code></pre><div class="warn"><strong>없이<code>&lt;AddStageGroup&gt;</code>무대가 보이지 않는다</strong>스테이지는 그룹에 속해야 합니다. 그룹이 없으면 스테이지 메뉴에 들어갈 자리가 없습니다.<br>게임에는 '그룹'이라는 내장 기능이 포함되어 있습니다<code>Mods</code>직접 사용할 수 있습니다.</div><div class="ok"><strong>반복해서 실행하는 것은 안전합니다</strong>플레이어가 이미 가진 그룹과 단계는 두 번 추가되지 않습니다.</div><h2>아이템 부여</h2><pre><code>&lt;AddItem&gt;SuperPotion,1</code></pre><div class="note"><strong>항목은 보통 자동 실행이 필요하지 않습니다</strong>세트<code>SellPrice</code>그리고 아이템이 플레이어가 구매할 수 있도록 상점에 나타납니다.<code>&lt;AddItem&gt;</code>직접 건네주는 용도일 뿐입니다.</div><h2>자동 실행에 대한 한 가지 경고</h2><div class="warn"><strong>저장이 이야기 중간이라면, AutoRun이 그것과 함께 실행됩니다</strong>컷신을 재개하는 저장파일을 불러오면 오토런이 화면을 차지하기 위해 경쟁하게 됩니다.<br><strong>AutoRun을 순수 데이터 명령으로 유지</strong>&mdash;<code>&lt;AddRole&gt;</code>,<code>&lt;AddItem&gt;</code>,<code>&lt;AddStage&gt;</code>,<code>&lt;Var&gt;</code>.<br>대화와 속도 조절을 위해, a<strong>스테이지 승리 연출</strong>더 나은 집입니다
+      (다음 장을 참조하십시오).</div><div class="ok"><strong>여러 모드의 자동 실행이 차례대로 실행됩니다</strong>절대 동시에 하지 마세요. 순서는 모드 리스트 순서대로(위에서 아래로)입니다.<br>그래서 a<code>&lt;Wait&gt;</code>귀하의 AutoRun은 의도한 대로 작동하며 — 다른 모드가 방해하지 않습니다.</div><h2>이름 규칙: 게임의 연출 슬롯 연결하기</h2><p>게임의 다양한 부분이 연출를 찾습니다<strong>고정된 이름</strong>. 당신의 연출 이름을 맞춰서 지으세요 그리고 그것은 &mdash; 아니라고 불립니다<code>Tag</code>필요했다.</p><h3>홈 화면 캐릭터 대화</h3><p>플레이어가 홈 화면에서 캐릭터 초상화를 클릭할 때 재생:</p><pre><code>RoomTalk_&lt;character Name&gt;</code></pre><p>캐릭터를 위한<code>Name</code>이다<code>NewHero</code>:</p><pre><code>Data/Show/RoomTalk.json
+
+{
+  "Name": "RoomTalk_NewHero",
+  "Shows": [
+    "&lt;Var&gt;RoomTalkCount,+,1",
+    "&lt;if&gt;{RoomTalkCount}&gt;3",
+    "&lt;Var&gt;RoomTalkCount,=,1",
+    "&lt;endif&gt;",
+    "&lt;if&gt;{RoomTalkCount}==1",
+    "&lt;MateImage&gt;NewHero",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: Hey there.",
+    "&lt;elseif&gt;{RoomTalkCount}==2",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: You again.",
+    "&lt;elseif&gt;",
+    "&lt;MateTalk&gt;{CurrentHomeCharacterName}: Stop poking me.",
+    "&lt;endif&gt;"
+  ]
+}</code></pre><div class="note"><strong>이것을 건너뛰는 것은 오류가 아닙니다</strong>캐릭터는 홈 화면에서 조용히 서 있기만 합니다. 반응을 원하면 추가하세요.<br>데이터 테이블의 것을 사용한다는 점에 유의하세요<code>Name</code>, 번역된 표시 이름이 아니라.</div><h2>명령 참조</h2><div class="table-wrap"><table><tr><th>명령</th><th>효과</th></tr><tr><td><code>&lt;AddRole&gt;Name</code></td><td>플레이어에게 캐릭터를 주세요</td></tr><tr><td><code>&lt;AddItem&gt;Name,count</code></td><td>아이템을 주세요</td></tr><tr><td><code>&lt;AddStageGroup&gt;name</code></td><td>스테이지 그룹 잠금 해제</td></tr><tr><td><code>&lt;AddStage&gt;Name</code></td><td>스테이지 잠금 해제</td></tr><tr><td><code>&lt;Var&gt;name,=,value</code></td><td>변수를 설정하다 (<code>=</code>/<code>+</code>/<code>-</code>)</td></tr><tr><td><code>&lt;if&gt;cond</code>…<code>&lt;endif&gt;</code></td><td>조건부의, ~와 함께<code>&lt;elseif&gt;</code>사이</td></tr><tr><td><code>&lt;Talk&gt;text</code></td><td>대화. 텍스트가 없으면 대화 상자를 닫습니다</td></tr><tr><td><code>&lt;MateTalk&gt;text</code></td><td>홈 화면 대화</td></tr><tr><td><code>&lt;Wait&gt;seconds</code></td><td>일시 정지</td></tr><tr><td><code>&lt;BG&gt;name,seconds,colour</code></td><td>배경.<code>&lt;BG&gt;,1</code>서서히 사라지다</td></tr><tr><td><code>&lt;Image&gt;slot,character,face,body</code></td><td>초상화. 인수가 없으면 모두 지웁니다</td></tr><tr><td><code>&lt;MateImage&gt;character,face,body</code></td><td>홈 화면 세로 모드 (슬롯 인수 없음)</td></tr><tr><td><code>&lt;BGM&gt;name</code></td><td>음악을 바꾸다</td></tr><tr><td><code>&lt;Sfx&gt;name</code></td><td>효과음을 재생하다</td></tr></table></div><div class="note"><strong>전체 명령 목록은 연출 편집기에서 확인할 수 있습니다</strong>복잡한 인수가 있는 명령어가 많이 있습니다. 작성은 ~에서 보여줍니다<a href="10-showeditor.html">연출 편집기</a>메뉴를 외우는 대신 설명과 함께 메뉴에서 선택할 수 있게 해줍니다.</div><h2>대화 규약</h2><p>화자를 '이름: 내용'으로 작성하세요:</p><pre><code>&lt;Talk&gt;NewHero: Good morning.</code></pre><div class="ok"><strong>캐릭터와 일치하는 이름이 자동으로 색이 칠해지고 스포트라이트가 켜집니다</strong>데이터 테이블과 대조됨<code>Name</code>. 일치하지 않는다는 것은 단순한 일반 텍스트를 의미하며 — 오류가 아님.</div><h3>이야기 섹션 열기 및 닫기</h3><p>게임 자체의 관습을 따르세요:</p><pre><code>&lt;BG&gt;MyBG,0,#00000000      set the background, fully transparent
+&lt;BG&gt;MyBG,1,#FFFFFF        fade in over 1 second
+&lt;Talk&gt;Someone: Opening line.
+&lt;Talk&gt;                     close the dialogue box
+&lt;Image&gt;                    clear the portraits
+&lt;BG&gt;,1                     fade the background out</code></pre><h2>체크리스트</h2><p>캐릭터나 스테이지가 추가되었지만 플레이어가 볼 수 없습니다:</p><ol><li>자동 실행 연출를 썼나요? (<strong>가장 흔한 원인</strong>)</li><li>합니까<code>Tag</code>포함하다<code>AutoRun</code>?</li><li>그것은<code>&lt;AddRole&gt;</code>데이터 테이블의 인수<code>Name</code>?
+          (아님<code>Name_I2</code>)</li><li>이다<code>ID</code>0보다 큰가?</li><li>단계의 경우 포함했나요<code>&lt;AddStageGroup&gt;</code>?</li><li>타이틀 화면으로 돌아가 새 게임을 시작했나요, 아니면 게임을 불러왔나요?</li></ol><nav class="pager"></nav></main></div><script src="../../js/nav.js"></script><script>buildNav({ lang:'ko', page: 6 });</script></body></html>
